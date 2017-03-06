@@ -1,0 +1,29 @@
+<div class="heading">
+  City Government in Your Hands.
+</div>
+
+<div class="find-your-city">
+  <md-input-container>
+    <input mdInput
+           type="text"
+           [placeholder]="'Find Your City'"
+           [mdAutocomplete]="auto"
+           id="find-city-input"
+           color="warn"
+           #findCity>
+  </md-input-container>
+
+  <md-autocomplete #auto="mdAutocomplete">
+    <md-option *ngFor="let city of cities" [value]="city.name[0]">{{city.name[0]}}</md-option>
+  </md-autocomplete>
+</div>
+
+<div class="flags" fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="10px" fxLayoutAlign="space-around stretch">
+  <div *ngFor="let city of cities" class="flag">
+    <img [src]="city.flag">
+  </div>
+</div>
+
+<div class="set-it-up">
+
+</div>

@@ -1,0 +1,42 @@
+@import "../../assets/style/theme";
+
+:host {
+  display: block;
+
+  & > div {
+    margin: 40px auto;
+  }
+
+}
+
+.heading {
+  font-size: 2em;
+  text-align: center;
+}
+
+.find-your-city {
+  text-align: center;
+
+  md-input-container {
+    display: block;
+    max-width: 400px;
+    margin: auto;
+  }
+
+}
+
+.flags {
+  align-self: center;
+  border-radius: 2px;
+  max-width: 900px;
+  margin: auto;
+
+  .flag {
+
+    img {
+      border: 1px solid mat-color($mat-grey, 700);
+      width: 180px;
+    }
+  }
+
+}
