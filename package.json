@@ -1,5 +1,12 @@
 {
   "name": "civ-cc",
+  "contributors": [
+    {
+      "name": "Drew Moore",
+      "email": "drew@civinomics.com"
+    }
+  ],
+  "repository": "https://github.com/civinomics/city-council",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -12,6 +19,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": ">=4.0.0-beta <5.0.0",
     "@angular/common": ">=4.0.0-beta <5.0.0",
     "@angular/compiler": ">=4.0.0-beta <5.0.0",
     "@angular/core": ">=4.0.0-beta <5.0.0",
