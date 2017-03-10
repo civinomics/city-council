@@ -1,64 +1,178 @@
-<div class="heading">
-  City Government in Your Hands
-</div>
+<main>
+  <div class="hero">
+    <h1>City Government in Your Hands</h1>
+    <div class="find-your-city">
+      <md-input-container class="center">
+        <input mdInput 
+               class="center"
+               type="text"
+               [placeholder]="'Find Your City'"
+               [mdAutocomplete]="auto"
+               id="find-city-input"
+               color="warn"
+               #findCity>
+      </md-input-container>
 
-<div class="find-your-city">
-  <md-input-container>
-    <input mdInput
-           type="text"
-           [placeholder]="'Find Your City'"
-           [mdAutocomplete]="auto"
-           id="find-city-input"
-           color="warn"
-           #findCity>
-  </md-input-container>
+      <md-autocomplete #auto="mdAutocomplete">
+        <md-option *ngFor="let city of cities" [value]="city.name[0]">{{city.name[0]}}</md-option>
+      </md-autocomplete>
+    </div>
 
-  <md-autocomplete #auto="mdAutocomplete">
-    <md-option *ngFor="let city of cities" [value]="city.name[0]">{{city.name[0]}}</md-option>
-  </md-autocomplete>
-</div>
-
-<div class="flags" fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="10px" fxLayoutAlign="space-around stretch">
-  <div *ngFor="let city of cities" class="flag">
-    <img [src]="city.flag">
+    <div class="flags" fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="10px" fxLayoutAlign="space-around stretch">
+      <div *ngFor="let city of cities" class="flag">
+        <img [src]="city.flag">
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="set-it-up">
-
-</div>
-
-<div class="why">
-  <div class="heading">
-    Why it Matters
+  <div class="set-it-up">
+    <div class="center">
+      <md-card fxFlex="1 1 33%" style="margin:auto;"><button md-raised-button>Request Set Up</button></md-card>
+    </div>
   </div>
-  <div>
-    <md-grid-list cols="2">
+
+  <hr>
+
+  <div class="why">
+    <h2>Why it Matters</h2>
+    <div>
+      <md-grid-list cols="2">
+        <md-grid-tile>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/BE8oiC1VHws" frameborder="0" allowfullscreen></iframe>
+        </md-grid-tile>
+        <md-grid-tile>
+          <div>
+            <ul class="fancy-list">
+              <li>Local government is our streets, our cops, our fire, our garbage, our parking, our zoning, our water, and our schools.</li>
+              <li>Democracy is a technology - we may not be able to reboot the federal government overnight, but we can update our city surprisingly quickly.</li>
+              <li>Our government must update the technology to adapt to the changing realities of public life: cell phones, commuting, education.</li>
+            </ul>
+          </div>
+        </md-grid-tile>
+      </md-grid-list>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="people-are-saying">
+    <h2>What People are Saying</h2>
+    <md-grid-list cols="5">
+      <md-grid-tile><a href="http://www.gtweekly.com/index.php/santa-cruz-news/good-times-cover-stories/5265-civinomics-rising.html" target="_blank"><img src="/assets/img/splash/good_times.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.xconomy.com/san-francisco/2013/07/30/santa-cruz-the-city-over-the-hill-builds-its-own-startup-culture/" target="_blank"><img src="/assets/img/splash/xconomy.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.bizjournals.com/sanjose/chreynolds-data-centers/2014/05/public-policy-startup-civnomics-wants-to-hack-u-s.html" target="_blank"><img src="/assets/img/splash/svbj.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.santacruzsentinel.com/santacruz/ci_24544092/santa-cruz-hackathon-brings-new-ideas-political-table" target="_blank"><img src="/assets/img/splash/sc_sentinel.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.register-pajaronian.com/v2_news_articles.php?heading=0&page=72&story_id=15248" target="_blank"><img src="/assets/img/splash/register_pajaronian.jpg"></a></md-grid-tile>
+    </md-grid-list>
+  </div>
+
+  <hr>
+
+  <div class="features">
+    <h2>Features</h2>
+    <md-grid-list cols="1">
       <md-grid-tile>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/BE8oiC1VHws" frameborder="0" allowfullscreen></iframe>
-      </md-grid-tile>
-      <md-grid-tile>
-        <div>
-          <ul>
-            <li>Local government is our streets, our cops, our fire, our garbage, our parking, our zoning, our water, and our schools.</li>
-            <li>Democracy is a technology - we may not be able to reboot the federal government overnight, but we can update our city surprisingly quickly.</li>
-            <li>Our government must update the technology to adapt to the changing realities of public life: cell phones, commuting, education.</li>
-          </ul>
-        </div>
+        <ul class="fancy-list lead no-bullet">
+          <li>
+            <md-icon fonticon="fa-comments" fontset="fa" role="img" class="fa fa-comments"></md-icon> 
+            <md-icon fonticon="fa-check-square" fontset="fa" role="img" class="fa fa-check-square"></md-icon> 
+            <md-icon fonticon="fa-share" fontset="fa" role="img" class="fa fa-share"></md-icon> 
+            <span>Comment, vote, and share meetings</span>
+          </li>
+          <li>
+            <md-icon fonticon="fa-mobile" fontset="fa" role="img" class="fa fa-mobile"></md-icon> 
+            <span>Mobile friendly</span>
+          </li>
+          <li>
+            <md-icon fonticon="fa-refresh" fontset="fa" role="img" class="fa fa-refresh"></md-icon> 
+            <span>Automated meeting upload and reporting</span>
+          </li>
+          <li>
+            <md-icon fonticon="fa-file-pdf-o" fontset="fa" role="img" class="fa fa-file-pdf-o"></md-icon>
+            <span>Export PDFs</span>
+          </li>
+          <li>
+            <md-icon fonticon="fa-arrows-h" fontset="fa" role="img" class="fa fa-arrows-h"></md-icon> 
+            <span>Compatible with: Sire, Socrata</span>
+          </li>
+          <li>
+            <md-icon fonticon="fa-envelope-o" fontset="fa" role="img" class="fa fa-envelope-o"></md-icon>
+            <md-icon fonticon="fa-asterisk" fontset="fa" role="img" class="fa fa-asterisk"></md-icon> 
+            <span>Notifications</span>
+          </li>
+          <li>
+            <md-icon fonticon="fa-vcard-o" fontset="fa" role="img" class="fa fa-vcard-o"></md-icon> 
+            <span>Citizen verification</span>
+          </li>
+          <li>
+            <md-icon fonticon="fa-map" fontset="fa" role="img" class="fa fa-map"></md-icon> 
+            <span>District mapping</span>
+          </li>
+          <li class="no-bullet center"><button md-raised-button>Pricing</button></li>
+        </ul>
       </md-grid-tile>
     </md-grid-list>
   </div>
+
+  <hr>
+
+  <div class="from-the-blog">
+    <h2>From the Blog</h2>
+    <md-grid-list cols="2">
+      <md-grid-tile fxLayout="column">
+        <div><strong>A Title</strong></div>
+        <div><p>Now that we know who you are, I know who I am. I'm not a mistake! It all makes sense! In a comic, you know how you can tell who the arch-villain's going to be? He's the exact opposite of the hero. And most times they're friends, like you and me! I should've known way back when... You know why, David? Because of the kids. They called me Mr Glass.</p></div>
+      </md-grid-tile>
+      <md-grid-tile>
+        <img class="thumbnail" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/FalkirkWheelSide_2004_SeanMcClean.jpg/1280px-FalkirkWheelSide_2004_SeanMcClean.jpg">
+      </md-grid-tile>
+    </md-grid-list>
+  </div>
+
+    <hr>
+
+  <div class="why-wait">
+    <h2>What are you waiting for?</h2>
+    <div class="center">
+      <md-card fxFlex="1 1 33%" style="margin:auto;"><button md-raised-button>Request Set Up</button></md-card>
+    </div>
+  </div>
+</main>
+
+
+<div class="footer">
+  <div fxLayout="row">
+      <div fxFlex="1 1 33%">
+        <ul class="no-bullet">
+          <li>About</li>
+          <li>Blog</li>
+          <li>Careers</li>
+          <li>Invest</li>
+          <li>Contact Us</li>
+        </ul>
+      </div>
+      <div fxFlex="1 1 33%">
+        <ul class="no-bullet">
+          <li>Solution</li>
+          <li>Case Studies</li>
+          <li>News</li>
+        </ul>
+      </div>
+      <div fxFlex="1 1 33%">
+        Newsletter
+        <br>
+        <md-input-container>
+          <input mdInput placeholder="Email" style="color:#fff;">
+        </md-input-container>
+        <br>
+        <md-icon fonticon="fa-facebook-square" fontset="fa" role="img" class="fa fa-facebook-square"></md-icon>
+        <md-icon fonticon="fa-twitter-square" fontset="fa" role="img" class="fa fa-twitter-square"></md-icon>
+        <md-icon fonticon="fa-youtube-square" fontset="fa" role="img" class="fa fa-youtube-square"></md-icon>
+        <md-icon fonticon="fa-github" fontset="fa" role="img" class="fa fa-github"></md-icon>
+      </div>
+  </div>
+  <div fxLayout="row" layout-align="right" flex>
+    Civinomics © 2017
+  </div>
 </div>
 
-<div class="people-are-saying">
-  <div class="heading">
-    What People are Saying
-  </div>
-  <md-grid-list cols="5">
-    <md-grid-tile><a href="http://www.gtweekly.com/index.php/santa-cruz-news/good-times-cover-stories/5265-civinomics-rising.html" target="_blank"><img src="/assets/img/splash/good_times.jpg"></a></md-grid-tile>
-    <md-grid-tile><a href="http://www.xconomy.com/san-francisco/2013/07/30/santa-cruz-the-city-over-the-hill-builds-its-own-startup-culture/" target="_blank"><img src="/assets/img/splash/xconomy.jpg"></a></md-grid-tile>
-    <md-grid-tile><a href="http://www.bizjournals.com/sanjose/chreynolds-data-centers/2014/05/public-policy-startup-civnomics-wants-to-hack-u-s.html" target="_blank"><img src="/assets/img/splash/svbj.jpg"></a></md-grid-tile>
-    <md-grid-tile><a href="http://www.santacruzsentinel.com/santacruz/ci_24544092/santa-cruz-hackathon-brings-new-ideas-political-table" target="_blank"><img src="/assets/img/splash/sc_sentinel.jpg"></a></md-grid-tile>
-    <md-grid-tile><a href="http://www.register-pajaronian.com/v2_news_articles.php?heading=0&page=72&story_id=15248" target="_blank"><img src="/assets/img/splash/register_pajaronian.jpg"></a></md-grid-tile>
-  </md-grid-list>
-</div>

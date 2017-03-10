@@ -9,10 +9,14 @@
 
 }
 
-.heading {
-  font-size: 2em;
+.heading,h1,h2,h3,h4,h5,h6{
   text-align: center;
 }
+
+.fancy-list li{
+  margin-bottom:20px;
+}
+
 
 .find-your-city {
   text-align: center;
@@ -40,3 +44,42 @@
   }
 
 }
+
+md-grid-tile a{
+  margin:10px;
+}
+
+md-grid-tile a img, .thumbnail{
+  width:100%;
+}
+
+.no-bullet, ul.no-bullet li{
+  list-style-type: none;
+}
+
+main{
+  overflow-y:auto;
+}
+
+footer, footer md-grid-list, .inverse, .footer{
+  background-color:#263238;
+  color:#ffffff;
+}
+
+div.footer{
+  margin-bottom: 0;
+}
+
+.center{
+  text-align: center;
+}
+
+.lead{
+  font-weight:300;
+  font-size:1.5em;
+}
+
+.lg{
+  font-size:24px;
+}
+
