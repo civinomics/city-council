@@ -27,7 +27,9 @@
 
   <div class="set-it-up">
     <div class="center">
-      <md-card fxFlex="1 1 33%" style="margin:auto;"><button md-raised-button>Request Set Up</button></md-card>
+      <md-card fxFlex="1 1 33%" style="margin:auto;">
+        <button md-raised-button color="accent" class="request-button">request set up</button>
+      </md-card>
     </div>
   </div>
 
@@ -70,48 +72,92 @@
 
   <div class="features">
     <h2>Features</h2>
-    <md-grid-list cols="1">
-      <md-grid-tile>
-        <ul class="fancy-list lead no-bullet">
-          <li>
-            <md-icon fonticon="fa-comments" fontset="fa" role="img" class="fa fa-comments"></md-icon> 
-            <md-icon fonticon="fa-check-square" fontset="fa" role="img" class="fa fa-check-square"></md-icon> 
-            <md-icon fonticon="fa-share" fontset="fa" role="img" class="fa fa-share"></md-icon> 
-            <span>Comment, vote, and share meetings</span>
-          </li>
-          <li>
-            <md-icon fonticon="fa-mobile" fontset="fa" role="img" class="fa fa-mobile"></md-icon> 
-            <span>Mobile friendly</span>
-          </li>
-          <li>
-            <md-icon fonticon="fa-refresh" fontset="fa" role="img" class="fa fa-refresh"></md-icon> 
-            <span>Automated meeting upload and reporting</span>
-          </li>
-          <li>
-            <md-icon fonticon="fa-file-pdf-o" fontset="fa" role="img" class="fa fa-file-pdf-o"></md-icon>
-            <span>Export PDFs</span>
-          </li>
-          <li>
-            <md-icon fonticon="fa-arrows-h" fontset="fa" role="img" class="fa fa-arrows-h"></md-icon> 
-            <span>Compatible with: Sire, Socrata</span>
-          </li>
-          <li>
-            <md-icon fonticon="fa-envelope-o" fontset="fa" role="img" class="fa fa-envelope-o"></md-icon>
-            <md-icon fonticon="fa-asterisk" fontset="fa" role="img" class="fa fa-asterisk"></md-icon> 
-            <span>Notifications</span>
-          </li>
-          <li>
-            <md-icon fonticon="fa-vcard-o" fontset="fa" role="img" class="fa fa-vcard-o"></md-icon> 
-            <span>Citizen verification</span>
-          </li>
-          <li>
-            <md-icon fonticon="fa-map" fontset="fa" role="img" class="fa fa-map"></md-icon> 
-            <span>District mapping</span>
-          </li>
-          <li class="no-bullet center"><button md-raised-button>Pricing</button></li>
-        </ul>
-      </md-grid-tile>
-    </md-grid-list>
+
+    <div class="feature-row">
+      <div class="feature">
+        <div>
+          <md-icon fonticon="fa-comments" fontset="fa" role="img" class="fa fa-comments"></md-icon>
+        </div>
+        <div class="feature-title">Comment, Vote, and Share Meetings</div>
+        <div>
+          <span class="feature-description">Your City's meetings open and interactive for all city residents.</span>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div>
+          <md-icon fonticon="fa-refresh" fontset="fa" role="img" class="fa fa-refresh"></md-icon> 
+        </div>
+        <div class="feature-title">Automated Upload and Reporting</div>
+        <div>
+          <span class="feature-description">Works on its own! No additional staff required.</span>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div>
+          <md-icon fonticon="fa-file-pdf-o" fontset="fa" role="img" class="fa fa-file-pdf-o"></md-icon>
+        </div>
+        <div class="feature-title">Export PDFs</div>
+        <div>
+          <span class="feature-description">Easily export data to share or append to the public record.</span>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div>
+          <md-icon fonticon="fa-mobile" fontset="fa" role="img" class="fa fa-mobile"></md-icon> 
+        </div>
+        <div class="feature-title">Mobile Friendly</div>
+        <div>
+          <span class="feature-description">Provide input and review outcomes no matter where you are.</span>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div>
+          <md-icon fonticon="fa-arrows-h" fontset="fa" role="img" class="fa fa-arrows-h"></md-icon>
+        </div>
+        <div class="feature-title">Cross-Platform Compatiblity</div>
+        <div>
+          <span class="feature-description">Integrate existing civic software like Sire and Socrata for an a la carte solution.</span>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div>
+          <md-icon fonticon="fa-envelope-o" fontset="fa" role="img" class="fa fa-envelope-o"></md-icon>
+        </div>
+        <div class="feature-title">Notifications</div>
+        <div>
+          <span class="feature-description">Stay up to date on the topics that interest you the most like public safety and transportation.</span>
+        </div>
+      </div>
+
+      <!--
+      <div class="feature">
+        <div>
+          <md-icon fonticon="fa-vcard-o" fontset="fa" role="img" class="fa fa-vcard-o"></md-icon>
+        </div>
+        <div class="feature-title">Citizen Verification</div>
+        <div>
+          <span class="feature-description">Be certain that the people you're interacting with live in your city.</span>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div>
+          <md-icon fonticon="fa-map" fontset="fa" role="img" class="fa fa-map"></md-icon> 
+        </div>
+        <div class="feature-title">District Mapping</div>
+        <div>
+          <span class="feature-description">Supports different voting districts for medium and large size cities.</span>
+        </div>
+      </div>
+
+    -->
+    
+    </div>
   </div>
 
   <hr>
@@ -131,12 +177,17 @@
 
     <hr>
 
-  <div class="why-wait">
-    <h2>What are you waiting for?</h2>
+
+  <div class="set-it-up">
     <div class="center">
-      <md-card fxFlex="1 1 33%" style="margin:auto;"><button md-raised-button>Request Set Up</button></md-card>
+      <h2>What are you waiting for?</h2>
+      <br>
+      <md-card fxFlex="1 1 33%" style="margin:auto;">
+        <button md-raised-button color="accent" class="request-button">request set up</button>
+      </md-card>
     </div>
   </div>
+  
 </main>
 
 
