@@ -68,6 +68,25 @@ footer, footer md-grid-list, .inverse, .footer{
 
 div.footer{
   margin-bottom: 0;
+
+  .main-footer{
+    display: flex;
+    flex-direction: row;
+    /*justify-content: center | space-around;*/
+    align-items:center;
+    justify-content: space-around;
+  }
+
+  a{
+    color:#fff;
+    text-decoration: none;
+  }
+
+  md-icon{
+    font-size: 2em;
+    margin: 0 10px;
+  }
+
 }
 
 .lg{

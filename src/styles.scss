@@ -43,4 +43,14 @@ main{
 	margin:auto;
 }
 
+.copyright{
+	display: flex;
+	justify-content: flex-end;
+	font-size: .75em;
+
+	div{
+		margin:20px 40px;
+	}
+}
+
 @include angular-material-theme($civ-theme);

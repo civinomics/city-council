@@ -2,13 +2,16 @@
 	width:150px;
 }
 
-/*
-md-card.team-card{
-	margin:auto;
-	max-width: 33%;
-	flex: 1 1 33%;
+.team-row{
+	margin-bottom:50px;
+	flex-wrap: wrap;
+	justify-content: center;
+
+	.team-card{
+		flex-basis: 27%;
+		margin-bottom: 50px;
+	}
 }
-*/
 
 hr{
 	margin:40px 0;
@@ -47,3 +50,4 @@ md-card-header{
 .fa{
 	font-size:20px;
 }
+
