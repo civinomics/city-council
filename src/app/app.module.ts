@@ -6,11 +6,13 @@ import {SplashModule} from "./splash/splash.module";
 import {AppRoutingModule} from "./app.routing.module";
 import {SharedModule} from "./shared/shared.module";
 import { AboutComponent } from './about/about.component';
+import { CareersComponent } from './careers/careers.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AboutComponent
+    AboutComponent,
+    CareersComponent
   ],
   imports: [
     BrowserModule,

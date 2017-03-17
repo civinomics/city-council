@@ -29,6 +29,12 @@ h1,h2,h3,h4,h5,h6{
   font-size:1.5em;
 }
 
+.title{
+  font-weight: 200;
+  font-size: 1.25em;
+  margin: 0px auto 15px;
+}
+
 .center{
   text-align: center;
 }
@@ -51,6 +57,42 @@ main{
 	div{
 		margin:20px 40px;
 	}
+}
+
+.request-button{
+  text-transform: uppercase;
+}
+
+footer, footer md-grid-list, .inverse, .footer{
+  background-color:#263238;
+  color:#ffffff;
+}
+
+div.footer{
+  margin-bottom: 0;
+
+  .main-footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  a{
+    color:#fff;
+    text-decoration: none;
+    font-size: .85em;
+    font-weight: 200;
+  }
+
+  md-icon{
+    font-size: 2em;
+    margin: 0 10px;
+  }
+
+}
+
+.no-bullet, ul.no-bullet li{
+  list-style-type: none;
 }
 
 @include angular-material-theme($civ-theme);

@@ -18,9 +18,6 @@ hr{
   margin:50px 0 60px;
 }
 
-.request-button{
-  text-transform: uppercase;
-}
 
 .fancy-list li{
   margin-bottom:20px;
@@ -66,40 +63,8 @@ a img, .thumbnail{
   width:100%;
 }
 
-.no-bullet, ul.no-bullet li{
-  list-style-type: none;
-}
-
 main{
   overflow-y:auto;
-}
-
-footer, footer md-grid-list, .inverse, .footer{
-  background-color:#263238;
-  color:#ffffff;
-}
-
-div.footer{
-  margin-bottom: 0;
-
-  .main-footer{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-  }
-
-  a{
-    color:#fff;
-    text-decoration: none;
-    font-size: .85em;
-    font-weight: 200;
-  }
-
-  md-icon{
-    font-size: 2em;
-    margin: 0 10px;
-  }
-
 }
 
 .lg{
@@ -126,19 +91,11 @@ div.footer{
     color: mat-color($civ-primary);
   }
 
-}
+  .title{
+    min-height:62px;
+    margin: 15px auto 15px;
+  }
 
-.feature-title{
-  font-weight: 200;
-  font-size: 1.25em;
-  margin: 15px auto 15px;
-  min-height:62px;
-}
-
-.blog-title{
-  font-weight: 200;
-  font-size: 1.25em;
-  margin: 0px auto 15px;
 }
 
 .blog-text, .blog-image{
@@ -154,5 +111,3 @@ div.footer{
   }
 
 }
-
-
