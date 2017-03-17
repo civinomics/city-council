@@ -1,6 +1,8 @@
 <main>
   <div class="hero">
     <h1>City Government in Your Hands</h1>
+
+    <!--
     <div class="find-your-city">
       <md-input-container class="center">
         <input mdInput 
@@ -17,6 +19,7 @@
         <md-option *ngFor="let city of cities" [value]="city.name[0]">{{city.name[0]}}</md-option>
       </md-autocomplete>
     </div>
+    -->
 
     <div class="flags" fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="10px" fxLayoutAlign="space-around stretch">
       <div *ngFor="let city of cities" class="flag">
@@ -28,7 +31,7 @@
   <div class="set-it-up">
     <div class="center">
       <md-card fxFlex="1 1 33%" style="margin:auto;">
-        <button md-raised-button color="accent" class="request-button">request set up</button>
+        <a href="mailto:info@civinomics.com" target="_top" md-raised-button color="accent" class="request-button">request set up</a>
       </md-card>
     </div>
   </div>
@@ -53,19 +56,6 @@
         </md-grid-tile>
       </md-grid-list>
     </div>
-  </div>
-
-  <hr>
-
-  <div class="people-are-saying">
-    <h2>What People are Saying</h2>
-    <md-grid-list cols="5">
-      <md-grid-tile><a href="http://www.gtweekly.com/index.php/santa-cruz-news/good-times-cover-stories/5265-civinomics-rising.html" target="_blank"><img src="/assets/img/splash/good_times.jpg"></a></md-grid-tile>
-      <md-grid-tile><a href="http://www.xconomy.com/san-francisco/2013/07/30/santa-cruz-the-city-over-the-hill-builds-its-own-startup-culture/" target="_blank"><img src="/assets/img/splash/xconomy.jpg"></a></md-grid-tile>
-      <md-grid-tile><a href="http://www.bizjournals.com/sanjose/chreynolds-data-centers/2014/05/public-policy-startup-civnomics-wants-to-hack-u-s.html" target="_blank"><img src="/assets/img/splash/svbj.jpg"></a></md-grid-tile>
-      <md-grid-tile><a href="http://www.santacruzsentinel.com/santacruz/ci_24544092/santa-cruz-hackathon-brings-new-ideas-political-table" target="_blank"><img src="/assets/img/splash/sc_sentinel.jpg"></a></md-grid-tile>
-      <md-grid-tile><a href="http://www.register-pajaronian.com/v2_news_articles.php?heading=0&page=72&story_id=15248" target="_blank"><img src="/assets/img/splash/register_pajaronian.jpg"></a></md-grid-tile>
-    </md-grid-list>
   </div>
 
   <hr>
@@ -156,7 +146,7 @@
       </div>
 
     -->
-    
+
     </div>
   </div>
 
@@ -164,26 +154,41 @@
 
   <div class="from-the-blog">
     <h2>From the Blog</h2>
-    <md-grid-list cols="2">
-      <md-grid-tile fxLayout="column">
-        <div><strong>A Title</strong></div>
-        <div><p>Now that we know who you are, I know who I am. I'm not a mistake! It all makes sense! In a comic, you know how you can tell who the arch-villain's going to be? He's the exact opposite of the hero. And most times they're friends, like you and me! I should've known way back when... You know why, David? Because of the kids. They called me Mr Glass.</p></div>
-      </md-grid-tile>
-      <md-grid-tile>
-        <img class="thumbnail" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/FalkirkWheelSide_2004_SeanMcClean.jpg/1280px-FalkirkWheelSide_2004_SeanMcClean.jpg">
-      </md-grid-tile>
+    <div fxLayout="row">
+      <div class="blog-text" fxLayout="column">
+        <div class="blog-title">Civinomics Rebooted</div>
+        <div>
+          <p>How do you create an open government app that engages citizens and works for public officials? Citizens have experience and knowledge to help make things better, but the input process is opaque and inconvenient for anyone who wants to participate. Meanwhile, “public feedback” is a loaded term in government offices because it has a way of flooding inboxes, representing only the vocal minority in a community and resulting in many hours of staff tiptoeing on eggshells.</p>
+          <p><a href="https://civinomics.wordpress.com/?p=5815&preview=true">read more</a></p>
+        </div>
+      </div>
+      <div class="blog-image">
+        <img class="thumbnail" src="https://civinomics.files.wordpress.com/2017/03/325854124_229d23d71d_b.jpg">
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="people-are-saying">
+    <h2>What People are Saying</h2>
+    <md-grid-list cols="5">
+      <md-grid-tile><a href="http://www.gtweekly.com/index.php/santa-cruz-news/good-times-cover-stories/5265-civinomics-rising.html" target="_blank"><img src="/assets/img/splash/good_times.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.xconomy.com/san-francisco/2013/07/30/santa-cruz-the-city-over-the-hill-builds-its-own-startup-culture/" target="_blank"><img src="/assets/img/splash/xconomy.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.bizjournals.com/sanjose/chreynolds-data-centers/2014/05/public-policy-startup-civnomics-wants-to-hack-u-s.html" target="_blank"><img src="/assets/img/splash/svbj.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.santacruzsentinel.com/santacruz/ci_24544092/santa-cruz-hackathon-brings-new-ideas-political-table" target="_blank"><img src="/assets/img/splash/sc_sentinel.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.register-pajaronian.com/v2_news_articles.php?heading=0&page=72&story_id=15248" target="_blank"><img src="/assets/img/splash/register_pajaronian.jpg"></a></md-grid-tile>
     </md-grid-list>
   </div>
 
-    <hr>
-
+  <hr>
 
   <div class="set-it-up">
     <div class="center">
       <h2>What are you waiting for?</h2>
       <br>
       <md-card fxFlex="1 1 33%" style="margin:auto;">
-        <button md-raised-button color="accent" class="request-button">request set up</button>
+        <a href="mailto:info@civinomics.com" target="_top" md-raised-button color="accent" class="request-button">request set up</a>
       </md-card>
     </div>
   </div>
@@ -193,16 +198,20 @@
 
 <div class="footer">
   <div fxLayout="row" class="main-footer">
-      <div fxFlex="1 1 33%">
+      <div fxFlex="1 1 15%">
         <ul class="no-bullet">
           <li><a href="/about">About</a></li>
           <li><a href="http://blog.civinomics.com">Blog</a></li>
-          <li>Careers</li>
-          <li><a href="https://angel.co/civinomics">Invest</a></li>
-          <li>Contact Us</li>
+          <li><a href="mailto:info@civinomics.com" target="_top">Contact Us</a></li>
         </ul>
       </div>
-      <div fxFlex="1 1 33%">
+      <div fxFlex="1 1 15%">
+        <ul class="no-bullet">
+          <li>Careers</li>
+          <li><a href="https://angel.co/civinomics">Invest</a></li>
+        </ul>
+      </div>
+      <div fxFlex="1 1 15%">
         <br>
         <a href="https://www.facebook.com/civinomics/"><md-icon fonticon="fa-facebook-square" fontset="fa" role="img" class="fa fa-facebook-square"></md-icon></a>
         <a href="https://twitter.com/Civinomics"><md-icon fonticon="fa-twitter-square" fontset="fa" role="img" class="fa fa-twitter-square"></md-icon></a>
