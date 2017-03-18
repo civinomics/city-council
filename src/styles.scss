@@ -39,11 +39,6 @@ h1,h2,h3,h4,h5,h6{
   text-align: center;
 }
 
-.hero{
-	margin-top:5%;
-	margin-bottom:5%;
-}
-
 main{
 	max-width:1000px;
 	margin:auto;
@@ -61,6 +56,7 @@ main{
 
 .request-button{
   text-transform: uppercase;
+  width:142px;
 }
 
 footer, footer md-grid-list, .inverse, .footer{

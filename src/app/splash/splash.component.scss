@@ -9,6 +9,20 @@
 
 }
 
+.hero{
+  margin-top:-10px !important;
+  margin-bottom:5%;
+  height: 50vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  color: #fff;
+  background-image: url("/assets/img/splash/bricks.jpg");
+  background-position: center center;
+  background-size:cover;
+}
+
 hr{
   margin:40px;
 }

@@ -1,60 +1,34 @@
+<div class="hero">
+  <h1>City Government in Your Hands</h1>
+  <div>
+    <a href="mailto:info@civinomics.com" target="_top" md-raised-button color="accent" class="request-button">request set up</a>
+  </div>
+
+  <!--
+  <div class="find-your-city">
+    <md-input-container class="center">
+      <input mdInput 
+             class="center"
+             type="text"
+             [placeholder]="'Find Your City'"
+             [mdAutocomplete]="auto"
+             id="find-city-input"
+             color="warn"
+             #findCity>
+    </md-input-container>
+
+    <md-autocomplete #auto="mdAutocomplete">
+      <md-option *ngFor="let city of cities" [value]="city.name[0]">{{city.name[0]}}</md-option>
+    </md-autocomplete>
+  </div>
+  -->
+</div>
 <main>
-  <div class="hero">
-    <h1>City Government in Your Hands</h1>
-
-    <!--
-    <div class="find-your-city">
-      <md-input-container class="center">
-        <input mdInput 
-               class="center"
-               type="text"
-               [placeholder]="'Find Your City'"
-               [mdAutocomplete]="auto"
-               id="find-city-input"
-               color="warn"
-               #findCity>
-      </md-input-container>
-
-      <md-autocomplete #auto="mdAutocomplete">
-        <md-option *ngFor="let city of cities" [value]="city.name[0]">{{city.name[0]}}</md-option>
-      </md-autocomplete>
-    </div>
-    -->
-
+  <div class="cities">
     <div class="flags" fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="10px" fxLayoutAlign="space-around stretch">
       <div *ngFor="let city of cities" class="flag">
         <img [src]="city.flag">
       </div>
-    </div>
-  </div>
-
-  <div class="set-it-up">
-    <div class="center">
-      <md-card fxFlex="1 1 33%" style="margin:auto;">
-        <a href="mailto:info@civinomics.com" target="_top" md-raised-button color="accent" class="request-button">request set up</a>
-      </md-card>
-    </div>
-  </div>
-
-  <hr>
-
-  <div class="why">
-    <h2>Why it Matters</h2>
-    <div>
-      <md-grid-list cols="2">
-        <md-grid-tile>
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/BE8oiC1VHws" frameborder="0" allowfullscreen></iframe>
-        </md-grid-tile>
-        <md-grid-tile>
-          <div>
-            <ul class="fancy-list">
-              <li>Local government is our streets, our cops, our fire, our garbage, our parking, our zoning, our water, and our schools.</li>
-              <li>Democracy is a technology - we may not be able to reboot the federal government overnight, but we can update our city surprisingly quickly.</li>
-              <li>Our government must update the technology to adapt to the changing realities of public life: cell phones, commuting, education.</li>
-            </ul>
-          </div>
-        </md-grid-tile>
-      </md-grid-list>
     </div>
   </div>
 
@@ -68,7 +42,7 @@
         <div>
           <md-icon fonticon="fa-comments" fontset="fa" role="img" class="fa fa-comments"></md-icon>
         </div>
-        <div class="title">Comment, Vote, and Share Meetings</div>
+        <div class="title">Comment, Vote, and Share City Council Meetings</div>
         <div>
           <span class="feature-description">Your City's meetings open and interactive for all city residents.</span>
         </div>
@@ -78,7 +52,7 @@
         <div>
           <md-icon fonticon="fa-refresh" fontset="fa" role="img" class="fa fa-refresh"></md-icon> 
         </div>
-        <div class="title">Automated Upload and Reporting</div>
+        <div class="title">Automated Reporting and Meeting Upload</div>
         <div>
           <span class="feature-description">Works on its own! No additional staff required.</span>
         </div>
@@ -152,6 +126,41 @@
 
   <hr>
 
+  <div class="why">
+    <h2>Why It Matters</h2>
+    <div>
+      <md-grid-list cols="2">
+        <md-grid-tile>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/BE8oiC1VHws" frameborder="0" allowfullscreen></iframe>
+        </md-grid-tile>
+        <md-grid-tile>
+          <div>
+            <ul class="fancy-list">
+              <li>Local government is our streets, our cops, our fire, our garbage, our parking, our zoning, our water, and our schools.</li>
+              <li>Democracy is a technology - we may not be able to reboot the federal government overnight, but we can update our city surprisingly quickly.</li>
+              <li>Our government must update the technology to adapt to the changing realities of public life: cell phones, commuting, education.</li>
+            </ul>
+          </div>
+        </md-grid-tile>
+      </md-grid-list>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="people-are-saying">
+    <h2>What People Are Saying</h2>
+    <md-grid-list cols="5">
+      <md-grid-tile><a href="http://www.gtweekly.com/index.php/santa-cruz-news/good-times-cover-stories/5265-civinomics-rising.html" target="_blank"><img src="/assets/img/splash/good_times.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.xconomy.com/san-francisco/2013/07/30/santa-cruz-the-city-over-the-hill-builds-its-own-startup-culture/" target="_blank"><img src="/assets/img/splash/xconomy.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.bizjournals.com/sanjose/chreynolds-data-centers/2014/05/public-policy-startup-civnomics-wants-to-hack-u-s.html" target="_blank"><img src="/assets/img/splash/svbj.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.santacruzsentinel.com/santacruz/ci_24544092/santa-cruz-hackathon-brings-new-ideas-political-table" target="_blank"><img src="/assets/img/splash/sc_sentinel.jpg"></a></md-grid-tile>
+      <md-grid-tile><a href="http://www.register-pajaronian.com/v2_news_articles.php?heading=0&page=72&story_id=15248" target="_blank"><img src="/assets/img/splash/register_pajaronian.jpg"></a></md-grid-tile>
+    </md-grid-list>
+  </div>
+
+  <hr>
+
   <div class="from-the-blog">
     <h2>From the Blog</h2>
     <div fxLayout="row">
@@ -170,22 +179,9 @@
 
   <hr>
 
-  <div class="people-are-saying">
-    <h2>What People are Saying</h2>
-    <md-grid-list cols="5">
-      <md-grid-tile><a href="http://www.gtweekly.com/index.php/santa-cruz-news/good-times-cover-stories/5265-civinomics-rising.html" target="_blank"><img src="/assets/img/splash/good_times.jpg"></a></md-grid-tile>
-      <md-grid-tile><a href="http://www.xconomy.com/san-francisco/2013/07/30/santa-cruz-the-city-over-the-hill-builds-its-own-startup-culture/" target="_blank"><img src="/assets/img/splash/xconomy.jpg"></a></md-grid-tile>
-      <md-grid-tile><a href="http://www.bizjournals.com/sanjose/chreynolds-data-centers/2014/05/public-policy-startup-civnomics-wants-to-hack-u-s.html" target="_blank"><img src="/assets/img/splash/svbj.jpg"></a></md-grid-tile>
-      <md-grid-tile><a href="http://www.santacruzsentinel.com/santacruz/ci_24544092/santa-cruz-hackathon-brings-new-ideas-political-table" target="_blank"><img src="/assets/img/splash/sc_sentinel.jpg"></a></md-grid-tile>
-      <md-grid-tile><a href="http://www.register-pajaronian.com/v2_news_articles.php?heading=0&page=72&story_id=15248" target="_blank"><img src="/assets/img/splash/register_pajaronian.jpg"></a></md-grid-tile>
-    </md-grid-list>
-  </div>
-
-  <hr>
-
   <div class="set-it-up">
     <div class="center">
-      <h2>What are you waiting for?</h2>
+      <h2>What Are You Waiting For?</h2>
       <md-card fxFlex="1 1 33%" style="margin:auto;">
         <a href="mailto:info@civinomics.com" target="_top" md-raised-button color="accent" class="request-button">request set up</a>
       </md-card>
