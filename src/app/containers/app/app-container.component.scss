@@ -1,0 +1,15 @@
+@import "../../../assets/style/all";
+
+$main-nav-height: 60px;
+
+.main-nav {
+  margin-bottom: 10px;
+  height: $main-nav-height;
+  background-color: mat-color($civ-primary);
+  color: mat-contrast($civ-primary, 700);
+
+  button[md-button] {
+    height: 100%;
+  }
+}
+

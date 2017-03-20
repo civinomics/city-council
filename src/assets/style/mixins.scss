@@ -1,0 +1,182 @@
+@import '~@angular/material/core/theming/all-theme';
+
+@mixin flex($direction: row, $justify: flex-start, $align: stretch, $inline: false) {
+  @if ($inline) {
+    display: inline-flex;
+    display: -webkit-inline-flex;
+  } @else {
+    display: flex;
+    display: -webkit-flex;
+  }
+
+  box-sizing: border-box;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+.work-sans {
+  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
+}
+
+.linklike {
+  color: #4078c0;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+}
+
+/*********** MEDIA QUERIES ***********/
+
+$sm: 470px;
+$md: 820px;
+$lg: 1280px;
+$xl: 1920px;
+
+@mixin mq-xs() {
+  @media only screen and (max-width: $sm - 1px) {
+    @content;
+  }
+}
+
+@mixin mq-gt-xs() {
+  @media only screen and (min-width: $sm) {
+    @content;
+  }
+}
+
+@mixin mq-lt-md() {
+  @media only screen and (max-width: $md - 1px) {
+    @content;
+  }
+}
+
+@mixin mq-sm() {
+  @media only screen and (min-width: $sm) and (max-width: $md - 1px) {
+    @content;
+  }
+}
+
+@mixin mq-gt-sm() {
+  @media only screen and (min-width: $md) {
+    @content;
+  }
+}
+
+@mixin mq-sm-md() {
+  @media only screen and (min-width: $sm) and (max-width: $lg - 1px) {
+    @content;
+  }
+}
+
+@mixin mq-md() {
+  @media only screen and (min-width: $md) and (max-width: $lg - 1px) {
+    @content;
+  }
+}
+
+@mixin mq-gt-md() {
+  @media only screen and (min-width: $lg) {
+    @content;
+  }
+}
+
+@mixin mq-lg() {
+  @media only screen and (min-width: $lg) and (max-width: $xl - 1px) {
+    @content;
+  }
+}
+
+@mixin mq-lg-xl() {
+  @media only screen and (min-width: $lg) {
+    @content;
+  }
+}
+
+@mixin mq-xl() {
+  @media only screen and (min-width: $xl) {
+    @content;
+  }
+}
+
+@mixin mq-lt-xl() {
+  @media only screen and (max-width: $xl - 1px) {
+    @content;
+  }
+}
+
+/** common ui components **/
+
+@mixin control-bar($position) {
+  background-color: mat-color($mat-grey, 300);
+  @include flex(row, space-between, center);
+
+  @if ($position == bottom) {
+    border-top: 2px solid mat-color($mat-grey, 400);
+  } @else if ($position == top) {
+    border-bottom: 2px solid mat-color($mat-grey, 400);
+  }
+
+}
+
+@mixin responsive-padding($xs:false, $sm:false, $md:false, $lg:false, $xl:false, $lt-md:false, $gt-xs:false, $gt-sm:false, $gt-md:false, $lt-xl:false) {
+  @if $xs {
+    @include mq-xs {
+      padding: $xs
+    }
+  }
+  @if $sm {
+    @include mq-sm {
+      padding: $sm
+    }
+  }
+  @if $md {
+    @include mq-md {
+      padding: $md
+    }
+  }
+  @if $lg {
+    @include mq-lg {
+      padding: $lg
+    }
+  }
+  @if $xl {
+    @include mq-xl {
+      padding: $xl
+    }
+  }
+
+  @if $gt-xs {
+    @include mq-gt-xs {
+      padding: $gt-xs;
+    }
+  }
+
+  @if $gt-sm {
+    @include mq-gt-sm {
+      padding: $gt-sm;
+    }
+  }
+
+  @if $gt-md {
+    @include mq-gt-md {
+      padding: $gt-md;
+    }
+  }
+
+  @if $lt-md {
+    @include mq-lt-md {
+      padding: $lt-md;
+    }
+  }
+
+  @if $lt-xl {
+    @include mq-lt-xl {
+      padding: $lt-xl;
+    }
+  }
+
+}
