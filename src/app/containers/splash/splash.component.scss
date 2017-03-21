@@ -1,4 +1,5 @@
 @import "../../../assets/style/theme";
+@import "../../../assets/style/all";
 
 :host {
   display: block;
@@ -95,21 +96,89 @@ main {
   max-width: 28%;
   margin-bottom: 50px;
 
+  @include mq-xs() {
+    width: 90%;
+    max-width: 90%;
+    margin-bottom: 15px;
+  }
+
+  .feature-description{
+    @include mq-xs() {
+      display: none;
+    }
+  }
+
+
   md-icon {
     font-size: 2.5em;
     margin: 15px;
     color: mat-color($civ-primary);
+    @include mq-xs() {
+      font-size: 1em;
+      margin: 0 0 5px;
+    }
   }
 
   .title {
     min-height: 62px;
     margin: 15px 0 15px;
+
+    @include mq-xs() {
+      min-height: 10px;
+    }
+
   }
 
 }
 
+.video-row{
+  display:flex;
+  flex-direction:row;
+  @include mq-sm() {
+    flex-direction:column;
+  }
+
+  .video, .video-text{
+    flex-basis:48%;
+    max-height: 340px;
+    @include mq-sm() {
+      text-align:center;
+      flex-basis:90%;
+    }
+  }
+}
+
+.news{
+  display:flex;
+  flex-direction: row;
+  align-items:center;
+
+  .news-link{
+    flex-basis:18%;
+    margin: 0 10px;
+  }
+}
+
+.blog-section{
+  display:flex;
+  flex-direction:row;
+  @include mq-sm() {
+    flex-direction: column;
+  }
+  @include mq-xs() {
+    flex-direction: column;
+  }
+}
+
 .blog-text, .blog-image {
   flex-basis: 48%;
+
+  @include mq-sm(){
+    flex-basis: 90%;
+  }
+  @include mq-xs(){
+    flex-basis: 90%;
+  }
 }
 
 .blog-text {
@@ -119,5 +188,14 @@ main {
     text-align: left;
     margin: 0;
   }
+}
 
+.button-card{
+  display: flex;
+  flex: 1 1 33%;
+  margin: auto;
+
+  .mat-card{
+    margin: auto;
+  }
 }
