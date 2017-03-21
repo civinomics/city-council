@@ -1,0 +1,58 @@
+.team-pic{
+	width:150px;
+}
+
+.team-row{
+	margin-bottom:50px;
+	flex-wrap: wrap;
+	justify-content: center;
+
+	.team-card{
+		flex-basis: 27%;
+		margin-bottom: 50px;
+	}
+}
+
+hr{
+	margin:40px 0;
+}
+
+main{
+	padding-bottom:50px;
+}
+
+.row.team{
+	padding:20px 0;
+}
+
+.mat-grid-tile{
+	height:100%;
+}
+
+.mat-card{
+	margin:0 5px;
+}
+
+md-card-header{
+	width:100%;
+	text-align:center;
+}
+
+.team-header{
+	text-align:left;
+}
+
+.mat-card-header-text{
+	width:100%;
+	text-align:center;
+}
+
+.fa{
+	font-size:20px;
+}
+
+.heading,h1,h2,h3,h4,h5,h6{
+  text-align: center;
+  margin:50px 0 60px;
+}
+

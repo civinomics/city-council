@@ -13,6 +13,8 @@ import { PlaceViewComponent } from './place-view/place-view.component';
 import { MeetingViewComponent } from './meeting-view/meeting-view.component';
 import { FormsModule } from '@angular/forms';
 import { ItemViewComponent } from './item-view/item-view.component';
+import { AboutComponent } from './about/about.component';
+import { CareersComponent } from './careers/careers.component';
 
 export const VIEW_COMPONENTS = [
   PlaceViewComponent, MeetingViewComponent, ItemViewComponent
@@ -27,7 +29,7 @@ export const VIEW_COMPONENTS = [
     FlexLayoutModule,
     MomentModule
   ],
-  declarations: [ ...VIEW_COMPONENTS ],
+  declarations: [ ...VIEW_COMPONENTS, AboutComponent, CareersComponent ],
 
   exports: [
     ...VIEW_COMPONENTS, MaterialModule, FlexLayoutModule, MomentModule

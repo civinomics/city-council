@@ -14,6 +14,8 @@ import { BrowseContainerComponent } from './containers/browse-container/browse-c
 import { MeetingContainerComponent } from './containers/meeting-container/meeting-container.component';
 import { PlaceContainerComponent } from './containers/place-container/place-container.component';
 import { AppState } from './reducers/index';
+import { CareersComponent } from './components/careers/careers.component';
+import { AboutComponent } from './components/about/about.component';
 import { SplashComponent } from './containers/splash/splash.component';
 import { ItemContainerComponent } from './containers/item-container/item-container.component';
 
@@ -40,6 +42,14 @@ export const APP_ROUTES: Routes = [
   {
     path: '',
     component: SplashComponent
+  },
+  {
+    path: 'about',
+    component: AboutComponent
+  },
+  {
+    path: 'careers',
+    component: CareersComponent
   }
 ];
 
