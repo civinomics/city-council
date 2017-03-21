@@ -50,7 +50,6 @@ const meetingSchema = new schema.Entity('meetings', { items: [ itemSchema ] });
 const groupSchema = new schema.Entity('groups', { meetings: [ meetingSchema ] });
 const placeSchema = new schema.Entity('places', { groups: [ groupSchema ] });
 
-//meetingSchema.define({ group: groupSchema });
 
 
 type NormalizeOutput = {
@@ -155,7 +154,6 @@ export function denormalizeMeeting(id: string, entities: StateEntities): Denorma
 
   return {
     ...meeting,
-    group: entities.groups[ meeting.group ],
     items: meeting.items.map(id => entities.items[ id ])
   }
 }

@@ -14,6 +14,8 @@ import { BrowseContainerComponent } from './containers/browse-container/browse-c
 import { MeetingContainerComponent } from './containers/meeting-container/meeting-container.component';
 import { PlaceContainerComponent } from './containers/place-container/place-container.component';
 import { AppState } from './reducers/index';
+import { SplashComponent } from './containers/splash/splash.component';
+import { ItemContainerComponent } from './containers/item-container/item-container.component';
 
 
 export const APP_ROUTES: Routes = [
@@ -21,6 +23,10 @@ export const APP_ROUTES: Routes = [
     path: 'place',
     component: BrowseContainerComponent,
     children: [
+      {
+        path: ':placeId/meeting/:meetingId/item/:itemId',
+        component: ItemContainerComponent
+      },
       {
         path: ':placeId/meeting/:meetingId',
         component: MeetingContainerComponent
@@ -30,6 +36,10 @@ export const APP_ROUTES: Routes = [
         component: PlaceContainerComponent
       }
     ]
+  },
+  {
+    path: '',
+    component: SplashComponent
   }
 ];
 
@@ -71,7 +81,6 @@ export class AppRoutingModule {
 
   private setUpStateRollbackEvents(): void {
     this.router.events.subscribe(e => {
-      console.log(e);
       if (e instanceof RoutesRecognized) {
         this.lastRoutesRecognized = e;
       } else if (e instanceof NavigationCancel) {

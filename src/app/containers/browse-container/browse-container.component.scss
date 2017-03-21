@@ -1,0 +1,22 @@
+@import "../../../assets/style/all";
+
+.traversal-bar {
+  background-color: mat-color($mat-blue-grey, 200);
+  color: mat-contrast($mat-blue-grey, 200);
+  min-height: 0;
+
+
+  .inner {
+    margin: 10px;
+  }
+
+  & > div {
+    cursor: pointer;
+  }
+}
+
+.flag {
+  height: 26px;
+  border-radius: 2px;
+  border: 1px solid mat-color($mat-grey, 700);
+}

@@ -1,0 +1,76 @@
+<div class="item-text">
+  <div><strong>{{item.itemNumber}}. </strong> {{item.text}}</div>
+  <div>
+    <a target="_blank" [href]="item.sireLink">Attachments</a>
+  </div>
+</div>
+
+<div class="actions-table" fxLayout="column">
+  <div class="row vote" fxLayout="row" fxLayoutAlign="start center">
+    <div class="key row-label" [class.focused]="!userVote">vote</div>
+    <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+      <button md-button
+              class="vote-button no"
+              [class.rejected]="userVote == 'yes'"
+              (click)="vote('no')"
+              [@voteBtn]="userVote == 'yes' ? 'rejected' : ''">
+        <md-icon *ngIf="userVote == 'no'" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
+        no
+      </button>
+      <button md-button
+              class="vote-button yes"
+              [class.rejected]="userVote == 'no'"
+              (click)="vote('yes')"
+              [@voteBtn]="userVote == 'no' ? 'rejected' : ''">yes
+        <md-icon *ngIf="userVote == 'yes'" class="checkmark" [@checkmark]="'fromRight'">check</md-icon>
+      </button>
+    </div>
+  </div>
+  <div class="row explain" fxLayout="row">
+    <div class="key row-label" [class.focused]="!userComment && !!userVote">explain</div>
+
+
+    <div *ngIf="!userComment" fxLayout="column" class="value">
+      <md-input-container>
+        <input type="text" mdInput [placeholder]="addCommentPlaceholder" #addComment>
+      </md-input-container>
+      <button md-raised-button
+              [@speakBtn]
+              color="primary"
+              fxFlexAlign="flex-end"
+              (click)="postComment()"
+              [disabled]="!addComment.value">Speak
+      </button>
+
+    </div>
+
+    <div *ngIf="!!userComment" class="user-comment-text value">{{userComment}}</div>
+
+  </div>
+
+  <div class="row share" fxLayout="row" fxLayoutAlign="start center" [class.highlighted]="!!userVote && !!userComment">
+    <div class="key row-label" [class.focused]="!!userVote && !!userComment">share</div>
+    <div class="value" fxLayout="row" fxLayoutGap="10px">
+      <button md-icon-button>
+        <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
+      </button>
+      <button md-icon-button>
+        <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
+      </button>
+      <button md-icon-button>
+        <md-icon fontSet="fa" fontIcon="fa-google-plus-square"></md-icon>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<div class="back-to-agenda">
+  <button md-button>
+    <span fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+      <md-icon>chevron_left</md-icon>
+      <span>BACK TO AGENDA</span>
+    </span>
+  </button>
+</div>
+

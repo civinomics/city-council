@@ -1,0 +1,31 @@
+<div class="traversal-bar"
+     fxLayout="row"
+     fxLayoutAlign="space-around stretch"
+     [@travBar]="(showTravBar | async) ? 'shown' : 'hidden'">
+  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" *ngIf="showTravBar | async" class="inner">
+    <div *ngIf="focusedPlace$ | async as place"
+         fxLayout="row"
+         fxLayoutAlign="start center"
+         fxLayoutGap="5px"
+         [routerLink]="['/place', place.id]"
+         [@travEl]>
+      <img [src]="place.icon" class="flag">
+      <div class="entry-text">{{place.name}}</div>
+    </div>
+
+    <md-icon *ngIf="focusedItem$ | async" [@travEl] style="font-weight: 200"> chevron_right</md-icon>
+
+    <div *ngIf="focusedItem$ | async"
+         fxLayout="row"
+         fxLayoutAlign="start center"
+         fxLayoutGap="5px"
+         [routerLink]="['/place', (focusedPlace$ | async).id, 'meeting', (focusedMeeting$ | async).id]"
+         [@travEl]>
+
+      <div class="entry-text" *ngIf="focusedMeeting$ | async as meeting">{{meeting.startTime | amDateFormat:
+        'M/DD/YY'}}
+      </div>
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>

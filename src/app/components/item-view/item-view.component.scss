@@ -1,0 +1,162 @@
+@import "../../../assets/style/all";
+
+$twitter-blue: #00aced;
+$facebook-blue: #3b5998;
+$google-orange: #dd4b39;
+
+:host {
+  @include flex(column, $align: center);
+
+  & > div {
+    margin-bottom: 15px;
+    padding-top: 15px;
+  }
+}
+
+.item-text {
+  max-width: 900px;
+  line-height: 2em;
+  cursor: pointer;
+
+  & > div {
+    margin-bottom: 10px;
+  }
+
+}
+
+.user-comment-text {
+  line-height: 1.5em;
+  margin: 15px;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: mat-color($mat-grey, 200);
+  color: mat-contrast($mat-grey, 200);
+}
+
+.vote-block {
+  border-top: 1px solid mat-color($mat-grey, 500);
+  padding: 0 20%;
+}
+
+.vote-button {
+  text-transform: uppercase;
+  font-weight: 500;
+
+  &.yes {
+    background-color: mat-color($mat-green, 700);
+    color: mat-contrast($mat-green, 700);
+  }
+
+  &.no {
+    background-color: mat-color($mat-red, 700);
+    color: mat-contrast($mat-red, 700);
+  }
+
+  &.rejected {
+    opacity: 0.5;
+  }
+
+  md-icon {
+    position: relative;
+    top: -2px;
+  }
+
+}
+
+.add-comment {
+  width: 50%;
+  max-width: 700px;
+  position: relative;
+
+  md-input-container {
+    width: 100%;
+  }
+
+}
+
+.share {
+  transition: 150ms linear all;
+
+  &:not(.highlighted) {
+    padding-top: 0;
+    opacity: 0.8;
+  }
+
+  .fa {
+    color: #999;
+  }
+
+  button md-icon {
+    transition: 250ms ease-in all;
+  }
+
+  &.highlighted {
+    button md-icon {
+      font-size: 2em;
+    }
+
+    .fa-facebook-square {
+      color: $facebook-blue;
+    }
+
+    .fa-twitter-square {
+      color: $twitter-blue;
+    }
+
+    .fa-google-plus-square {
+      color: $google-orange;
+    }
+  }
+
+}
+
+.row-label {
+  font-weight: 500;
+  text-transform: uppercase;
+  opacity: 0.5;
+  transition: 150ms linear opacity;
+
+  &.focused {
+    opacity: 1;
+  }
+
+}
+
+.actions-table {
+  .row {
+    margin: 20px 0 50px 0;
+
+    &.explain .key {
+      position: relative;
+      top: 15px;
+    }
+
+  }
+
+  .key {
+    margin-right: 50px;
+    width: 80px;
+
+    @include mq-gt-xs {
+    }
+
+    @include mq-xs {
+      max-width: 40%;
+    }
+  }
+
+  .value {
+    width: 65%;
+    text-align: right;
+
+    @include mq-gt-xs {
+      width: 65%;
+      text-align: right;
+    }
+
+  }
+
+  @include mq-xs {
+  }
+
+}

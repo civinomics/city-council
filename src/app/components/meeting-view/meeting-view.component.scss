@@ -1,0 +1,57 @@
+@import "../../../assets/style/all";
+
+:host {
+  @include flex(column, $align: center);
+  padding-top: 20px;
+  & > div {
+    margin-bottom: 20px;
+  }
+}
+
+.meeting-title {
+  font-size: 2em;
+  text-align: center;
+}
+
+.agenda {
+  max-width: 800px;
+  padding: 10px;
+  margin: auto;
+}
+
+.section-title {
+  font-size: 1.25em;
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &.recent {
+    margin-top: 40px;
+  }
+
+}
+
+.item-row {
+  margin: 20px;
+  border: 1px solid mat-color($mat-grey, 800);
+  padding: 10px;
+
+  .item-text {
+    transition: 100ms 50ms linear color;
+    cursor: pointer;
+    &:hover {
+      color: mat-color($mat-blue, 600);
+    }
+  }
+
+}
+
+.item-no {
+  font-weight: 500;
+}
+
+.action-items {
+  button[md-button] {
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+}

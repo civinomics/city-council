@@ -1,0 +1,43 @@
+<div fxLayout="row" fxLayoutAlign="space-around stretch">
+  <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="10px">
+    <img class="flag" [src]="place.icon" class.xs="mini">
+    <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="5px">
+      <div class="place-title">{{place.longName}}</div>
+      <div class="follow-row"
+           fxLayout="row"
+           fxLayoutAlign="space-around center"
+           fxLayout.xs="column"
+           fxLayoutGap="40px"
+           fxLayoutGap.xs="10px">
+        <div class="num-followers"><strong>332</strong> followers</div>
+        <button md-raised-button color="accent" class="follow-button">follow</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<md-tab-group class="main-tabs">
+  <md-tab label="Meetings" class="meetings">
+    <div class="section-title">Upcoming</div>
+    <div *ngFor="let meeting of upcomingMeetings"
+         class="meeting-row"
+         fxLayout="row"
+         fxLayoutAlign="space-between center"
+         (click)="showMeeting.emit(meeting.id)"
+    >
+      <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
+      <div class="title">{{meeting.title}}</div>
+      <div class="status">{{meeting.status}}</div>
+    </div>
+    <div class="section-title recent">Recent</div>
+    <div *ngFor="let meeting of recentMeetings" class="meeting-row" fxLayout="row" fxLayoutAlign="space-between center"
+         (click)="showMeeting.emit(meeting.id)">
+      <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
+      <div class="title">{{meeting.title}}</div>
+      <div class="status">{{meeting.status}}</div>
+    </div>
+  </md-tab>
+  <md-tab label="Feed"></md-tab>
+  <md-tab label="Elected Officials"></md-tab>
+
+</md-tab-group>

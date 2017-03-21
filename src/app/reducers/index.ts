@@ -39,10 +39,13 @@ export const getPlaces = createSelector(getDataState, fromData.getPlaceEntities)
 export const getMeetings = createSelector(getDataState, fromData.getMeetingEntities);
 
 export const getFocusedPlace = createSelector(getFocusedPlaceId, getEntities, (placeId, entities) => {
-  return fromData.denormalizePlace(placeId, entities);
+  return !placeId ? null : fromData.denormalizePlace(placeId, entities);
 });
 
 export const getFocusedMeeting = createSelector(getFocusedMeetingId, getEntities, (meetingId, entities) => {
-  return fromData.denormalizeMeeting(meetingId, entities);
+  return !meetingId ? null : fromData.denormalizeMeeting(meetingId, entities);
 });
 
+export const getFocusedItem = createSelector(getFocusedItemId, getEntities, (itemId, entities) => {
+  return !itemId ? null : entities.items[ itemId ];
+});

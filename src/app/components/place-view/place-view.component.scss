@@ -1,0 +1,61 @@
+@import "../../../assets/style/theme";
+
+:host {
+  display: block;
+  position: relative;;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  & > * {
+    margin-bottom: 20px;
+  }
+
+}
+
+.flag {
+  height: 120px;
+  border-radius: 2px;
+  border: 1px solid mat-color($mat-grey, 700);
+  display: block;
+  align-self: center;
+
+  &.mini {
+    max-width: 20%;
+    height: auto;
+  }
+
+}
+
+.place-title {
+  font-size: 2em;
+}
+
+.follow-row, .follow-row button {
+  text-transform: uppercase;
+}
+
+.main-tabs {
+  .section-title {
+    font-size: 1.25em;
+    font-weight: 500;
+    margin: 10px;
+    text-transform: uppercase;
+
+    &.recent {
+      margin-top: 40px;
+    }
+
+  }
+}
+
+.meeting-row {
+  padding: 10px;
+  border: 1px solid mat-color($mat-grey, 700);
+  cursor: pointer;
+
+  .status {
+    font-style: italic;
+    text-transform: uppercase;
+  }
+}
