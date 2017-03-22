@@ -15,7 +15,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "deploy": "fireplan database.rules.yaml && ng build --prod --aot && firebase deploy"
   },
   "dependencies": {
     "@angular/animations": "^4.0.0-rc.5",
