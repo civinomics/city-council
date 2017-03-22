@@ -16,6 +16,14 @@ import 'hammerjs';
 import { SplashComponent } from './containers/splash/splash.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ItemContainerComponent } from './containers/item-container/item-container.component';
+import { AngularFireModule } from 'angularfire2';
+import { environment } from '../environments/environment';
+import { SignInContainerComponent } from './containers/signin-container/signin-container.component';
+import { APP_PROVIDERS } from './services/index';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+import { UserService } from './services/user.service';
+import { AuthWidgetComponent } from './containers/app/auth-widget/auth-widget.component';
 
 @NgModule({
 
@@ -27,8 +35,14 @@ import { ItemContainerComponent } from './containers/item-container/item-contain
     BrowserAnimationsModule,
 
     AppRoutingModule,
+
+    AngularFireModule.initializeApp(environment.firebase),
     StoreModule.provideStore(rootReducer),
-    //  StoreDevtoolsModule.instrumentOnlyWithExtension(),
+    StoreDevtoolsModule.instrumentOnlyWithExtension(),
+
+    EffectsModule,
+
+    EffectsModule.run(UserService),
 
     ViewComponentsModule,
 
@@ -41,9 +55,11 @@ import { ItemContainerComponent } from './containers/item-container/item-contain
     BrowseContainerComponent,
     MeetingContainerComponent,
     SplashComponent,
-    ItemContainerComponent
+    ItemContainerComponent,
+    SignInContainerComponent,
+    AuthWidgetComponent
   ],
-  providers: [],
+  providers: [ ...APP_PROVIDERS ],
   bootstrap: [ AppContainerComponent ]
 })
 export class AppModule {

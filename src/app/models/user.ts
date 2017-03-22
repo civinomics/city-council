@@ -3,7 +3,8 @@ import * as moment from 'moment';
 import Moment = moment.Moment;
 
 export interface User extends Entity {
-  name: string;
+  firstName: string;
+  lastName: string;
   icon: string;
   joined: Moment;
   lastOn: Moment;
@@ -12,16 +13,16 @@ export interface User extends Entity {
   districts: { [id: string]: string }
 }
 
+export type UserAddress = {
+  line1: string;
+  line2: string;
+  city: string;
+  zip: number;
+}
+
 export interface SessionUser extends User {
   email: string;
-  address: {
-    street1: string;
-    street2: string;
-    city: string;
-    state: string;
-    zip: number;
-  }
-
+  address: UserAddress;
   votes: { [id: string]: number }
 
 }

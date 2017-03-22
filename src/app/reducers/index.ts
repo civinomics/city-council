@@ -1,5 +1,6 @@
 import * as fromFocus from './focus';
 import * as fromData from './data';
+import * as fromAuth from './auth';
 
 import { ActionReducer, combineReducers } from '@ngrx/store';
 import { compose } from '@ngrx/core';
@@ -7,11 +8,13 @@ import { environment } from '../../environments/environment';
 import { createSelector } from 'reselect';
 
 export interface AppState {
+  auth: fromAuth.State,
   focus: fromFocus.State,
   data: fromData.State
 }
 
 const reducers = {
+  auth: fromAuth.reducer,
   focus: fromFocus.reducer,
   data: fromData.reducer
 };
@@ -26,6 +29,10 @@ export function rootReducer(state: any, action: any) {
     return developmentReducer(state, action);
   }
 }
+
+export const getAuthState = (state: AppState) => state.auth;
+export const getSessionUserId = (state: AppState) => state.auth.id || null;
+export const getSessionUser = (state: AppState) => state.auth.data || null;
 
 export const getFocusState = (state: AppState) => state.focus;
 export const getFocusedPlaceId = (state: AppState) => state.focus.place;

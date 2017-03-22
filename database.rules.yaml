@@ -1,0 +1,35 @@
+functions:
+  - ownsItem(id): root.item[id].owner == auth.uid
+  - ownsGroup(id): root.group[id].owner == auth.uid
+  - ownsMeeting(id): root.meeting[id].owner == auth.uid
+  - ownsComment(id): root.comment[id].owner == auth.uid
+
+root:
+  user_public:
+    .read: true
+    $id:
+      .write: auth != null && auth.uid == $id
+
+  user_private:
+    $id:
+      .read: auth != null && auth.uid == $id
+      .write: auth != null && auth.uid == $id
+
+  group:
+    .read: true
+    $id:
+      .write: auth != null && ownsGroup($id)
+
+  item:
+    .read: true
+    $id:
+      .write: (!data.exists() || (auth != null && ownsMeeting($id)))
+
+
+  meeting:
+    .read: true
+
+    $id:
+      .write: (!data.exists() || (auth != null && ownsMeeting($id)))
+
+

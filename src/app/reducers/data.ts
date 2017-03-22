@@ -9,7 +9,7 @@ import { NormalizedGroup } from '../models/group';
 type StateEntities = {
   places: { [id: string]: NormalizedPlace },
   meetings: { [id: string]: NormalizedMeeting },
-  groups: { [id: string]: NormalizedGroup }
+  groups: { [id: string]: NormalizedGroup },
   items: { [id: string]: AgendaItem }
 };
 
@@ -23,6 +23,7 @@ export type State = {
   entities: StateEntities
 }
 
+export const USER_LOADED = '[Data] meetingLoaded';
 export const MEETING_LOADED = '[Data] meetingLoaded';
 export const PLACE_LOADED = '[Data] placeLoaded';
 export const ITEM_LOADED = '[Data] itemLoaded';
