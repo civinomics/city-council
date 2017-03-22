@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../reducers/index';
 
 @Component({
   selector: 'civ-root',
@@ -6,8 +8,7 @@ import { Component } from '@angular/core';
     <md-toolbar class="main-nav">
       <button md-button routerLink="/"><img src="/assets/img/civ_logo_white.png"></button>
       <div class="filler" fxFlex="1 1 auto"></div>
-      <button md-button>LOGIN | SIGNUP</button>
-
+      <civ-auth-widget></civ-auth-widget>
     </md-toolbar>
 
     <router-outlet></router-outlet>
@@ -16,6 +17,11 @@ import { Component } from '@angular/core';
   styleUrls: [ './app-container.component.scss' ]
 })
 export class AppContainerComponent {
+
+  constructor(private store: Store<AppState>) {
+
+
+  }
 
 
 }

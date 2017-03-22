@@ -18,9 +18,15 @@ import { CareersComponent } from './components/careers/careers.component';
 import { AboutComponent } from './components/about/about.component';
 import { SplashComponent } from './containers/splash/splash.component';
 import { ItemContainerComponent } from './containers/item-container/item-container.component';
+import { SignInContainerComponent } from './containers/signin-container/signin-container.component';
 
 
 export const APP_ROUTES: Routes = [
+  {
+    path: 'sign-in',
+    component: SignInContainerComponent
+  },
+
   {
     path: 'place',
     component: BrowseContainerComponent,

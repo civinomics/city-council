@@ -1,0 +1,62 @@
+<div fxLayout="column" fxLayoutAlign="start center" class="outer">
+  <div class="title">sign up</div>
+  <div class="socials" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
+    <div><strong>CONNECT: </strong></div>
+    <button md-icon-button class="social-button fb" (click)="startSocial.emit('facebook')">
+      <md-icon fontSet="fa" fontIcon="fa-facebook-f"></md-icon>
+    </button>
+    <!--    <button md-icon-button class="social-button twitter" (click)="startSocial.emit('twitter')">
+          <md-icon fontSet="fa" fontIcon="fa-twitter"></md-icon>
+        </button>-->
+    <button md-icon-button class="social-button google" (click)="startSocial.emit('google')">
+      <md-icon fontSet="fa" fontIcon="fa-google"></md-icon>
+    </button>
+  </div>
+  <form class="signup-form" [formGroup]="signupForm" fxLayout="column" fxLayoutAlign="start stretch">
+    <md-input-container>
+      <md-placeholder>First Name</md-placeholder>
+      <input mdInput type="text" formControlName="firstName">
+    </md-input-container>
+    <md-input-container>
+      <md-placeholder>Last Name</md-placeholder>
+      <input mdInput type="text" formControlName="lastName">
+    </md-input-container>
+    <md-input-container>
+      <md-placeholder>Email Address</md-placeholder>
+      <input mdInput type="email" formControlName="email">
+    </md-input-container>
+    <div class="your-address" fxFlexAlign="center" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
+      <div>Your address</div>
+      <i class="fa fa-question-circle-o" [mdTooltip]="addressTooltip" mdTooltipPosition="right"></i></div>
+    <md-input-container>
+      <md-placeholder>Address Line 1</md-placeholder>
+      <input mdInput type="email" formControlName="line1">
+    </md-input-container>
+    <md-input-container>
+      <md-placeholder>Address Line 2</md-placeholder>
+      <input mdInput type="email" formControlName="line2">
+    </md-input-container>
+    <md-input-container>
+      <md-placeholder>City</md-placeholder>
+      <input mdInput type="email" formControlName="city">
+    </md-input-container>
+    <md-input-container>
+      <md-placeholder>Zip</md-placeholder>
+      <input mdInput type="email" formControlName="zip">
+    </md-input-container>
+
+    <div class="checkboxes">
+      <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
+        <md-checkbox></md-checkbox>
+        <div>I am registered to vote at this address.</div>
+      </div>
+    </div>
+
+  </form>
+
+
+  <button md-raised-button fxFlexAlign="center" [disabled]="!signupForm.valid" class="submit-button" (click)="submit()">
+    SUBMIT
+  </button>
+
+</div>

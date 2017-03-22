@@ -1,0 +1,23 @@
+<button md-button routerLink="/sign-in" *ngIf="!(authUser$ | async)">LOGIN | SIGNUP</button>
+
+<button md-button *ngIf="authUser$ | async as user" [mdMenuTriggerFor]="userMenu">
+  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+    <div class="user-name">{{user.firstName}}</div>
+    <img class="avatar" [src]="user.icon">
+  </div>
+</button>
+
+<md-menu #userMenu="mdMenu" style="height:500px" [overlapTrigger]="false">
+  <button md-menu-item>
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" class="menu-item">
+      <i class="fa fa-user-circle-o"></i>
+      <div>My Profile</div>
+    </div>
+  </button>
+  <button md-menu-item (click)="logout()">
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" class="menu-item">
+      <i class="fa fa-sign-out"></i>
+      <div>Sign Out</div>
+    </div>
+  </button>
+</md-menu>

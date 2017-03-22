@@ -11,25 +11,27 @@ import { AppState } from '../reducers/index';
 import { Place } from '../models/place';
 import { PlaceViewComponent } from './place-view/place-view.component';
 import { MeetingViewComponent } from './meeting-view/meeting-view.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ItemViewComponent } from './item-view/item-view.component';
 import { AboutComponent } from './about/about.component';
 import { CareersComponent } from './careers/careers.component';
+import { SignInViewComponent } from './signin-view/signin-view.component';
 
 export const VIEW_COMPONENTS = [
-  PlaceViewComponent, MeetingViewComponent, ItemViewComponent
+  PlaceViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, SignInViewComponent
 ];
 
 
 @NgModule({
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     FormsModule,
     MaterialModule,
     FlexLayoutModule,
     MomentModule
   ],
-  declarations: [ ...VIEW_COMPONENTS, AboutComponent, CareersComponent ],
+  declarations: [ ...VIEW_COMPONENTS ],
 
   exports: [
     ...VIEW_COMPONENTS, MaterialModule, FlexLayoutModule, MomentModule
