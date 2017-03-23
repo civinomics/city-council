@@ -1,3 +1,5 @@
+@import "../../../assets/style/all";
+
 .team-pic{
 	width:150px;
 }
@@ -6,10 +8,15 @@
 	margin-bottom:50px;
 	flex-wrap: wrap;
 	justify-content: center;
+	align-content: space-around;
 
 	.team-card{
 		flex-basis: 27%;
 		margin-bottom: 50px;
+
+		@include mq-xs() {
+		    flex: 1 1 100%;
+		  }
 	}
 }
 

@@ -31,13 +31,14 @@
 
 /*********** MEDIA QUERIES ***********/
 
-$sm: 470px;
-$md: 820px;
-$lg: 1280px;
-$xl: 1920px;
+$xs: 600px;
+$sm: 960px;
+$md: 1280px;
+$lg: 1920px;
+$xl: 2560px;
 
 @mixin mq-xs() {
-  @media only screen and (max-width: $sm - 1px) {
+  @media only screen and (max-width: $xs) {
     @content;
   }
 }
