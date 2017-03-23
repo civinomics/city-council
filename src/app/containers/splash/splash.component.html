@@ -2,7 +2,7 @@
   <h1>City Government in Your Hands</h1>
   <div>
     <a href="mailto:info@civinomics.com" target="_top" md-raised-button color="accent" class="button request-button">request
-      set up</a>
+      demo</a>
   </div>
   <!--
   <div class="find-your-city">
@@ -24,10 +24,12 @@
   -->
 </div>
 <main>
+
   <div class="cities">
     <div class="flags" fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="10px" fxLayoutAlign="space-around stretch">
-      <div *ngFor="let city of cities" class="flag" [routerLink]="['place', city.id]">
-        <img [src]="city.icon">
+      <div *ngFor="let city of cities" class="flag center">
+        <img [src]="city.icon"><br>
+        <em><strong>Coming Soon!</strong></em>
       </div>
     </div>
   </div>
@@ -149,6 +151,7 @@
 
   <hr>
 
+  <!--
   <div class="from-the-blog">
     <h2>From the Blog</h2>
     <div class="blog-section">
@@ -166,6 +169,7 @@
   </div>
 
   <hr>
+  -->
 
   <div class="set-it-up">
     <div class="center">
@@ -173,7 +177,7 @@
       <div class="button-card">
         <md-card>
           <a href="mailto:info@civinomics.com" target="_top" md-raised-button color="accent" class="button request-button">request
-            set up</a>
+            demo</a>
         </md-card>
       </div>
     </div>
