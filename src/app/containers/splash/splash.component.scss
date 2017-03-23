@@ -132,20 +132,34 @@ main {
 }
 
 .video-row{
-  display:flex;
-  flex-direction:row;
-  @include mq-sm() {
-    flex-direction:column;
+  display: inline-flex;
+  flex-direction:column;
+
+  @include mq-gt-sm() {
+    flex-direction:row;
   }
 
   .video, .video-text{
-    flex-basis:48%;
+    flex-basis: 1 1 48%;
     max-height: 340px;
     @include mq-sm() {
       text-align:center;
-      flex-basis:90%;
+      flex-basis: 1 1 90%;
+    }
+    @include mq-xs() {
+      text-align:center;
+      flex-basis: 1 1 90%;
     }
   }
+
+   .video{
+    min-height: 315px;
+  }
+
+  .video-text{
+    flex: 1;
+  }
+
 }
 
 .news{
@@ -160,8 +174,9 @@ main {
 }
 
 .blog-section{
-  display:flex;
+  display: inline-flex;
   flex-direction:row;
+
   @include mq-sm() {
     flex-direction: column;
   }
@@ -171,13 +186,13 @@ main {
 }
 
 .blog-text, .blog-image {
-  flex-basis: 48%;
+  flex-basis: 1 1 48%;
 
   @include mq-sm(){
-    flex-basis: 90%;
+    flex-basis: 1 1 90%;
   }
   @include mq-xs(){
-    flex-basis: 90%;
+    flex-basis: 1 1 90%;
   }
 }
 
