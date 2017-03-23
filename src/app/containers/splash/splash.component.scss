@@ -134,6 +134,10 @@ main {
 .video-row{
   display: inline-flex;
   flex-direction:row;
+  justify-content: space-around;
+  flex:1 1 100%;
+  width:100%;
+
   @include mq-sm-mx() {
       flex-direction:column;
     }
@@ -142,23 +146,25 @@ main {
   .video, .video-text{
     flex-basis:48%;
     max-height: 340px;
-
-    @include mq-sm() {
-      text-align:center;
-      flex: 1 1 100%;
-    }
-    @include mq-xs() {
-      text-align:center;
-      flex: 1 1 100%;
-    }
   }
 
    .video{
     min-height: 315px;
+
+    @include mq-sm-mx() {
+      text-align:center;
+      flex-basis:100%;
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
   }
 
   .video-text{
-    flex: 1;
+    @include mq-sm-mx() {
+      flex-basis:0%;
+      display: none;
+      text-align:center;
+    }
   }
 
 }
