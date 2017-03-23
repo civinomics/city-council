@@ -5,8 +5,9 @@
 
 .positions{
 	margin:50px 10% 100px;
+	flex: 1 1 100%;
 }
 
 main{
-	height:80vh;
+	min-height:80vh;
 }
