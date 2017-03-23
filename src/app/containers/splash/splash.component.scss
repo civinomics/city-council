@@ -133,22 +133,23 @@ main {
 
 .video-row{
   display: inline-flex;
-  flex-direction:column;
+  flex-direction:row;
+  @include mq-sm-mx() {
+      flex-direction:column;
+    }
 
-  @include mq-gt-sm() {
-    flex-direction:row;
-  }
 
   .video, .video-text{
-    flex-basis: 1 1 48%;
+    flex-basis:48%;
     max-height: 340px;
+
     @include mq-sm() {
       text-align:center;
-      flex-basis: 1 1 90%;
+      flex: 1 1 100%;
     }
     @include mq-xs() {
       text-align:center;
-      flex-basis: 1 1 90%;
+      flex: 1 1 100%;
     }
   }
 
@@ -186,14 +187,19 @@ main {
 }
 
 .blog-text, .blog-image {
-  flex-basis: 1 1 48%;
+  flex-basis: 48%;
 
   @include mq-sm(){
-    flex-basis: 1 1 90%;
+    flex: 1 1 100%;
   }
   @include mq-xs(){
-    flex-basis: 1 1 90%;
+    flex: 1 1 100%;
   }
+}
+
+.blog-image{
+  max-width: 600px;
+  margin: auto;
 }
 
 .blog-text {
