@@ -14,6 +14,7 @@ import { BrowseContainerComponent } from './containers/browse-container/browse-c
 import { MeetingContainerComponent } from './containers/meeting-container/meeting-container.component';
 import { PlaceContainerComponent } from './containers/place-container/place-container.component';
 import { AppState } from './reducers/index';
+import { TermsComponent } from './components/terms/terms.component';
 import { CareersComponent } from './components/careers/careers.component';
 import { AboutComponent } from './components/about/about.component';
 import { SplashComponent } from './containers/splash/splash.component';
@@ -56,6 +57,10 @@ export const APP_ROUTES: Routes = [
   {
     path: 'careers',
     component: CareersComponent
+  },
+  {
+    path: 'terms',
+    component: TermsComponent
   }
 ];
 

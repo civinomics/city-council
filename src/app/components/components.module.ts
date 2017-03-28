@@ -15,10 +15,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ItemViewComponent } from './item-view/item-view.component';
 import { AboutComponent } from './about/about.component';
 import { CareersComponent } from './careers/careers.component';
+import { TermsComponent } from './terms/terms.component';
 import { SignInViewComponent } from './signin-view/signin-view.component';
 
 export const VIEW_COMPONENTS = [
-  PlaceViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, SignInViewComponent
+  PlaceViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent, SignInViewComponent
 ];
 
 

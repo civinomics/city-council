@@ -57,7 +57,7 @@ import { AuthWidgetComponent } from './containers/app/auth-widget/auth-widget.co
     SplashComponent,
     ItemContainerComponent,
     SignInContainerComponent,
-    AuthWidgetComponent
+    AuthWidgetComponent,
   ],
   providers: [ ...APP_PROVIDERS ],
   bootstrap: [ AppContainerComponent ]
