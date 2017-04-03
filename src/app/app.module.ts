@@ -1,38 +1,38 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {HttpModule} from '@angular/http';
 
-import { AppContainerComponent } from './containers/app/app-container.component';
-import { AppRoutingModule } from './routing';
-import { StoreModule } from '@ngrx/store';
-import { rootReducer } from './reducers/index';
-import { PlaceContainerComponent } from './containers/place-container/place-container.component';
-import { BrowseContainerComponent } from './containers/browse-container/browse-container.component';
-import { ViewComponentsModule } from './components/components.module';
-import { MeetingContainerComponent } from './containers/meeting-container/meeting-container.component';
+import {AppContainerComponent} from './components/app/app-container.component';
+import {AppRoutingModule} from './routing';
+import {StoreModule} from '@ngrx/store';
+import {rootReducer} from './reducers/index';
+import {CONTAINER_COMPONENTS, VIEW_COMPONENTS} from './components/index';
 
 import 'hammerjs';
-import { SplashComponent } from './containers/splash/splash.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ItemContainerComponent } from './containers/item-container/item-container.component';
-import { AngularFireModule } from 'angularfire2';
-import { environment } from '../environments/environment';
-import { SignInContainerComponent } from './containers/signin-container/signin-container.component';
-import { APP_PROVIDERS } from './services/index';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { EffectsModule } from '@ngrx/effects';
-import { UserService } from './services/user.service';
-import { AuthWidgetComponent } from './containers/app/auth-widget/auth-widget.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {AngularFireModule} from 'angularfire2';
+import {environment} from '../environments/environment';
+import {APP_PROVIDERS} from './services/index';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {EffectsModule} from '@ngrx/effects';
+import {AuthService} from './services/auth.service';
+import {MaterialModule} from '@angular/material';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {MomentModule} from 'angular2-moment';
 
 @NgModule({
 
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
 
     BrowserAnimationsModule,
+    MaterialModule,
+    FlexLayoutModule,
+    MomentModule,
 
     AppRoutingModule,
 
@@ -42,22 +42,12 @@ import { AuthWidgetComponent } from './containers/app/auth-widget/auth-widget.co
 
     EffectsModule,
 
-    EffectsModule.run(UserService),
-
-    ViewComponentsModule,
-
+    EffectsModule.run(AuthService),
 
 
   ],
   declarations: [
-    AppContainerComponent,
-    PlaceContainerComponent,
-    BrowseContainerComponent,
-    MeetingContainerComponent,
-    SplashComponent,
-    ItemContainerComponent,
-    SignInContainerComponent,
-    AuthWidgetComponent,
+    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS
   ],
   providers: [ ...APP_PROVIDERS ],
   bootstrap: [ AppContainerComponent ]

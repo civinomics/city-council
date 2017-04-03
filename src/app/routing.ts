@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {NgModule} from '@angular/core';
 import {
   NavigationCancel,
   NavigationError,
@@ -8,18 +8,18 @@ import {
   Routes,
   RoutesRecognized
 } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { of } from 'rxjs/observable/of';
-import { BrowseContainerComponent } from './containers/browse-container/browse-container.component';
-import { MeetingContainerComponent } from './containers/meeting-container/meeting-container.component';
-import { PlaceContainerComponent } from './containers/place-container/place-container.component';
-import { AppState } from './reducers/index';
-import { TermsComponent } from './components/terms/terms.component';
-import { CareersComponent } from './components/careers/careers.component';
-import { AboutComponent } from './components/about/about.component';
-import { SplashComponent } from './containers/splash/splash.component';
-import { ItemContainerComponent } from './containers/item-container/item-container.component';
-import { SignInContainerComponent } from './containers/signin-container/signin-container.component';
+import {Store} from '@ngrx/store';
+import {of} from 'rxjs/observable/of';
+import {BrowseContainerComponent} from './components/browse/browse-container.component';
+import {MeetingContainerComponent} from './components/meeting/meeting-container.component';
+import {PlaceContainerComponent} from './components/place/place-container.component';
+import {AppState} from './reducers/index';
+import {TermsComponent} from './components/corp/terms/terms.component';
+import {CareersComponent} from './components/corp/careers/careers.component';
+import {AboutComponent} from './components/corp/about/about.component';
+import {SplashComponent} from './components/splash/splash.component';
+import {ItemContainerComponent} from './components/item/item-container.component';
+import {SignInContainerComponent} from './components/sign-in/signin-container.component';
 
 
 export const APP_ROUTES: Routes = [

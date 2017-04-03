@@ -1,6 +1,6 @@
 import * as moment from 'moment';
-import { Place } from './place';
-import { Group } from './group';
+import {Place} from './place';
+import {Group} from './group';
 import Moment = moment.Moment;
 
 export const SPLASH_DATA = {
@@ -257,10 +257,10 @@ export const ACC_DATA: Group = {
 };
 
 export const AUSTIN_DATA: Place = {
-  id: 'id-austin',
+  id: 'id_austin',
   name: 'Austin',
   longName: 'City of Austin',
-  icon: 'https://civinomics.com/images/Screen_Shot_2015-10-21_at_9.36.41_AM.png',
+  icon: 'https://cmgstatesmanaustin.files.wordpress.com/2015/08/city-of-austin-flag.png',
   owner: 'id-doug',
 
   groups: [ ACC_DATA ]
