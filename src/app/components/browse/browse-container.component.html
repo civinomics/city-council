@@ -3,14 +3,14 @@
      fxLayoutAlign="space-around stretch"
      [@travBar]="(showTravBar | async) ? 'shown' : 'hidden'">
   <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" *ngIf="showTravBar | async" class="inner">
-    <div *ngIf="focusedPlace$ | async as place"
+    <div *ngIf="focusedPlace$ | async as group"
          fxLayout="row"
          fxLayoutAlign="start center"
          fxLayoutGap="5px"
-         [routerLink]="['/place', place.id]"
+         [routerLink]="['/place', group.id]"
          [@travEl]>
-      <img [src]="place.icon" class="flag">
-      <div class="entry-text">{{place.name}}</div>
+      <img [src]="group.icon" class="flag">
+      <div class="entry-text">{{group.name}}</div>
     </div>
 
     <md-icon *ngIf="focusedItem$ | async" [@travEl] style="font-weight: 200"> chevron_right</md-icon>

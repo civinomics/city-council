@@ -28,7 +28,7 @@
 
   <div class="cities">
     <div class="flags" fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="10px" fxLayoutAlign="space-around stretch">
-      <div *ngFor="let city of cities" class="flag center" [routerLink]="['place', city.id]">
+      <div *ngFor="let city of cities" class="flag center" [routerLink]="['group', city.id]">
         <img [src]="city.icon"><br>
         <em><strong>Coming Soon!</strong></em>
       </div>

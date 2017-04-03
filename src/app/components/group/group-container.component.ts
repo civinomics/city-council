@@ -1,18 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {DenormalizedPlace} from '../../models/place';
-import {AppState, getFocusedPlace} from '../../reducers/index';
+import {AppState} from '../../reducers/index';
 import {Store} from '@ngrx/store';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DenormalizedMeeting} from '../../models/meeting';
+import {Meeting} from '../../models/meeting';
 import {animate, style, transition, trigger} from '@angular/animations';
+import {Group} from '../../models/group';
 
 @Component({
-  selector: 'civ-place-container',
+  selector: 'civ-group',
   template: `
-    <civ-place-view [place]="place$ | async"
+    <civ-group-view [group]="group$ | async"
                     [meetings]="meetings$ | async"
-                    (showMeeting)="showMeeting($event)"></civ-place-view>
+                    (showMeeting)="showMeeting($event)"></civ-group-view>
   `,
   styles: [],
   host: { '[@host]': '' },
@@ -28,13 +28,13 @@ import {animate, style, transition, trigger} from '@angular/animations';
     ])
   ]
 })
-export class PlaceContainerComponent implements OnInit {
-  place$: Observable<DenormalizedPlace>;
-  meetings$: Observable<DenormalizedMeeting[]>;
+export class GroupContainerComponent implements OnInit {
+  group$: Observable<Group>;
+  meetings$: Observable<Meeting[]>;
 
   constructor(private store: Store<AppState>, private router: Router, private route: ActivatedRoute) {
-    this.place$ = this.store.select(getFocusedPlace);
-    this.meetings$ = this.place$
+    this.group$ = this.store.select(getF);
+    this.meetings$ = this.group$
       .filter(it => !!it)
       .map(place => place.groups.reduce((result, group) => [ ...result, ...group.meetings ], []));
 

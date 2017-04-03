@@ -1,20 +1,20 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {PlaceContainerComponent} from './place-container.component';
+import {GroupContainerComponent} from './group-container.component';
 
-describe('PlaceContainerComponent', () => {
-  let component: PlaceContainerComponent;
-  let fixture: ComponentFixture<PlaceContainerComponent>;
+describe('GroupContainerComponent', () => {
+  let component: GroupContainerComponent;
+  let fixture: ComponentFixture<GroupContainerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlaceContainerComponent ]
+      declarations: [GroupContainerComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlaceContainerComponent);
+    fixture = TestBed.createComponent(GroupContainerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

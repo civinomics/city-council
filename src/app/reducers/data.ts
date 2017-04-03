@@ -1,15 +1,15 @@
-import { normalize, schema } from 'normalizr';
-import { keys, values } from 'lodash';
-import { NormalizedPlace, Place } from '../models/place';
-import { DenormalizedMeeting, Meeting, NormalizedMeeting } from '../models/meeting';
-import { AgendaItem, Item } from '../models/item';
-import { Action } from '@ngrx/store';
-import { NormalizedGroup } from '../models/group';
+import {normalize, schema} from 'normalizr';
+import {keys, values} from 'lodash';
+import {Place} from '../models/place';
+import {Meeting} from '../models/meeting';
+import {AgendaItem, Item} from '../models/item';
+import {Action} from '@ngrx/store';
+import {Group} from '../models/group';
 
 type StateEntities = {
-  places: { [id: string]: NormalizedPlace },
-  meetings: { [id: string]: NormalizedMeeting },
-  groups: { [id: string]: NormalizedGroup },
+  places: { [id: string]: Place },
+  meetings: { [id: string]: Meeting },
+  groups: { [id: string]: Group },
   items: { [id: string]: AgendaItem }
 };
 
@@ -27,6 +27,7 @@ export const USER_LOADED = '[Data] meetingLoaded';
 export const MEETING_LOADED = '[Data] meetingLoaded';
 export const PLACE_LOADED = '[Data] placeLoaded';
 export const ITEM_LOADED = '[Data] itemLoaded';
+export const GROUP_LOADED = '[Data] groupLoaded';
 
 export class MeetingLoadedAction implements Action {
   public readonly type = MEETING_LOADED;
@@ -46,6 +47,15 @@ export class ItemLoadedAction implements Action {
   constructor(public readonly payload: Item) {}
 }
 
+
+export class GroupLoadedAction implements Action {
+  public readonly type = GROUP_LOADED;
+
+  constructor(public readonly payload: Group) {
+  }
+}
+
+
 const itemSchema = new schema.Entity('items', {});
 const meetingSchema = new schema.Entity('meetings', { items: [ itemSchema ] });
 const groupSchema = new schema.Entity('groups', { meetings: [ meetingSchema ] });
@@ -56,10 +66,10 @@ const placeSchema = new schema.Entity('places', { groups: [ groupSchema ] });
 type NormalizeOutput = {
   result: string,
   entities: {
-    meetings: { [id: string]: NormalizedMeeting },
+    meetings: { [id: string]: Meeting },
     items: { [id: string]: AgendaItem },
-    places: { [id: string]: NormalizedPlace },
-    groups: { [id: string]: NormalizedGroup }
+    places: { [id: string]: Place },
+    groups: { [id: string]: Group }
   },
 };
 
@@ -120,41 +130,3 @@ export const getPlaceEntities = (state: State) => state.entities.places;
 export const getMeetingEntities = (state: State) => state.entities.meetings;
 export const getItemEntities = (state: State) => state.entities.items;
 
-
-export const denormalizePlace = (id: string, entities: StateEntities) => {
-  /*
-   TRACK: https://github.com/paularmstrong/normalizr/issues/248
-   let ret = denormalize({places:id}, placeSchema, entities);
-   console.log(ret);
-   return ret;*/
-
-  let place: NormalizedPlace = entities.places[ id ];
-
-  return {
-    ...place,
-    groups: place.groups.map(id => denormalizeGroup(id, entities))
-  };
-
-};
-
-export const denormalizeGroup = (id: string, entities: StateEntities) => {
-  let group: NormalizedGroup = entities.groups[ id ];
-  return {
-    ...group,
-    meetings: group.meetings.map(id => denormalizeMeeting(id, entities))
-  }
-};
-
-export function denormalizeMeeting(id: string, entities: StateEntities): DenormalizedMeeting {
-
-  /*
-   TRACK: https://github.com/paularmstrong/normalizr/issues/248
-   return denormalize({meetings:id}, meetingSchema, entities);*/
-
-  let meeting: NormalizedMeeting = entities.meetings[ id ];
-
-  return {
-    ...meeting,
-    items: meeting.items.map(id => entities.items[ id ])
-  }
-}

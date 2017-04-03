@@ -1,16 +1,16 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
-import {Place} from '../../models/place';
 import {DenormalizedMeeting} from '../../models/meeting';
+import {Group} from '../../models/group';
 import Moment = moment.Moment;
 
 @Component({
-  selector: 'civ-place-view',
-  templateUrl: './place-view.component.html',
-  styleUrls: [ './place-view.component.scss' ]
+  selector: 'civ-group-view',
+  templateUrl: './group-view.component.html',
+  styleUrls: ['./group-view.component.scss']
 })
-export class PlaceViewComponent implements OnInit {
-  @Input() place: Place;
+export class GroupViewComponent implements OnInit {
+  @Input() group: Group;
   @Input() meetings: DenormalizedMeeting[];
   @Output() showMeeting = new EventEmitter();
 

@@ -12,7 +12,7 @@ import {Store} from '@ngrx/store';
 import {of} from 'rxjs/observable/of';
 import {BrowseContainerComponent} from './components/browse/browse-container.component';
 import {MeetingContainerComponent} from './components/meeting/meeting-container.component';
-import {PlaceContainerComponent} from './components/place/place-container.component';
+import {GroupContainerComponent} from './components/group/group-container.component';
 import {AppState} from './reducers/index';
 import {TermsComponent} from './components/corp/terms/terms.component';
 import {CareersComponent} from './components/corp/careers/careers.component';
@@ -29,7 +29,7 @@ export const APP_ROUTES: Routes = [
   },
 
   {
-    path: 'place',
+    path: 'group',
     component: BrowseContainerComponent,
     children: [
       {
@@ -42,7 +42,7 @@ export const APP_ROUTES: Routes = [
       },
       {
         path: ':placeId',
-        component: PlaceContainerComponent
+        component: GroupContainerComponent
       }
     ]
   },

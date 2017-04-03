@@ -34,7 +34,7 @@ export class SignInContainerComponent implements OnInit {
 
   completeSocial(data: UserAddress) {
     this.userSvc.completeSocialSignin(data).subscribe(user => {
-      this.router.navigate([ 'place', 'id-austin' ])
+      this.router.navigate(['group', 'id-austin'])
     })
   }
 
