@@ -1,35 +1,94 @@
 functions:
-  - ownsItem(id): root.item[id].owner == auth.uid
-  - ownsGroup(id): root.group[id].owner == auth.uid
-  - ownsMeeting(id): root.meeting[id].owner == auth.uid
-  - ownsComment(id): root.comment[id].owner == auth.uid
-
+  - userExists(id): root.user_public[id].exists()
+  - itemExists(id): root.item[id].exists()
+  - commentExists(itemId, commId): root.comment[itemId][commId].exists()
+  - voteExists(itemId, voteId): root.vote[itemId][voteId].exists()
+  - userHasVotedOn(id): root.user_private[auth.uid].votes.exists() && root.user_private[auth.uid].votes[id].exists()
+  - userHasCommentedOn(id): root.user_private[auth.uid].comments[id].exists()
+  - itemOrCommentExists(id): root.item[id].exists() || root.comment[id].exists()
 root:
-  user_public:
+  user:
     .read: true
     $id:
       .write: auth != null && auth.uid == $id
+      firstName: required string
+      lastName: required string
+      icon: string
 
   user_private:
     $id:
-      .read: auth != null && auth.uid == $id
-      .write: auth != null && auth.uid == $id
-
-  group:
-    .read: true
-    $id:
-      .write: auth != null && ownsGroup($id)
-
+      .read/write: auth != null && auth.uid == $id
+      email: required string
+      address:
+        line1: required string
+        line2: string
+        city: required string
+        zip: required
+      votes:
+        $itemId:
+          $voteId: itemOrCommentExists($itemId) && voteExists($itemId, $voteId)
+      comments:
+        $targetId:
+          $commentId: itemOrCommentExists($targetId) && commentExists($targetId, $commentId)
+#
   item:
     .read: true
     $id:
-      .write: (!data.exists() || (auth != null && ownsMeeting($id)))
+      .write: (!data.exists()) || data.owner == auth.uid
+      text: required string
+      feedbackDeadline: required string
+      owner: userExists(newData.owner)
+
+  group:
+    .read: true
+
 
 
   meeting:
     .read: true
 
     $id:
-      .write: (!data.exists() || (auth != null && ownsMeeting($id)))
+      .write: (!data.exists()) || data.owner == auth.uid
+      owner: userExists(newData.owner)
+      startTime: required string
+      endTime: required string
+      title: required string
+      agenda:
+        $itemId:
+          .value: number
+
+  comment:
+    .read: true
+    $targetId:
+      #allow if: user is authenticated, AND
+        #they're posting a new comment and have not yet commented on this item, OR
+        #they're editing an existing comment and are the owner of that comment
+
+      .write: auth != null && ((!data.exists() && !userHasCommentedOn($targetId)) || (data.exists() && data.owner == auth.uid))
+
+      $commentId:
+        role: required string
+        text: required string
+        owner: newData.isString() && newData == auth.uid
+        posted: required string
 
 
+
+  vote:
+    .read: true
+
+    $itemId:
+      #allow if: user is authenticated, AND
+        #they're casting a new vote and have not yet voted on this item, OR
+        #they're changing an existing vote and are the owner of that vote
+
+      $voteId:
+        .write: auth != null && ((!data.exists() && !userHasVotedOn($itemId)) || (data.exists() && data.owner == auth.uid))
+        value: oneOf(1, -1)
+        owner: newData.isString() && newData == auth.uid
+        posted: required string
+        userDistrict: string
+
+#
+#  follow:
+#    $targetId:

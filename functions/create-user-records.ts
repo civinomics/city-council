@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 
 import * as admin from 'firebase-admin';
-import { initializeApp } from './_internal';
+import {initializeApp} from './_internal';
 import UserRecord = admin.auth.UserRecord;
 
 const app = initializeApp();
@@ -16,7 +16,7 @@ export const createUserRecords = functions.auth.user().onCreate(event => {
   const firstName = user.displayName.split(' ')[ 0 ];
   const lastName = user.displayName.split(' ')[ 1 ];
 
-  database.ref(`/user_public/${user.uid}`).set({
+  database.ref(`/user/${user.uid}`).set({
     firstName, lastName,
     icon: user.photoURL,
     joined: user.metadata.createdAt,
