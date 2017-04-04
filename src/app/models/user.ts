@@ -1,4 +1,4 @@
-import {Entity} from './index';
+import {Entity, RawEntity} from './index';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -28,5 +28,23 @@ export interface SessionUser extends User {
   following: string[];
 }
 
+export type RawUser = RawEntity & {
+  [P in 'firstName' | 'lastName' | 'icon' | 'districts']: User[P]
+  } & {
+  [P in 'joined' | 'lastOn']: string
+  }
 
-export const UserSchemaDefinition = {};
+export type RawSessionUser = {
+  [P in keyof RawUser]: RawUser[P]
+  } & {
+  [P in keyof SessionUser]: SessionUser[P]
+  }
+
+export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) => {
+  return {
+    ...data,
+    id: data.$key,
+    joined: moment(data.joined),
+    lastOn: moment(data.lastOn)
+  }
+};

@@ -1,7 +1,18 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {animate, keyframes, state, style, transition, trigger} from '@angular/animations';
 import {Item} from '../../models/item';
 import {MdInputDirective} from '@angular/material';
+import {Vote} from '../../models/vote';
 
 @Component({
   selector: 'civ-item-view',
@@ -52,9 +63,10 @@ export class ItemViewComponent implements OnInit, OnChanges {
   }
 
   @Input() item: Item;
+  @Input() userVote: Vote | null;
 
+  @Output() vote: EventEmitter<{ itemId: string, value: 1 | -1 }> = new EventEmitter();
 
-  userVote: 'yes' | 'no';
   userComment: string = '';
 
   @ViewChild('addComment', { read: MdInputDirective }) addCommentInput: MdInputDirective;
@@ -67,17 +79,8 @@ export class ItemViewComponent implements OnInit, OnChanges {
   }
 
 
-  vote(val: 'yes' | 'no') {
-    if (this.userVote == val) {
-      this.userVote = null;
-      this.addCommentPlaceholder = 'why you haven\'t voted';
-    } else {
-      this.userVote = val;
-      this.addCommentPlaceholder = `why you voted ${val}`;
-      if (!!this.addCommentInput) {
-        this.addCommentInput.focus();
-      }
-    }
+  castVote(value: 1 | -1) {
+    this.vote.emit({itemId: this.item.id, value});
   }
 
   postComment() {
@@ -87,6 +90,10 @@ export class ItemViewComponent implements OnInit, OnChanges {
 
   share(provider: 'facebook' | 'google' | 'twitter') {
 
+  }
+
+  get userVoteVal(): 1 | -1 | null {
+    return !this.userVote ? null : this.userVote.value;
   }
 
 

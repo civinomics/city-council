@@ -11,18 +11,18 @@
     <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
       <button md-button
               class="vote-button no"
-              [class.rejected]="userVote == 'yes'"
-              (click)="vote('no')"
-              [@voteBtn]="userVote == 'yes' ? 'rejected' : ''">
-        <md-icon *ngIf="userVote == 'no'" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
+              [class.rejected]="userVoteVal == 1"
+              (click)="castVote(-1)"
+              [@voteBtn]="userVoteVal == 1 ? 'rejected' : ''">
+        <md-icon *ngIf="userVoteVal == -1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
         no
       </button>
       <button md-button
               class="vote-button yes"
-              [class.rejected]="userVote == 'no'"
-              (click)="vote('yes')"
-              [@voteBtn]="userVote == 'no' ? 'rejected' : ''">yes
-        <md-icon *ngIf="userVote == 'yes'" class="checkmark" [@checkmark]="'fromRight'">check</md-icon>
+              [class.rejected]="userVoteVal == -1"
+              (click)="castVote(1)"
+              [@voteBtn]="userVoteVal == -1 ? 'rejected' : ''">yes
+        <md-icon *ngIf="userVoteVal == 1" class="checkmark" [@checkmark]="'fromRight'">check</md-icon>
       </button>
     </div>
   </div>
@@ -35,6 +35,7 @@
         <input type="text" mdInput [placeholder]="addCommentPlaceholder" #addComment>
       </md-input-container>
       <button md-raised-button
+              *ngIf="!!addComment.value"
               [@speakBtn]
               color="primary"
               fxFlexAlign="flex-end"

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AngularFireAuth, AngularFireDatabase, AuthMethods, AuthProviders, FirebaseAuthState} from 'angularfire2';
-import {Observable} from 'rxjs';
-import {SessionUser, UserAddress} from '../models/user';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {parseSessionUser, SessionUser, UserAddress} from '../models/user';
 import {FirebaseError} from 'firebase/app';
 import {
   AUTH_ERRORED,
@@ -12,10 +12,13 @@ import {
   SessionUserLoadedAction
 } from '../reducers/auth';
 import {Store} from '@ngrx/store';
-import {AppState, getSessionUserId} from '../reducers/index';
+import {AppState, getSessionUser, getSessionUserId} from '../reducers/index';
 import {Actions, Effect, toPayload} from '@ngrx/effects';
 
 export type SocialAuthProvider = 'facebook' | 'twitter' | 'google';
+
+export type AuthModalRequestOutcome = 'logged-in' | 'signed-up' | 'none';
+export type AuthModalRequest = { message?: string, callback?: (outcome: AuthModalRequestOutcome) => any }
 
 @Injectable()
 export class AuthService {
@@ -25,23 +28,26 @@ export class AuthService {
     .map(toPayload)
     .filter(state => !!state && !!state.uid)
     .do(it => {
-      console.debug(`initiating loadSessinUserData`);
+      console.debug(`initiating loadSessionUserData`);
       console.debug(it);
     })
     .map(state => state.uid)
     .flatMap(id =>
-      Observable.combineLatest(this.db.object(`/user_public/${id}`), this.db.object(`/user_private/${id}`))
+      Observable.combineLatest(this.db.object(`/user/${id}`), this.db.object(`/user_private/${id}`))
       //make sure we end the subscription when the user logs out to avoid 401
         .takeUntil(this.actions.ofType(AUTH_STATE_CHANGED)
           .map(toPayload)
-          .filter(it => !it || !it.uid))
-        .map(([ publicData, privateData ]) => ({ ...publicData, ...privateData } as SessionUser))
+          .filter(it => !it || !it.uid)
+        )
+        .map(([publicData, privateData]) => parseSessionUser({...publicData, ...privateData, $key: publicData.$key}))
     ).map(user => new SessionUserLoadedAction(user));
 
 
   public readonly sessionUser$: Observable<SessionUser | null>;
   public readonly sessionUserId$: Observable<string | null>;
 
+  private authModalReq$: Subject<AuthModalRequest> = new BehaviorSubject(null);
+  public readonly authModalRequest$ = this.authModalReq$.skip(1).share();
 
   constructor(private authBackend: AngularFireAuth,
               private db: AngularFireDatabase,
@@ -56,8 +62,14 @@ export class AuthService {
         this.store.dispatch(new AuthStateChangedAction(state));
       });
 
-    this.sessionUserId$ = this.store.select(getSessionUserId);
 
+    this.sessionUserId$ = this.store.select(getSessionUserId);
+    this.sessionUser$ = this.store.select(getSessionUser);
+
+  }
+
+  public requestAuthModal(message?: string, callback?: (outcome: AuthModalRequestOutcome) => any) {
+    this.authModalReq$.next({message, callback});
   }
 
   public logout() {

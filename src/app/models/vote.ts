@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import {Entity, EntityField} from './index';
+import {Entity, parseEntity, RawEntity} from './index';
 import Moment = moment.Moment;
 
 export interface Vote extends Entity {
@@ -8,11 +8,14 @@ export interface Vote extends Entity {
   userDistrict: string | null,
 }
 
-export type RawVote = {[P in EntityField | 'value' | 'userDistrict']: Vote[P]} & { posted: string };
+export type RawVote = RawEntity & {[P in 'value' | 'userDistrict']: Vote[P]} & { posted: string };
 
 export function parseVote(data: RawVote): Vote {
+  console.log(data);
   return {
-    ...data,
-    posted: moment(data.posted)
+    ...parseEntity(data),
+    value: data.value,
+    posted: moment(data.posted),
+    userDistrict: data.userDistrict || null
   }
 }

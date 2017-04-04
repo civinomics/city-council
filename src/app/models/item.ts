@@ -32,8 +32,6 @@ export type RawItem = RawEntity & {
 } & {
   [P in 'posted' | 'feedbackDeadline']: string
   } & {
-  //TODO delete after schema update 3/30/17
-  itemNumber: number
 }
 
 export type ItemWithComments = Item & {
@@ -51,7 +49,7 @@ export const parseItem: (it: RawItem | any) => Item = (it) => {
     id: it.$key || it.id,
     posted: moment(it.posted),
     feedbackDeadline: moment(it.feedbackDeadline),
-    agendaNumber: it.itemNumber,
+    agendaNumber: it.agendaNumber,
     activity: it.activity
   }
 }
