@@ -1,33 +1,46 @@
-import { Entity, EntityField } from './index';
+import {Entity, EntityField, parseEntity, RawEntity} from './index';
 import * as moment from 'moment';
-import { AgendaItem } from './item';
+import {keys} from 'lodash';
 import Moment = moment.Moment;
 
 export type MeetingStatus = 'open' | 'closed' | 'draft'
 
-export type MeetingField = 'title' | 'startTime' | 'endTime' | 'feedbackDeadline' | 'status' | 'items'
+export type MeetingField = 'title' | 'startTime' | 'endTime' | 'feedbackDeadline' | 'status' | 'agendaIds'
 
 export interface Meeting extends Entity {
   title: string;
-
   startTime: Moment;
   endTime: Moment;
   feedbackDeadline: Moment;
   status: MeetingStatus;
 
-  items: (string | AgendaItem)[]
+  agendaIds: string[]
 }
 
-export type NormalizedMeeting = {
-  [P in EntityField | 'title' | 'startTime' | 'endTime' | 'feedbackDeadline' | 'status']: Meeting[P]
+
+export type RawMeeting = RawEntity & {
+  [P in EntityField | 'title' | 'status']: Meeting[P];
   } & {
-  items: string[]
-}
-
-
-export type DenormalizedMeeting = {
-  [P in EntityField | 'title' | 'startTime' | 'endTime' | 'feedbackDeadline' | 'status']: Meeting[P]
+  [P in 'startTime' | 'endTime' | 'feedbackDeadline']: string;
   } & {
-  items: AgendaItem[]
+  agenda: string[]
 }
 
+export const parseMeeting: (data: RawMeeting) => Meeting = (data: RawMeeting) => {
+
+  return {
+    ...parseEntity(data),
+    id: data.$key,
+    title: data.title,
+    status: moment(data.feedbackDeadline).isAfter(moment()) ? 'open' : 'closed',
+    startTime: moment(data.startTime),
+    endTime: moment(data.endTime),
+    feedbackDeadline: moment(data.feedbackDeadline),
+    agendaIds: keys(data.agenda)
+  }
+};
+
+export const meetingsEqual: (x: Meeting, y: Meeting) => boolean = (x, y) => {
+  //TODO
+  return x.id == y.id
+};

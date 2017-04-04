@@ -1,11 +1,12 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {animate, keyframes, state, style, transition, trigger} from '@angular/animations';
-import {AgendaItem} from '../../models/item';
+import {Item} from '../../models/item';
 import {MdInputDirective} from '@angular/material';
 
 @Component({
   selector: 'civ-item-view',
   templateUrl: './item-view.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: [ './item-view.component.scss' ],
   animations: [
     trigger('voteBtn', [
@@ -45,8 +46,12 @@ import {MdInputDirective} from '@angular/material';
     ])
   ]
 })
-export class ItemViewComponent implements OnInit {
-  @Input() item: AgendaItem;
+export class ItemViewComponent implements OnInit, OnChanges {
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+  }
+
+  @Input() item: Item;
 
 
   userVote: 'yes' | 'no';

@@ -1,8 +1,8 @@
-import {normalize, schema} from 'normalizr';
+import {schema} from 'normalizr';
 import {keys, values} from 'lodash';
 import {Place} from '../models/place';
 import {Meeting} from '../models/meeting';
-import {AgendaItem, Item} from '../models/item';
+import {Item} from '../models/item';
 import {Action} from '@ngrx/store';
 import {Group} from '../models/group';
 
@@ -10,7 +10,7 @@ type StateEntities = {
   places: { [id: string]: Place },
   meetings: { [id: string]: Meeting },
   groups: { [id: string]: Group },
-  items: { [id: string]: AgendaItem }
+  items: { [id: string]: Item }
 };
 
 export type State = {
@@ -67,7 +67,7 @@ type NormalizeOutput = {
   result: string,
   entities: {
     meetings: { [id: string]: Meeting },
-    items: { [id: string]: AgendaItem },
+    items: { [id: string]: Item },
     places: { [id: string]: Place },
     groups: { [id: string]: Group }
   },
@@ -90,11 +90,63 @@ const initialState = {
 
 
 export function reducer(state: State = initialState, action: Action): State {
+
   switch (action.type) {
     case MEETING_LOADED:
-    case PLACE_LOADED:
-      let normalized: NormalizeOutput = normalize(action.payload, placeSchema);
-      return merge(normalized, state);
+
+      let newMtgIds = state.ids.meetings.indexOf(action.payload.id) >= 0 ? state.ids.meetings : [...state.ids.meetings, action.payload.id];
+      let newMtgEnts = {...state.entities.meetings, [action.payload.id]: action.payload};
+
+      return {
+        ids: {
+          ...state.ids,
+          meetings: newMtgIds
+        },
+        entities: {
+          ...state.entities,
+          meetings: newMtgEnts
+        }
+      };
+    case GROUP_LOADED:
+
+      let newGrpIds = state.ids.groups.indexOf(action.payload.id) >= 0 ? state.ids.groups : [...state.ids.groups, action.payload.id];
+      let newGrpEnts = {...state.entities.groups, [action.payload.id]: action.payload};
+
+      return {
+        ids: {
+          ...state.ids,
+          groups: newGrpIds
+        },
+        entities: {
+          ...state.entities,
+          groups: newGrpEnts
+        }
+      };
+
+    case ITEM_LOADED:
+
+      let newItemId = state.ids.items.indexOf(action.payload.id) >= 0 ? state.ids.items : [...state.ids.items, action.payload.id];
+      let newItemEnts = {...state.entities.items, [action.payload.id]: action.payload};
+
+      return {
+        ids: {
+          ...state.ids,
+          items: newItemId
+        },
+        entities: {
+          ...state.entities,
+          items: newItemEnts
+        }
+      };
+
+
+
+    /*
+
+     case ITEMS_LOADED:
+     normalized = normalize(action.payload, itemSchema);
+     return merge(normalized, state);
+     */
 
     default:
       return state;
@@ -129,4 +181,5 @@ export const getEntities = (state: State) => state.entities;
 export const getPlaceEntities = (state: State) => state.entities.places;
 export const getMeetingEntities = (state: State) => state.entities.meetings;
 export const getItemEntities = (state: State) => state.entities.items;
+export const getGroupEntities = (state: State) => state.entities.groups;
 

@@ -1,28 +1,26 @@
-import { Entity, EntityField } from './index';
-import { Meeting } from './meeting';
-import { Office } from './office';
+import {Entity, parseEntity, RawEntity} from './index';
+import {Office, parseOffice, RawOffice} from './office';
 
 export interface Group extends Entity {
   name: string;
   icon: string;
-
-  meetings: (Meeting | string)[]
-
-  districts: (Office | string)[]
+  meetingIds: string[];
+  districts: Office[]
 }
 
-export type GroupField = EntityField | 'name' | 'icon';
-
-export type NormalizedGroup = {
-  [P in EntityField | 'name' | 'icon']: Group[P]
+export type RawGroup = RawEntity & {
+  [P in 'name' | 'icon']: Group[P]
   } & {
-  meetings: string[];
-  districts: string[];
+  meetings: string[],
+  districts: RawOffice[]
 }
 
-export type DenormalizedGroup = {
-  [P in EntityField | 'name' | 'icon']: Group[P]
-  } & {
-  meetings: Meeting[];
-  districts: Office[];
+export function parseGroup(data: RawGroup): Group {
+  return {
+    ...parseEntity(data),
+    name: data.name,
+    icon: data.icon,
+    meetingIds: data.meetings,
+    districts: data.districts.map(it => parseOffice(it))
+  }
 }

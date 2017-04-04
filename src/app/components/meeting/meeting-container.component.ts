@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
-import {Store} from '@ngrx/store';
-import {AppState, getFocusedMeeting} from '../../reducers/index';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
-import {DenormalizedMeeting} from '../../models/meeting';
-import {AgendaItem} from '../../models/item';
+import {Meeting} from '../../models/meeting';
+import {Item} from '../../models/item';
+import {MeetingService} from '../../services/meeting.service';
+import {ItemService} from '../../services/item.service';
 
 @Component({
   selector: 'civ-meeting-container',
@@ -30,16 +30,33 @@ import {AgendaItem} from '../../models/item';
 })
 export class MeetingContainerComponent implements OnInit {
 
-  meeting$: Observable<DenormalizedMeeting>;
-  items$: Observable<AgendaItem[]>;
+  meeting$: Observable<Meeting>;
+  items$: Observable<Item[]>;
 
 
-  constructor(private store: Store<AppState>, private router: Router, private route: ActivatedRoute) {
-    this.meeting$ = this.store.select(getFocusedMeeting).filter(it => !!it);
+  constructor(private meetingSvc: MeetingService, private itemSvc: ItemService, private router: Router, private route: ActivatedRoute) {
+    const id$ = this.route.params.map(params => params['meetingId']).distinctUntilChanged();
 
+    this.meeting$ = id$
+      .flatMap(it => this.meetingSvc.get(it));
+
+    /* const agendaIds = this.meeting$
+     .map(mtg => mtg.agendaIds)
+     .distinctUntilChanged((x, y) => x.length == y.length);
+
+     this.items$ = agendaIds
+     .take(1)
+     .flatMap(ids => Observable.forkJoin(...ids.map(id => this.itemSvc.get(id, true).take(1))));
+     */
+
+    this.items$ = id$.flatMap(id => this.meetingSvc.getMeetingAgenda(id).take(1));
+
+    this.items$.subscribe(it => console.log(it));
+
+    /*
     this.items$ = this.meeting$
       .filter(it => !!it)
-      .map(mtg => mtg.items);
+     .map(mtg => mtg.items);*/
 
   }
 

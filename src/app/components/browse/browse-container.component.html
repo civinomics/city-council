@@ -3,7 +3,7 @@
      fxLayoutAlign="space-around stretch"
      [@travBar]="(showTravBar | async) ? 'shown' : 'hidden'">
   <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" *ngIf="showTravBar | async" class="inner">
-    <div *ngIf="focusedPlace$ | async as group"
+    <div *ngIf="focusedGroup$ | async as group"
          fxLayout="row"
          fxLayoutAlign="start center"
          fxLayoutGap="5px"
@@ -19,7 +19,7 @@
          fxLayout="row"
          fxLayoutAlign="start center"
          fxLayoutGap="5px"
-         [routerLink]="['/place', (focusedPlace$ | async).id, 'meeting', (focusedMeeting$ | async).id]"
+         [routerLink]="['/place', (focusedGroup$ | async).id, 'meeting', (focusedMeeting$ | async).id]"
          [@travEl]>
 
       <div class="entry-text" *ngIf="focusedMeeting$ | async as meeting">{{meeting.startTime | amDateFormat:

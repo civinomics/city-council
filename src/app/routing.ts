@@ -2,18 +2,14 @@ import {NgModule} from '@angular/core';
 import {
   NavigationCancel,
   NavigationError,
-  Router,
   RouterModule,
   RouterStateSnapshot,
   Routes,
   RoutesRecognized
 } from '@angular/router';
-import {Store} from '@ngrx/store';
-import {of} from 'rxjs/observable/of';
 import {BrowseContainerComponent} from './components/browse/browse-container.component';
 import {MeetingContainerComponent} from './components/meeting/meeting-container.component';
 import {GroupContainerComponent} from './components/group/group-container.component';
-import {AppState} from './reducers/index';
 import {TermsComponent} from './components/corp/terms/terms.component';
 import {CareersComponent} from './components/corp/careers/careers.component';
 import {AboutComponent} from './components/corp/about/about.component';
@@ -33,15 +29,15 @@ export const APP_ROUTES: Routes = [
     component: BrowseContainerComponent,
     children: [
       {
-        path: ':placeId/meeting/:meetingId/item/:itemId',
+        path: ':groupId/meeting/:meetingId/item/:itemId',
         component: ItemContainerComponent
       },
       {
-        path: ':placeId/meeting/:meetingId',
+        path: ':groupId/meeting/:meetingId',
         component: MeetingContainerComponent
       },
       {
-        path: ':placeId',
+        path: ':groupId',
         component: GroupContainerComponent
       }
     ]
@@ -65,7 +61,6 @@ export const APP_ROUTES: Routes = [
 ];
 
 
-
 @NgModule({
   imports: [
     RouterModule.forRoot(APP_ROUTES)
@@ -73,54 +68,7 @@ export const APP_ROUTES: Routes = [
   exports: [ RouterModule ]
 })
 export class AppRoutingModule {
-  private routerState: RouterStateSnapshot = null;
-  private storeState: any;
-  private lastRoutesRecognized: RoutesRecognized;
 
-  constructor(private store: Store<AppState>, private router: Router) {
-    this.setUpBeforePreactivationHook();
-    this.setUpStoreStateListener();
-    this.setUpStateRollbackEvents();
-  }
-
-  private setUpBeforePreactivationHook(): void {
-    (<any>this.router).hooks.beforePreactivation = (routerState: RouterStateSnapshot) => {
-      this.routerState = routerState;
-
-      const payload = { routerState, event: this.lastRoutesRecognized };
-      this.store.dispatch({ type: ROUTER_NAVIGATION, payload });
-
-      return of(true);
-    };
-  }
-
-  private setUpStoreStateListener(): void {
-    this.store.subscribe(s => {
-      this.storeState = s;
-    });
-  }
-
-  private setUpStateRollbackEvents(): void {
-    this.router.events.subscribe(e => {
-      if (e instanceof RoutesRecognized) {
-        this.lastRoutesRecognized = e;
-      } else if (e instanceof NavigationCancel) {
-        this.dispatchRouterCancel(e);
-      } else if (e instanceof NavigationError) {
-        this.dispatchRouterError(e);
-      }
-    });
-  }
-
-  private dispatchRouterCancel(event: NavigationCancel): void {
-    const payload = { routerState: this.routerState, storeState: this.storeState, event };
-    this.store.dispatch({ type: ROUTER_CANCEL, payload });
-  }
-
-  private dispatchRouterError(event: NavigationError): void {
-    const payload = { routerState: this.routerState, storeState: this.storeState, event };
-    this.store.dispatch({ type: ROUTER_ERROR, payload });
-  }
 }
 
 /** https://github.com/vsavkin/router-store/blob/master/src/index.ts */

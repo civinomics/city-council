@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
-import {DenormalizedMeeting} from '../../models/meeting';
+import {Meeting} from '../../models/meeting';
 import {Group} from '../../models/group';
 import Moment = moment.Moment;
 
@@ -11,7 +11,7 @@ import Moment = moment.Moment;
 })
 export class GroupViewComponent implements OnInit {
   @Input() group: Group;
-  @Input() meetings: DenormalizedMeeting[];
+  @Input() meetings: Meeting[];
   @Output() showMeeting = new EventEmitter();
 
   private readonly now: Moment;

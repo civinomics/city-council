@@ -1,8 +1,8 @@
 <div fxLayout="row" fxLayoutAlign="space-around stretch">
   <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="10px">
-    <img class="flag" [src]="group.icon" class.xs="mini">
+    <img class="flag" [src]="group?.icon" class.xs="mini">
     <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="5px">
-      <div class="place-title">{{group.longName}}</div>
+      <div class="place-title">{{group?.name}}</div>
       <div class="follow-row"
            fxLayout="row"
            fxLayoutAlign="space-around center"

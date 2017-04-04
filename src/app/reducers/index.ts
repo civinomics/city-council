@@ -15,8 +15,8 @@ export interface AppState {
 
 const reducers = {
   auth: fromAuth.reducer,
-  focus: fromFocus.reducer,
-  data: fromData.reducer
+  // focus: fromFocus.reducer,
+  //s data: fromData.reducer
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(combineReducers)(reducers);
@@ -40,13 +40,19 @@ export const getGroupData = createSelector(getDataState, (state) => {
 });
 
 
+export const getMeetingData = createSelector(getDataState, (state) => {
+  return {
+    ids: state.ids.meetings,
+    entities: state.entities.meetings
+  }
+});
 
-
-
-
-
-
-
+export const getItemData = createSelector(getDataState, (state) => {
+  return {
+    ids: state.ids.items,
+    entities: state.entities.items
+  }
+});
 
 
 
@@ -61,17 +67,21 @@ export const getFocusedItemId = (state: AppState) => state.focus.item;
 
 
 export const getEntities = createSelector(getDataState, fromData.getEntities);
-export const getPlaces = createSelector(getDataState, fromData.getPlaceEntities);
+export const getItems = createSelector(getDataState, fromData.getItemEntities);
 export const getMeetings = createSelector(getDataState, fromData.getMeetingEntities);
+export const getGroups = createSelector(getDataState, fromData.getGroupEntities);
 
-export const getFocusedGroup = createSelector(getFocusedGroupId, getEntities, (groupId, entities) => {
-  return !groupId || !entities.groups[groupId] ? null : entities.groups[groupId];
+export const getFocusedGroup = createSelector(getFocusedGroupId, getGroups, (groupId, groups) => {
+  console.log('getFocusedGroup firing');
+  return !groupId || !groups[groupId] ? null : groups[groupId];
 });
 
-export const getFocusedMeeting = createSelector(getFocusedMeetingId, getEntities, (meetingId, entities) => {
-  return !meetingId || !entities.meetings[meetingId] ? null : entities.meetings[meetingId];
+export const getFocusedMeeting = createSelector(getFocusedMeetingId, getMeetings, (meetingId, meetings) => {
+  console.log('getFocusedMeeting firing');
+
+  return !meetingId || !meetings[meetingId] ? null : meetings[meetingId];
 });
 
-export const getFocusedItem = createSelector(getFocusedItemId, getEntities, (itemId, entities) => {
-  return !itemId || !entities.items[itemId] ? null : entities.items[itemId];
+export const getFocusedItem = createSelector(getFocusedItemId, getItems, (itemId, items) => {
+  return !itemId || !items[itemId] ? null : items[itemId];
 });

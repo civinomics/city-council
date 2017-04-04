@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {AUSTIN_DATA} from '../../models/fixtures';
 
 @Component({
   selector: 'civ-splash',
@@ -7,7 +6,13 @@ import {AUSTIN_DATA} from '../../models/fixtures';
   styleUrls: [ './splash.component.scss' ]
 })
 export class SplashComponent implements OnInit {
-  cities = [ AUSTIN_DATA ];
+  cities = [{
+    id: 'id_acc',
+    name: 'Austin',
+    longName: 'City of Austin',
+    icon: 'https://cmgstatesmanaustin.files.wordpress.com/2015/08/city-of-austin-flag.png',
+    owner: 'id-doug',
+  }];
 
   constructor() { }
 

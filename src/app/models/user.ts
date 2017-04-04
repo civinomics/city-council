@@ -1,4 +1,4 @@
-import { Entity } from './index';
+import {Entity} from './index';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -15,16 +15,17 @@ export interface User extends Entity {
 
 export type UserAddress = {
   line1: string;
-  line2: string;
+  line2?: string;
   city: string;
-  zip: number;
+  zip: string;
 }
 
 export interface SessionUser extends User {
   email: string;
   address: UserAddress;
-  votes: { [id: string]: number }
-
+  votes: { [id: string]: string }
+  comments: { [id: string]: string }
+  following: string[];
 }
 
 

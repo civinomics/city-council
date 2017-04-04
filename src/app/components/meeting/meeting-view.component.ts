@@ -1,17 +1,18 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Meeting} from '../../models/meeting';
 
-import {AgendaItem} from '../../models/item';
+import {Item} from '../../models/item';
 
 @Component({
   selector: 'civ-meeting-view',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './meeting-view.component.html',
   styleUrls: [ './meeting-view.component.scss' ]
 })
 export class MeetingViewComponent implements OnInit {
 
   @Input() meeting: Meeting;
-  @Input() items: AgendaItem[];
+  @Input() items: Item[];
   @Output() showItem = new EventEmitter();
 
   agendaSortOptions = [ 'Item Number', 'Most Active' ];
@@ -24,7 +25,7 @@ export class MeetingViewComponent implements OnInit {
   }
 
   get agendaItems() {
-    return this.items
-      .sort((x, y) => (x as AgendaItem).itemNumber - (y as AgendaItem).itemNumber);
+    return !this.items ? [] : this.items
+      .sort((x, y) => (x as Item).agendaNumber - (y as Item).agendaNumber);
   }
 }
