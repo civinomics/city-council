@@ -20,6 +20,7 @@ import {AuthService} from './services/auth.service';
 import {MaterialModule} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MomentModule} from 'angular2-moment';
+import {AuthModalComponent} from './components/auth/auth-modal/auth-modal.component';
 
 @NgModule({
 
@@ -47,10 +48,11 @@ import {MomentModule} from 'angular2-moment';
 
   ],
   declarations: [
-    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS
+    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS, AuthModalComponent
   ],
   providers: [ ...APP_PROVIDERS ],
-  bootstrap: [ AppContainerComponent ]
+  entryComponents: [AuthModalComponent],
+  bootstrap: [AppContainerComponent],
 })
 export class AppModule {
 

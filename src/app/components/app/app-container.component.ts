@@ -1,6 +1,7 @@
-import {Component} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {AppState} from '../../reducers/index';
+import {Component, OnInit} from '@angular/core';
+import {AuthService} from '../../services/auth.service';
+import {MdDialog} from '@angular/material';
+import {AuthModalComponent} from '../auth/auth-modal/auth-modal.component';
 
 @Component({
   selector: 'civ-root',
@@ -16,12 +17,20 @@ import {AppState} from '../../reducers/index';
   `,
   styleUrls: [ './app-container.component.scss' ]
 })
-export class AppContainerComponent {
+export class AppContainerComponent implements OnInit {
 
-  constructor(private store: Store<AppState>) {
+  constructor(private authService: AuthService, private dialog: MdDialog) {
 
 
   }
+
+  ngOnInit(): void {
+    this.authService.authModalRequest$.subscribe(req => {
+      this.dialog.open(AuthModalComponent);
+    })
+  }
+
+
 
 
 }
