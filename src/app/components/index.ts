@@ -14,9 +14,11 @@ import {SplashComponent} from './splash/splash.component';
 import {AppContainerComponent} from './app/app-container.component';
 import {AuthWidgetComponent} from './auth/auth-widget/auth-widget.component';
 import {CommentComponent} from './comment/comment.component';
+import {VerifyModalComponent} from './auth/verify-modal/verify-modal.component';
+import {AuthModalComponent} from './auth/auth-modal/auth-modal.component';
 
 export const VIEW_COMPONENTS = [
-  GroupViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent, SignInViewComponent, AuthWidgetComponent, CommentComponent
+  GroupViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent, SignInViewComponent, AuthWidgetComponent, CommentComponent, VerifyModalComponent, AuthModalComponent
 ];
 
 export const CONTAINER_COMPONENTS = [

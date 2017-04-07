@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {AngularFireAuth, AngularFireDatabase, AuthMethods, AuthProviders, FirebaseAuthState} from 'angularfire2';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Observer, Subject} from 'rxjs';
 import {EmailSignupData, parseSessionUser, SessionUser, UserAddress} from '../models/user';
 import {FirebaseError} from 'firebase/app';
 import {
@@ -49,7 +49,10 @@ export class AuthService {
   public readonly sessionUserId$: Observable<string | null>;
 
   private authModalReq$: Subject<AuthModalRequest> = new BehaviorSubject(null);
-  public readonly authModalRequest$ = this.authModalReq$.skip(1).share();
+  private verificationRequiredReq$: Subject<any> = new BehaviorSubject(null);
+
+  public readonly displayAuthModal$ = this.authModalReq$.skip(1).share();
+  public readonly displayVerificationRequired$ = this.verificationRequiredReq$.skip(1).share();
 
   constructor(private authBackend: AngularFireAuth,
               private db: AngularFireDatabase,
@@ -62,6 +65,21 @@ export class AuthService {
       .subscribe(state => {
         console.log(state);
         this.store.dispatch(new AuthStateChangedAction(state));
+      });
+
+
+    //whenever the auth state changes, check our user record
+    this.authBackend
+      .filter(it => !!it && !!it.auth)
+      .distinctUntilChanged()
+      .flatMap(authState => this.db.object(`/user_private/${authState.uid}`).map(userData => ({authState, userData})))
+      .subscribe(it => {
+        if (it.authState.auth.emailVerified && !it.userData.isVerified) {
+          console.log(`User ${it.authState.uid} has verified their email, updating record accordingly`);
+          this.db.object(`/user_private/${it.authState.uid}`).update({isVerified: true}).then(res => {
+            console.info(`successfully updated isVerified for user ${it.authState.uid}`);
+          });
+        }
       });
 
 
@@ -79,11 +97,9 @@ export class AuthService {
   }
 
   public emailSignin(data: EmailSignupData): Observable<SessionUser> {
-    this.sessionUserId$.subscribe(it => {
-      console.info(`pre callback - id: ${it}`)
-    });
 
-    this.authBackend.createUser({email: data.email, password: data.password}).then((state: FirebaseAuthState) => {
+    this.authBackend.createUser({email: data.email, password: data.password})
+      .then((state: FirebaseAuthState) => {
       let id = state.uid;
       console.info(`created ${id}`);
       //can't push undefined values
@@ -122,6 +138,11 @@ export class AuthService {
         console.info(err);
       });
 
+        state.auth.sendEmailVerification().then((res) => {
+          console.debug(`sent email`);
+          console.debug(res);
+        })
+
 
     }).catch(err => {
       console.error(`error creating user: ${err.message}`);
@@ -156,6 +177,26 @@ export class AuthService {
       .take(1)
       .map(toPayload);
 
+  }
+
+  public showVerificationRequiredModal() {
+    this.verificationRequiredReq$.next();
+  }
+
+  public resendVerificationEmail(): Observable<'success'> {
+    return Observable.create((observer: Observer<'success'>) => {
+      this.authBackend.take(1).subscribe(state => {
+        if (!state || !state.auth) {
+          throw new Error(`Cannot resend activation email with no signed-in user`)
+        }
+        state.auth.sendEmailVerification().then(() => {
+          observer.next('success');
+          observer.complete()
+        }).catch(err => {
+          observer.error(err);
+        })
+      })
+    }).take(1);
   }
 
 

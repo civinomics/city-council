@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {MdDialog} from '@angular/material';
 import {AuthModalComponent} from '../auth/auth-modal/auth-modal.component';
+import {VerifyModalComponent} from '../auth/verify-modal/verify-modal.component';
 
 @Component({
   selector: 'civ-root',
@@ -25,14 +26,19 @@ export class AppContainerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.authModalRequest$.subscribe(req => {
+    this.authService.displayAuthModal$.subscribe(req => {
       let dialog = this.dialog.open(AuthModalComponent);
       dialog.afterClosed().subscribe(result => {
         if (!!req.callback && (result == 'signed-up' || result == 'logged-in')) {
           req.callback(result);
         }
       })
+    });
+
+    this.authService.displayVerificationRequired$.subscribe(() => {
+      this.dialog.open(VerifyModalComponent);
     })
+
   }
 
 

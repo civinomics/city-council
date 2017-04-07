@@ -25,6 +25,10 @@ export class VoteService {
           }, 1000);
         });
         return;
+      } else if (user.isVerified == false) {
+        console.debug('user is not verified.');
+        this.authService.showVerificationRequiredModal();
+        return;
       }
 
 
@@ -53,7 +57,7 @@ export class VoteService {
 
   private castNewVote(itemId: string, value: 1 | -1, user: SessionUser) {
     console.log(`casting new vote`);
-    let userDistrict = user.districts ? user.districts['id_acc'] : null;
+    let userDistrict = user.districts['id_acc'] || null;
 
     this.db.list(`/vote/${itemId}`).push({
       value,

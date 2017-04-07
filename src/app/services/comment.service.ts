@@ -28,9 +28,8 @@ export class CommentService {
         });
         return;
       } else if (user.isVerified == false) {
-        //TODO
-        //show verification reqd modal
-        //  return;
+        this.authService.showVerificationRequiredModal();
+        return;
       }
 
       console.log('user is verified - continuing');

@@ -21,6 +21,7 @@ import {MaterialModule} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MomentModule} from 'angular2-moment';
 import {AuthModalComponent} from './components/auth/auth-modal/auth-modal.component';
+import {VerifyModalComponent} from './components/auth/verify-modal/verify-modal.component';
 
 @NgModule({
 
@@ -48,10 +49,10 @@ import {AuthModalComponent} from './components/auth/auth-modal/auth-modal.compon
 
   ],
   declarations: [
-    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS, AuthModalComponent,
+    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS
   ],
   providers: [ ...APP_PROVIDERS ],
-  entryComponents: [AuthModalComponent],
+  entryComponents: [AuthModalComponent, VerifyModalComponent],
   bootstrap: [AppContainerComponent],
 })
 export class AppModule {
