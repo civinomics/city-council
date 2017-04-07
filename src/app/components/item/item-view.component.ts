@@ -13,6 +13,7 @@ import {animate, keyframes, state, style, transition, trigger} from '@angular/an
 import {Item} from '../../models/item';
 import {MdInputDirective} from '@angular/material';
 import {Vote} from '../../models/vote';
+import {Comment} from '../../models/comment';
 
 @Component({
   selector: 'civ-item-view',
@@ -58,19 +59,28 @@ import {Vote} from '../../models/vote';
   ]
 })
 export class ItemViewComponent implements OnInit, OnChanges {
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-  }
 
   @Input() item: Item;
   @Input() userVote: Vote | null;
+  @Input() userComment: Comment | null;
 
-  @Output() vote: EventEmitter<{ itemId: string, value: 1 | -1 }> = new EventEmitter();
 
-  userComment: string = '';
+  @Output() vote: EventEmitter<{ itemId: string, value: number }> = new EventEmitter();
+  @Output() comment: EventEmitter<{ itemId: string, text: string, role: string }> = new EventEmitter();
+
+  newComment: string;
 
   @ViewChild('addComment', { read: MdInputDirective }) addCommentInput: MdInputDirective;
   addCommentPlaceholder = 'why you haven\'t voted';
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    if (changes['userVote'] && changes['userVote'].previousValue == null && !!changes['userVote'].currentValue) {
+      if (!!this.addCommentInput) {
+        this.addCommentInput.focus();
+      }
+    }
+  }
 
 
   constructor() { }
@@ -79,20 +89,30 @@ export class ItemViewComponent implements OnInit, OnChanges {
   }
 
 
-  castVote(value: 1 | -1) {
+  castVote(value: number) {
     this.vote.emit({itemId: this.item.id, value});
   }
 
   postComment() {
-    this.userComment = this.addCommentInput.value;
-    this.addCommentInput.value = '';
+    let role = !this.userVote ? 'neutral' : this.userVote.value == 1 ? 'pro' : 'con';
+    this.comment.emit({itemId: this.item.id, text: this.newComment, role})
+  }
+
+  editComment(edited: { text?: string, role?: string }) {
+    console.log('editing comment');
+    let push = {
+      itemId: this.item.id,
+      role: edited.role || this.userComment.role,
+      text: edited.text || this.userComment.text
+    };
+    this.comment.emit(push);
   }
 
   share(provider: 'facebook' | 'google' | 'twitter') {
 
   }
 
-  get userVoteVal(): 1 | -1 | null {
+  get userVoteVal(): number | null {
     return !this.userVote ? null : this.userVote.value;
   }
 

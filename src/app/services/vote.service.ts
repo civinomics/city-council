@@ -13,11 +13,17 @@ export class VoteService {
 
   }
 
-  castVote(itemId: string, value: 1 | -1) {
+  public castVote(itemId: string, value: 1 | -1) {
     console.log('voting');
     this.authService.sessionUser$.take(1).subscribe(user => {
       if (!user) {
-        this.authService.requestAuthModal('We need you to sign in before voting.');
+        console.debug('no user signed in - opening modal');
+        this.authService.requestAuthModal('We need you to sign in before voting.', (result) => {
+          setTimeout(() => {
+            console.debug(`modal callback - result ${result} : casting again`);
+            this.castVote(itemId, value);
+          }, 1000);
+        });
         return;
       }
 

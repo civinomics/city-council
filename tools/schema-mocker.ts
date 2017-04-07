@@ -142,7 +142,7 @@ let _lastNo: number = 1;
 export function mockItem(input?: MockItemInput): Item {
   let itemNo = _lastNo++ % 100;
   return {
-    text: input && input.text || Faker.lorem.sentence(),
+    text: input && input.text || Faker.lorem.paragraph(),
     agendaNumber: input && input.agendaNumber || itemNo,
     id: randId('item'),
     feedbackDeadline: input && input.deadline || randTime(),
@@ -162,13 +162,13 @@ export function mockMeeting(input?: MockMeetingInput) {
 
 
   return {
-    title: `Regular Meeting of the Austin City Council: ${start.format('DD/MM/YY')}`,
+    title: `Regular Meeting of the Austin City Council`,
     startTime: start,
     endTime: end,
     feedbackDeadline: deadline,
     status,
     id: randId('meeting'),
-    owner: input && input.owner || adminId,
+    owner: input && input.owner || 'id_doug',
     agenda: []
   }
 }
@@ -214,7 +214,7 @@ export function schema(input?: MockSchemaInput): any {
   const MAX_VOTES_PER = 100;
 
   const MIN_COMMS_PER = 0;
-  const MAX_COMMS_PER = 0;
+  const MAX_COMMS_PER = 50;
 
 
   const DEFAULT_NUM_USERS = 200;

@@ -59,6 +59,15 @@ describe('database rules', () => {
     expect({uid: user2Id}).canWrite(`comment/id_with_votes_and_comments/fooId`, comment);
   });
 
+  it('should allow new user to write new user_private entry', () => {
+    const privateData = data.user_private.id_user_1;
+    const newId = 'fooId';
+
+    expect({uid: newId}).canWrite(`/user_private/${newId}`, privateData);
+
+
+  });
+
 
 });
 
@@ -86,6 +95,7 @@ const data = {
       address: {
         line1: '140 Jackson St',
         line2: '',
+        state: 'NY',
         city: 'Brooklyn',
         zip: '11211'
       },

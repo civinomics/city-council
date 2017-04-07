@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import {Entity, RawEntity} from './index';
+import {Entity, parseEntity, RawEntity} from './index';
 import {User} from './user';
 import Moment = moment.Moment;
 export type CommentRole = 'pro' | 'con' | 'neutral';
@@ -22,3 +22,18 @@ export type RawComment = RawEntity & {
 export type CommentWithAuthor = Comment & {
   author: User
 }
+
+export type NewCommentData = {
+  text: string,
+  role: string;
+}
+
+export const parseComment: (data: RawComment) => Comment = (data) => {
+  return {
+    ...parseEntity(data),
+    text: data.text,
+    role: data.role,
+    posted: moment(data.posted),
+    userDistrict: data.userDistrict
+  }
+};

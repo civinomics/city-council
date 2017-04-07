@@ -3,7 +3,7 @@ import {Entity, parseEntity, RawEntity} from './index';
 import Moment = moment.Moment;
 
 export interface Vote extends Entity {
-  value: 1 | -1;
+  value: number;
   posted: Moment;
   userDistrict: string | null,
 }

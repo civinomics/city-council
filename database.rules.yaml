@@ -4,7 +4,7 @@ functions:
   - commentExists(itemId, commId): root.comment[itemId][commId].exists()
   - voteExists(itemId, voteId): root.vote[itemId][voteId].exists()
   - userHasVotedOn(id): root.user_private[auth.uid].votes.exists() && root.user_private[auth.uid].votes[id].exists()
-  - userHasCommentedOn(id): root.user_private[auth.uid].comments[id].exists()
+  - userHasCommentedOn(id): root.user_private[auth.uid].comments.exists() && root.user_private[auth.uid].comments[id].exists()
   - itemOrCommentExists(id): root.item[id].exists() || root.comment[id].exists()
 root:
   user:
@@ -18,11 +18,13 @@ root:
   user_private:
     $id:
       .read/write: auth != null && auth.uid == $id
-      email: required string
+      isVerified: boolean
+      email: string
       address:
-        line1: required string
+        line1: string
         line2: string
-        city: required string
+        state: string
+        city: string
         zip: required
       votes:
         $itemId:
@@ -64,9 +66,9 @@ root:
         #they're posting a new comment and have not yet commented on this item, OR
         #they're editing an existing comment and are the owner of that comment
 
-      .write: auth != null && ((!data.exists() && !userHasCommentedOn($targetId)) || (data.exists() && data.owner == auth.uid))
 
       $commentId:
+        .write: auth != null && ((!data.exists() && !userHasCommentedOn($targetId)) || (data.exists() && data.owner == auth.uid))
         role: required string
         text: required string
         owner: newData.isString() && newData == auth.uid

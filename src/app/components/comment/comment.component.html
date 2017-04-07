@@ -1,0 +1,33 @@
+<div class="outer-wrapper">
+  <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="space-between center">
+    <div *ngIf="!isEditing" class="text-box">
+      {{comment.text}}
+    </div>
+    <button md-icon-button *ngIf="isEditing" (click)="toggleEditing()" [@resetBtn]>
+      <md-icon class="yellow">replay</md-icon>
+    </button>
+    <md-input-container *ngIf="isEditing">
+      <input type="text" mdInput #editInput [(ngModel)]="newText">
+    </md-input-container>
+
+    <button md-icon-button *ngIf="!isEditing" (click)="toggleEditing()" [@editBtn]>
+      <md-icon>edit</md-icon>
+    </button>
+
+
+  </div>
+  <div *ngIf="isEditing" fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="15px" [@editBtnRow]>
+    <button md-button class="red">
+      <div fxLayout="row" fxLayouGap="5px" (click)="delete()" fxLayoutAlign="start center">
+        <md-icon>close</md-icon>
+        <div class="button-text">Delete comment</div>
+      </div>
+    </button>
+    <button md-button class="green" [disabled]="newText == originalText" (click)="saveEdit()">
+      <div fxLayout="row" fxLayouGap="5px" fxLayoutAlign="start center">
+        <md-icon>check</md-icon>
+        <div class="button-text">Save changes</div>
+      </div>
+    </button>
+  </div>
+</div>

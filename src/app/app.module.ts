@@ -48,7 +48,7 @@ import {AuthModalComponent} from './components/auth/auth-modal/auth-modal.compon
 
   ],
   declarations: [
-    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS, AuthModalComponent
+    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS, AuthModalComponent,
   ],
   providers: [ ...APP_PROVIDERS ],
   entryComponents: [AuthModalComponent],
@@ -56,5 +56,7 @@ import {AuthModalComponent} from './components/auth/auth-modal/auth-modal.compon
 })
 export class AppModule {
 
+  constructor() {
 
+  }
 }

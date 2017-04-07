@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AngularFireAuth, AngularFireDatabase, AuthMethods, AuthProviders, FirebaseAuthState} from 'angularfire2';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {parseSessionUser, SessionUser, UserAddress} from '../models/user';
+import {EmailSignupData, parseSessionUser, SessionUser, UserAddress} from '../models/user';
 import {FirebaseError} from 'firebase/app';
 import {
   AUTH_ERRORED,
@@ -14,6 +14,8 @@ import {
 import {Store} from '@ngrx/store';
 import {AppState, getSessionUser, getSessionUserId} from '../reducers/index';
 import {Actions, Effect, toPayload} from '@ngrx/effects';
+
+const DEFAULT_ICON = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/User_font_awesome.svg/500px-User_font_awesome.svg.png';
 
 export type SocialAuthProvider = 'facebook' | 'twitter' | 'google';
 
@@ -76,6 +78,60 @@ export class AuthService {
     this.authBackend.logout();
   }
 
+  public emailSignin(data: EmailSignupData): Observable<SessionUser> {
+    this.sessionUserId$.subscribe(it => {
+      console.info(`pre callback - id: ${it}`)
+    });
+
+    this.authBackend.createUser({email: data.email, password: data.password}).then((state: FirebaseAuthState) => {
+      let id = state.uid;
+      console.info(`created ${id}`);
+      //can't push undefined values
+      let addr: UserAddress = {
+        line1: data.address.line1,
+        city: data.address.city,
+        state: data.address.state,
+        zip: data.address.zip
+      };
+
+      if (!!data.address.line2) {
+        addr.line2 = data.address.line2;
+      }
+
+      this.db.object(`/user/${id}`).update({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        icon: DEFAULT_ICON
+      }).then(() => {
+        console.info(`successfully created user/${id}`);
+      }).catch((err) => {
+        console.info(`error creating user/${id}`);
+        console.info(err);
+      });
+
+      console.info('mkay creating private - curr stateL');
+      console.info(this.authBackend.getAuth());
+      this.db.object(`/user_private/${id}`).update({
+        email: data.email,
+        address: addr,
+        isVerified: false,
+      }).then(res => {
+        console.info(`successfully created user_private/${id}`)
+      }).catch((err) => {
+        console.info(`error creating user_private/${id}`);
+        console.info(err);
+      });
+
+
+    }).catch(err => {
+      console.error(`error creating user: ${err.message}`);
+    });
+
+    return this.actions.ofType(SESSION_USER_LOADED)
+      .take(1)
+      .map(toPayload);
+  }
+
   public socialSignIn(provider: SocialAuthProvider): Observable<FirebaseAuthState> {
     this.doSocialLogin(provider);
 
@@ -97,7 +153,8 @@ export class AuthService {
     });
 
     return this.actions.ofType(SESSION_USER_LOADED)
-      .take(1);
+      .take(1)
+      .map(toPayload);
 
   }
 

@@ -26,7 +26,12 @@ export class AppContainerComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.authModalRequest$.subscribe(req => {
-      this.dialog.open(AuthModalComponent);
+      let dialog = this.dialog.open(AuthModalComponent);
+      dialog.afterClosed().subscribe(result => {
+        if (!!req.callback && (result == 'signed-up' || result == 'logged-in')) {
+          req.callback(result);
+        }
+      })
     })
   }
 

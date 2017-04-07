@@ -17,6 +17,7 @@ export type UserAddress = {
   line1: string;
   line2?: string;
   city: string;
+  state: string;
   zip: string;
 }
 
@@ -26,6 +27,7 @@ export interface SessionUser extends User {
   votes: { [id: string]: string }
   comments: { [id: string]: string }
   following: string[];
+  isVerified: boolean;
 }
 
 export type RawUser = RawEntity & {
@@ -40,11 +42,19 @@ export type RawSessionUser = {
   [P in keyof SessionUser]: SessionUser[P]
   }
 
+export type EmailSignupData = {
+  [P in 'firstName' | 'lastName' | 'address' | 'email']: SessionUser[P]
+  } & {
+  password: string;
+}
+
 export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) => {
   return {
     ...data,
     id: data.$key,
     joined: moment(data.joined),
-    lastOn: moment(data.lastOn)
+    isVerified: data.isVerified,
+    lastOn: moment(data.lastOn),
+    districts: data.districts || {}
   }
 };

@@ -1,0 +1,40 @@
+@import "../../../assets/style/all";
+
+:host {
+  display: block;
+}
+
+.outer-wrapper {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: mat-color($mat-grey, 200);
+  border: 1px solid mat-color($mat-grey, 500);
+
+}
+
+.text-box {
+  padding: 5px;
+  border-radius: 5px;
+  &.con {
+    background-color: mat-color($mat-red, A100);
+  }
+
+  &.pro {
+    background-color: mat-color($mat-green, A100);
+  }
+
+}
+
+md-icon, button[md-button]:not([disabled]) {
+  &.red {
+    color: mat-color($mat-red, 700);
+  }
+  &.green {
+    color: mat-color($mat-green, 700);
+  }
+  &.yellow {
+    color: mat-color($mat-yellow, 800);
+  }
+}
+
+

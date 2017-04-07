@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService, SocialAuthProvider} from '../../services/auth.service';
 import {BehaviorSubject, Subject} from 'rxjs';
-import {UserAddress} from '../../models/user';
+import {EmailSignupData, UserAddress} from '../../models/user';
 import {Router} from '@angular/router';
 
 @Component({
@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
   template: `
     <civ-sign-in-view (startSocial)="initSocialSignin($event)"
                       (completeSocial)="completeSocial($event)"
+                      (emailSignup)="emailSignup($event)"
                       [firstName]="(values$ | async).firstName"
                       [lastName]="(values$ | async).lastName"
                       [email]="(values$ | async).email"></civ-sign-in-view>
@@ -25,21 +26,27 @@ export class SignInContainerComponent implements OnInit {
 
   private _socialAccountInitiated: boolean = false;
 
-  constructor(private userSvc: AuthService, private router: Router) {
+  constructor(private authSvc: AuthService, private router: Router) {
 
   }
 
   ngOnInit() {
   }
 
+  emailSignup(data: EmailSignupData) {
+    this.authSvc.emailSignin(data).subscribe(user => {
+      this.router.navigate(['group', 'id_acc'])
+    })
+  }
+
   completeSocial(data: UserAddress) {
-    this.userSvc.completeSocialSignin(data).subscribe(user => {
-      this.router.navigate(['group', 'id-austin'])
+    this.authSvc.completeSocialSignin(data).subscribe(user => {
+      this.router.navigate(['group', 'id_acc'])
     })
   }
 
   initSocialSignin(provider: SocialAuthProvider) {
-    this.userSvc.socialSignIn(provider).subscribe(auth => {
+    this.authSvc.socialSignIn(provider).subscribe(auth => {
       console.info('Social signin result:');
       console.info(auth);
       if (!!auth && !!auth.auth) {

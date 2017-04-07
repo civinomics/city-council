@@ -13,29 +13,33 @@ export const createUserRecords = functions.auth.user().onCreate(event => {
 
   console.info(`Creating new records for user ${user.displayName} (id: ${user.uid})`);
 
-  const firstName = user.displayName.split(' ')[ 0 ];
-  const lastName = user.displayName.split(' ')[ 1 ];
+  if (!!user.displayName) {
 
-  database.ref(`/user/${user.uid}`).set({
-    firstName, lastName,
-    icon: user.photoURL,
-    joined: user.metadata.createdAt,
-    lastOn: user.metadata.lastSignedInAt
-  }).then(res => {
-    console.info(`created public record successfully for ${user.uid}`);
-  }, err => {
-    console.error(`error creating public record for ${user.uid}: `);
-    console.error(err.toString());
-  });
+    const firstName = user.displayName.split(' ')[0];
+    const lastName = user.displayName.split(' ')[1];
 
-  database.ref(`/user_private/${user.uid}`).set({
-    email: user.email,
-    isVerified: user.emailVerified == true
-  }).then(res => {
-    console.info(`created private record successfully for ${user.uid}`);
-  }, err => {
-    console.error(`error creating private record for ${user.uid}: `);
-    console.error(err.toString());
-  });
+    database.ref(`/user/${user.uid}`).set({
+      firstName, lastName,
+      icon: user.photoURL,
+      joined: user.metadata.createdAt,
+      lastOn: user.metadata.lastSignedInAt
+    }).then(res => {
+      console.info(`created public record successfully for ${user.uid}`);
+    }, err => {
+      console.error(`error creating public record for ${user.uid}: `);
+      console.error(err.toString());
+    });
+
+    database.ref(`/user_private/${user.uid}`).set({
+      email: user.email,
+      isVerified: user.emailVerified == true
+    }).then(res => {
+      console.info(`created private record successfully for ${user.uid}`);
+    }, err => {
+      console.error(`error creating private record for ${user.uid}: `);
+      console.error(err.toString());
+    });
+
+  }
 
 });
