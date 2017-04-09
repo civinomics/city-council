@@ -7,7 +7,7 @@ import {AppContainerComponent} from './components/app/app-container.component';
 import {AppRoutingModule} from './routing';
 import {StoreModule} from '@ngrx/store';
 import {rootReducer} from './reducers/index';
-import {CONTAINER_COMPONENTS, VIEW_COMPONENTS} from './components/index';
+import {CONTAINER_COMPONENTS, VIEW_COMPONENTS, VIEW_PROVIDERS} from './components/index';
 
 import 'hammerjs';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -17,9 +17,6 @@ import {APP_PROVIDERS} from './services/index';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {EffectsModule} from '@ngrx/effects';
 import {AuthService} from './services/auth.service';
-import {MaterialModule} from '@angular/material';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {MomentModule} from 'angular2-moment';
 import {AuthModalComponent} from './components/auth/auth-modal/auth-modal.component';
 import {VerifyModalComponent} from './components/auth/verify-modal/verify-modal.component';
 
@@ -31,12 +28,10 @@ import {VerifyModalComponent} from './components/auth/verify-modal/verify-modal.
     ReactiveFormsModule,
     HttpModule,
 
-    BrowserAnimationsModule,
-    MaterialModule,
-    FlexLayoutModule,
-    MomentModule,
-
     AppRoutingModule,
+
+    BrowserAnimationsModule,
+    VIEW_PROVIDERS,
 
     AngularFireModule.initializeApp(environment.firebase),
     StoreModule.provideStore(rootReducer),

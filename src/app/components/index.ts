@@ -16,6 +16,20 @@ import {AuthWidgetComponent} from './auth/auth-widget/auth-widget.component';
 import {CommentComponent} from './comment/comment.component';
 import {VerifyModalComponent} from './auth/verify-modal/verify-modal.component';
 import {AuthModalComponent} from './auth/auth-modal/auth-modal.component';
+import {
+  MdAutocompleteModule,
+  MdButtonModule,
+  MdCheckboxModule,
+  MdDialogModule,
+  MdIconModule,
+  MdInputModule,
+  MdMenuModule,
+  MdSelectModule,
+  MdToolbarModule,
+  MdTooltipModule
+} from '@angular/material';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {MomentModule} from 'angular2-moment';
 
 export const VIEW_COMPONENTS = [
   GroupViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent, SignInViewComponent, AuthWidgetComponent, CommentComponent, VerifyModalComponent, AuthModalComponent
@@ -23,5 +37,21 @@ export const VIEW_COMPONENTS = [
 
 export const CONTAINER_COMPONENTS = [
   AppContainerComponent, BrowseContainerComponent, ItemContainerComponent, MeetingContainerComponent, GroupContainerComponent, SignInContainerComponent, SplashComponent
+];
+
+export const VIEW_PROVIDERS = [
+  MdSelectModule,
+  MdButtonModule,
+  MdIconModule,
+  MdToolbarModule,
+  MdAutocompleteModule,
+  MdCheckboxModule,
+  MdInputModule,
+  MdTooltipModule,
+  MdMenuModule,
+  MdDialogModule,
+
+  FlexLayoutModule,
+  MomentModule,
 ];
 
