@@ -1,21 +1,23 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {values} from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Meeting} from '../../models/meeting';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Group} from '../../models/group';
 import {GroupService} from '../../services/group.service';
 import {MeetingService} from '../../services/meeting.service';
+import {AppFocusService} from '../../services/app-focus.service';
 
 @Component({
   selector: 'civ-group',
   template: `
-    <civ-group-view [group]="group$ | async"
-                    [meetings]="meetings$ | async"
-                    (showMeeting)="showMeeting($event)"
+    <router-outlet>
+      <civ-group-view [group]="group$ | async"
+                      [meetings]="meetings$ | async"
+                      (showMeeting)="showMeeting($event)"
 
-    ></civ-group-view>
+      ></civ-group-view>
+    </router-outlet>
   `,
   styles: [],
   host: {'[@host]': ''},
@@ -35,26 +37,16 @@ export class GroupContainerComponent implements OnInit {
   group$: Observable<Group>;
   meetings$: Observable<Meeting[]> = Observable.of([]);
 
-  constructor(private groupSvc: GroupService, private meetingSvc: MeetingService, private router: Router, private route: ActivatedRoute) {
-    this.group$ = this.route.params.map(params => params['groupId']).flatMap(it => this.groupSvc.get(it));
+  constructor(private groupSvc: GroupService, private meetingSvc: MeetingService, private router: Router, private route: ActivatedRoute, private focusSvc: AppFocusService) {
 
-    const mtgIds = this.group$.map(it => it.meetingIds).distinctUntilChanged((x, y) => x.length == y.length);
+    const groupId$ = this.route.params.map(params => params['groupId']);
 
-    const mtg$: Observable<{ [id: string]: Observable<Meeting> }> = mtgIds.map(ids => {
-      return ids.reduce((result, id) => ({...result, [id]: this.meetingSvc.get(id)}), {});
-    });
-
-    this.meetings$ = mtg$.flatMap(dict => Observable.merge(...values(dict)).scan((result: Meeting[], mtg: Meeting) => {
-      let ids = result.map(it => it.id);
-
-      return ids.indexOf(mtg.id) < 0 ? [...result, mtg] : result;
-    }, [])).startWith([]).distinctUntilChanged((x: Meeting[], y: Meeting[]) => x.length == y.length);
+    groupId$.subscribe(id => this.focusSvc.selectGroup(id));
 
 
-    this.meetings$.subscribe(it => {
-      console.log(it)
-    });
+    this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
 
+    this.meetings$ = this.groupSvc.getMeetingsOfSelectedGroup().map(arr => arr.filter(it => !!it));
 
 
   }

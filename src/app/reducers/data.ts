@@ -1,16 +1,17 @@
-import {schema} from 'normalizr';
-import {keys, values} from 'lodash';
 import {Place} from '../models/place';
-import {Meeting} from '../models/meeting';
-import {Item} from '../models/item';
+import {Meeting, meetingsEqual, mergeMeetings} from '../models/meeting';
+import {Item, itemsEqual, mergeItems} from '../models/item';
 import {Action} from '@ngrx/store';
-import {Group} from '../models/group';
+import {Group, groupsEqual, mergeGroups} from '../models/group';
+import {Vote, votesEqual} from '../models/vote';
 
 type StateEntities = {
   places: { [id: string]: Place },
   meetings: { [id: string]: Meeting },
   groups: { [id: string]: Group },
-  items: { [id: string]: Item }
+  items: { [id: string]: Item },
+  votes: { [id: string]: Vote },
+  comments: { [id: string]: Comment }
 };
 
 export type State = {
@@ -18,7 +19,9 @@ export type State = {
     places: string[],
     groups: string[],
     meetings: string[],
-    items: string[]
+    items: string[],
+    votes: string[],
+    comments: string[]
   },
   entities: StateEntities
 }
@@ -28,6 +31,9 @@ export const MEETING_LOADED = '[Data] meetingLoaded';
 export const PLACE_LOADED = '[Data] placeLoaded';
 export const ITEM_LOADED = '[Data] itemLoaded';
 export const GROUP_LOADED = '[Data] groupLoaded';
+export const ITEMS_LOADED = '[Data] itemsLoaded';
+export const VOTES_LOADED = '[Data] votesLoaded';
+
 
 export class MeetingLoadedAction implements Action {
   public readonly type = MEETING_LOADED;
@@ -48,6 +54,14 @@ export class ItemLoadedAction implements Action {
 }
 
 
+export class ItemsLoadedAction implements Action {
+  public readonly type = ITEMS_LOADED;
+
+  constructor(public readonly payload: Item[]) {
+  }
+}
+
+
 export class GroupLoadedAction implements Action {
   public readonly type = GROUP_LOADED;
 
@@ -56,22 +70,17 @@ export class GroupLoadedAction implements Action {
 }
 
 
-const itemSchema = new schema.Entity('items', {});
-const meetingSchema = new schema.Entity('meetings', { items: [ itemSchema ] });
-const groupSchema = new schema.Entity('groups', { meetings: [ meetingSchema ] });
-const placeSchema = new schema.Entity('places', { groups: [ groupSchema ] });
+export class VotesLoadedAction implements Action {
+  public readonly type = VOTES_LOADED;
+  public readonly payload: { votes: Vote[], itemId: string }
+
+  constructor(votes: Vote[], itemId: string) {
+    this.payload = {votes, itemId};
+  }
+}
 
 
 
-type NormalizeOutput = {
-  result: string,
-  entities: {
-    meetings: { [id: string]: Meeting },
-    items: { [id: string]: Item },
-    places: { [id: string]: Place },
-    groups: { [id: string]: Group }
-  },
-};
 
 const initialState = {
   ids: {
@@ -79,12 +88,16 @@ const initialState = {
     meetings: [],
     items: [],
     groups: [],
+    votes: [],
+    comments: []
   },
   entities: {
     places: {},
     meetings: {},
     items: {},
-    groups: {}
+    groups: {},
+    votes: {},
+    comments: {}
   }
 };
 
@@ -93,93 +106,208 @@ export function reducer(state: State = initialState, action: Action): State {
 
   switch (action.type) {
     case MEETING_LOADED:
-
-      let newMtgIds = state.ids.meetings.indexOf(action.payload.id) >= 0 ? state.ids.meetings : [...state.ids.meetings, action.payload.id];
-      let newMtgEnts = {...state.entities.meetings, [action.payload.id]: action.payload};
+      let meetingIds, meetings;
+      //if we already have a meeting with this ID in the cache:
+      if (state.ids.meetings.indexOf(action.payload.id) >= 0) {
+        //and there's nothing new about the data
+        if (meetingsEqual(state.entities.meetings[action.payload.id], action.payload)) {
+          //return the same object if nothing has changed to prevent unnecessary rerenders
+          return state;
+        }
+        //or if there is something new in the data, merge it into the cached object
+        meetingIds = state.ids;
+        meetings = {
+          ...state.entities.meetings,
+          [action.payload.id]: mergeMeetings(state.entities.meetings[action.payload.id], action.payload)
+        }
+      } else {
+        meetingIds = [...state.ids.meetings, action.payload.id];
+        meetings = {...state.entities.meetings, [action.payload.id]: action.payload};
+      }
 
       return {
         ids: {
           ...state.ids,
-          meetings: newMtgIds
+          meetings: meetingIds
         },
         entities: {
           ...state.entities,
-          meetings: newMtgEnts
+          meetings: meetings
         }
       };
     case GROUP_LOADED:
-
-      let newGrpIds = state.ids.groups.indexOf(action.payload.id) >= 0 ? state.ids.groups : [...state.ids.groups, action.payload.id];
-      let newGrpEnts = {...state.entities.groups, [action.payload.id]: action.payload};
-
+      let groupIds, groups;
+      if (state.ids.groups.indexOf(action.payload.id) >= 0) {
+        //and there's nothing new about the data
+        if (groupsEqual(state.entities.groups[action.payload.id], action.payload)) {
+          //return the same object if nothing has changed to prevent unnecessary rerenders
+          return state;
+        }
+        //or if there is something new in the data, merge it into the cached object
+        groupIds = state.ids;
+        groups = {
+          ...state.entities.groups,
+          [action.payload.id]: mergeGroups(state.entities.groups[action.payload.id], action.payload)
+        }
+      } else {
+        groupIds = [...state.ids.groups, action.payload.id];
+        groups = {...state.entities.groups, [action.payload.id]: action.payload};
+      }
       return {
         ids: {
           ...state.ids,
-          groups: newGrpIds
+          groups: groupIds
         },
         entities: {
           ...state.entities,
-          groups: newGrpEnts
+          groups: groups
         }
       };
 
     case ITEM_LOADED:
+      let itemIds, items;
+      if (state.ids.items.indexOf(action.payload.id) >= 0) {
+        //and there's nothing new about the data
+        if (itemsEqual(state.entities.items[action.payload.id], action.payload)) {
+          //return the same object if nothing has changed to prevent unnecessary rerenders
+          return state;
+        }
+        //or if there is something new in the data, merge it into the cached object
+        itemIds = state.ids;
+        items = {
+          ...state.entities.items,
+          [action.payload.id]: mergeItems(state.entities.items[action.payload.id], action.payload)
+        }
+      } else {
+        itemIds = [...state.ids.items, action.payload.id];
+        items = {...state.entities.items, [action.payload.id]: action.payload};
+      }
+      return {
+        ids: {
+          ...state.ids,
+          items: itemIds
+        },
+        entities: {
+          ...state.entities,
+          items: items
+        }
+      };
 
-      let newItemId = state.ids.items.indexOf(action.payload.id) >= 0 ? state.ids.items : [...state.ids.items, action.payload.id];
-      let newItemEnts = {...state.entities.items, [action.payload.id]: action.payload};
+    case ITEMS_LOADED:
+      let newItemIds = [], newItems = {};
+
+      let loadedItems = action.payload as Item[];
+
+      let changed = false;
+
+      loadedItems.forEach(item => {
+        if (state.ids.items.indexOf(item.id) >= 0) {
+          //and there's nothing new about the data
+          if (itemsEqual(state.entities.items[item.id], item)) {
+            //return the same object if nothing has changed to prevent unnecessary rerenders
+            return;
+          }
+          //or if there is something new in the data, merge it into the cached object
+          changed = true;
+          newItems[item.id] = mergeItems(state.entities.items[item.id], item);
+        } else {
+          changed = true;
+          newItemIds.push(item.id);
+          newItems[item.id] = item;
+        }
+      });
+
+      if (!changed) {
+        return state;
+      }
 
       return {
         ids: {
           ...state.ids,
-          items: newItemId
+          items: [...state.ids.items, ...newItemIds]
         },
         entities: {
           ...state.entities,
-          items: newItemEnts
+          items: {
+            ...state.entities.items,
+            ...newItems
+          }
+        }
+      };
+
+    case VOTES_LOADED:
+      let newVoteIds = [], newVotes = {};
+      let votes = action.payload.votes;
+
+      votes.forEach(vote => {
+        if (state.ids.votes.indexOf(vote.id) >= 0) {
+          //and there's nothing new about the data
+          if (votesEqual(state.entities.votes[vote.id], vote)) {
+            //return the same object if nothing has changed to prevent unnecessary rerenders
+            return;
+          }
+          //or if there is something new in the data, merge it into the cached object
+          newVotes[vote.id] = vote;
+        } else {
+          newVoteIds.push(vote.id);
+          newVotes[vote.id] = vote;
+        }
+
+      });
+
+
+      let newState = {
+        ids: {
+          ...state.ids,
+          votes: [...state.ids.votes, ...newVoteIds]
+        },
+        entities: {
+          ...state.entities,
+          votes: {
+            ...state.entities.votes,
+            ...newVotes
+          }
         }
       };
 
 
+      let itemId = action.payload.itemId;
 
-    /*
+      if (state.ids.items.indexOf(itemId) >= 0) {
+        //TODO consider case where vote is loaded before item
 
-     case ITEMS_LOADED:
-     normalized = normalize(action.payload, itemSchema);
-     return merge(normalized, state);
-     */
+        newState = {
+          ids: newState.ids,
+          entities: {
+            ...newState.entities,
+            items: {
+              ...newState.entities.items,
+              [itemId]: {
+                ...newState.entities.items[itemId],
+                voteIds: [...(newState.entities.items[itemId].voteIds || []), ...newVoteIds]
+              }
+            }
+          }
+        }
+      }
+
+      return newState;
+
+
 
     default:
       return state;
   }
 }
 
-function merge(normOutput: NormalizeOutput, state: State): State {
-
-  let newPlaceIds = keys(normOutput.entities.places).filter(id => state.ids.places.indexOf(id) < 0);
-  let newMeetingIds = keys(normOutput.entities.meetings).filter(id => state.ids.meetings.indexOf(id) < 0);
-  let newItemIds = keys(normOutput.entities.items).filter(id => state.ids.items.indexOf(id) < 0);
-  let newGroupIds = keys(normOutput.entities.groups).filter(id => state.ids.groups.indexOf(id) < 0);
-
-  return {
-    ids: {
-      places: [ ...state.ids.places, ...newPlaceIds ],
-      groups: [ ...state.ids.groups, ...newGroupIds ],
-      meetings: [ ...state.ids.meetings, ...newMeetingIds ],
-      items: [ ...state.ids.items, ...newItemIds ],
-    },
-    entities: {
-      places: { ...state.entities.places, ...normOutput.entities.places },
-      groups: { ...state.entities.groups, ...normOutput.entities.groups },
-      meetings: { ...state.entities.meetings, ...normOutput.entities.meetings },
-      items: { ...state.entities.items, ...normOutput.entities.items },
-    }
-  };
-
-}
-
 export const getEntities = (state: State) => state.entities;
 export const getPlaceEntities = (state: State) => state.entities.places;
+export const getMeetingIds = (state: State) => state.ids.meetings;
 export const getMeetingEntities = (state: State) => state.entities.meetings;
+export const getItemIds = (state: State) => state.ids.items;
 export const getItemEntities = (state: State) => state.entities.items;
 export const getGroupEntities = (state: State) => state.entities.groups;
+export const getGroupIds = (state: State) => state.ids.groups;
+export const getVoteIds = (state: State) => state.ids.votes;
+export const getVoteEntities = (state: State) => state.entities.votes;
 

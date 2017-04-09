@@ -57,9 +57,9 @@ export class BrowseContainerComponent implements OnInit, OnChanges {
     }))
       .distinctUntilChanged((x, y) => x.group == y.group && x.meeting == y.meeting && x.item == y.item);
 
-    this.focusedGroup$ = focus.map(it => it.group).flatMap(id => !!id ? this.groupSvc.get(id) : Observable.of(null));
-    this.focusedMeeting$ = focus.map(it => it.meeting).flatMap(id => !!id ? this.meetingSvc.get(id) : Observable.of(null));
-    this.focusedItem$ = focus.map(it => it.item).flatMap(id => !!id ? this.itemSvc.get(id) : Observable.of(null));
+    this.focusedGroup$ = groupSvc.getSelectedGroup();
+    this.focusedMeeting$ = meetingSvc.getSelectedMeeting();
+    this.focusedItem$ = itemSvc.getSelectedItem();
 
 
     focus.subscribe(it => console.log(it));

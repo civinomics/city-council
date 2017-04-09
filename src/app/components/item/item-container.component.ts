@@ -10,6 +10,7 @@ import {Vote} from '../../models/vote';
 import {Comment} from '../../models/comment';
 
 import {CommentService} from '../../services/comment.service';
+import {AppFocusService} from '../../services/app-focus.service';
 
 @Component({
   selector: 'civ-item-container',
@@ -28,15 +29,24 @@ export class ItemContainerComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute,
               private itemSvc: ItemService,
-              private voteSvc: VoteService, private commentSvc: CommentService) {
+              private voteSvc: VoteService, private commentSvc: CommentService, private focusSvc: AppFocusService) {
 
   }
 
 
   ngOnInit() {
     const itemId = this.route.params.map(params => params['itemId']);
-    this.item$ = itemId.flatMap(it => this.itemSvc.get(it));
-    this.userVote$ = itemId.flatMap(itemId => this.voteSvc.getUserVoteFor(itemId));
+
+    this.route.params.subscribe(params => {
+      this.focusSvc.selectItem(params['itemId']);
+      this.focusSvc.selectGroup(params['groupId']);
+      this.focusSvc.selectMeeting(params['meetingId']);
+
+    });
+
+
+    this.item$ = this.itemSvc.getSelectedItem();
+    this.userVote$ = this.voteSvc.getUserVoteForSelectedItem();
     this.userComment$ = itemId.flatMap(itemId => this.commentSvc.getUserCommentFor(itemId));
   }
 

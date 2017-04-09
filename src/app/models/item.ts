@@ -5,7 +5,7 @@ import Moment = moment.Moment;
 
 export type ItemStatus = 'CITIZEN_PROPOSAL' | 'ON_AGENDA';
 
-export type ItemActivityAdt = {
+export type ItemActivitySummary = {
   comments: {
     total: number;
   };
@@ -18,9 +18,11 @@ export type ItemActivityAdt = {
 export interface Item extends Entity {
   text: string;
   sireLink: string;
-  activity?: ItemActivityAdt;
   agendaNumber: number;
   feedbackDeadline: Moment;
+  activity?: ItemActivitySummary;
+  voteIds?: string[],
+  commentIds?: string[]
 }
 
 //export const ItemSchema
@@ -28,7 +30,7 @@ export interface Item extends Entity {
 export type RawItem = RawEntity & {
   [P in 'text' | 'sireLink' | 'agendaNumber']: Item[P];
   } & {
-  activity?: ItemActivityAdt;
+  activity?: ItemActivitySummary;
 } & {
   [P in 'posted' | 'feedbackDeadline']: string
   } & {
@@ -47,7 +49,6 @@ export const parseItem: (it: RawItem | any) => Item = (it) => {
   return {
     ...it,
     id: it.$key || it.id,
-    posted: moment(it.posted),
     feedbackDeadline: moment(it.feedbackDeadline),
     agendaNumber: it.agendaNumber,
     activity: it.activity
@@ -55,7 +56,17 @@ export const parseItem: (it: RawItem | any) => Item = (it) => {
 }
 
 export const itemsEqual: (x: Item, y: Item) => boolean = (x, y) => {
-  //TODO
-  return x.id == y.id;
-
+  if (x.id != y.id || x.text != y.text || x.sireLink != y.sireLink || x.agendaNumber != y.agendaNumber) {
+    return false;
+  }
+  if (x.activity != y.activity) {
+    return false;
+  }
+  return true;
 };
+
+export function mergeItems(prev: Item, next: Item): Item {
+  let voteIds = [...(prev.voteIds || []), ...(next.voteIds || []).filter(id => (prev.voteIds || []).indexOf(id) < 0)];
+
+  return {...prev, ...next, voteIds};
+}

@@ -19,6 +19,10 @@ import {EffectsModule} from '@ngrx/effects';
 import {AuthService} from './services/auth.service';
 import {AuthModalComponent} from './components/auth/auth-modal/auth-modal.component';
 import {VerifyModalComponent} from './components/auth/verify-modal/verify-modal.component';
+import {MeetingService} from './services/meeting.service';
+import {GroupService} from './services/group.service';
+import {ItemService} from './services/item.service';
+import {VoteService} from './services/vote.service';
 
 @NgModule({
 
@@ -40,6 +44,10 @@ import {VerifyModalComponent} from './components/auth/verify-modal/verify-modal.
     EffectsModule,
 
     EffectsModule.run(AuthService),
+    EffectsModule.run(MeetingService),
+    EffectsModule.run(GroupService),
+    EffectsModule.run(ItemService),
+    EffectsModule.run(VoteService)
 
 
   ],

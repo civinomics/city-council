@@ -5,13 +5,38 @@ import {AngularFireDatabase} from 'angularfire2';
 import {Observable} from 'rxjs';
 import {parseVote, Vote} from '../models/vote';
 import {SessionUser} from '../models/user';
+import {Actions, Effect, toPayload} from '@ngrx/effects';
+import {Store} from '@ngrx/store';
+import {AppState, getSessionUser, getUserVoteForSelectedItem} from '../reducers/index';
+import {SELECT_ITEM} from '../reducers/focus';
+import {VotesLoadedAction} from '../reducers/data';
 
 @Injectable()
 export class VoteService {
+  @Effect()
+  loadSessionUserVoteForSelectedItemEffect =
+    this.store.select(getSessionUser)
+      .withLatestFrom(this.actions.ofType(SELECT_ITEM)
+        .map(toPayload)
+        .filter(it => !!it))
+      .do((x) => {
+        console.log(`yup`);
+        console.log(x)
+      })
+      .filter(([user, itemId]) => !!user && !!user.votes[itemId])
+      .flatMap(([user, itemId]) => this.loadSingleVote(itemId, user.votes[itemId]).map(vote => new VotesLoadedAction([vote], itemId)));
 
-  constructor(private authService: AuthService, private db: AngularFireDatabase) {
+
+  @Effect()
+  loadVotesForSelectedItemEffect = this.actions.ofType(SELECT_ITEM)
+    .map(toPayload)
+    .filter(it => !!it)
+    .flatMap(id => this.loadVotesForItem(id).take(1).map(votes => new VotesLoadedAction(votes, id)));
+
+  constructor(private authService: AuthService, private db: AngularFireDatabase, private store: Store<AppState>, private actions: Actions, private authSvc: AuthService) {
 
   }
+
 
   public castVote(itemId: string, value: 1 | -1) {
     console.log('voting');
@@ -44,6 +69,16 @@ export class VoteService {
 
 
     })
+  }
+
+
+  private loadVotesForItem(itemId: string): Observable<Vote[]> {
+    return this.db.list(`/vote/${itemId}`).map(votes => votes.map(vote => parseVote(vote)));
+  }
+
+  private loadSingleVote(itemId: string, voteId: string): Observable<Vote> {
+    console.log('loading single vote');
+    return this.db.object(`/vote/${itemId}/${voteId}`).map(vote => parseVote(vote));
   }
 
   private changeVote(itemId: string, voteId: string, value: 1 | -1) {
@@ -83,6 +118,10 @@ export class VoteService {
     this.db.object(`/user_private/${userId}/votes/${itemId}`).remove()
       .then(() => console.info(`successfully deleted /user_private/${userId}/votes/${voteId}`))
       .catch((err) => `error deleting user vote entry: ${err.message}`);
+  }
+
+  getUserVoteForSelectedItem() {
+    return this.store.select(getUserVoteForSelectedItem);
   }
 
   getUserVoteFor(itemId: string): Observable<Vote | null> {

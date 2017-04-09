@@ -24,3 +24,21 @@ export function parseGroup(data: RawGroup): Group {
     districts: data.districts.map(it => parseOffice(it))
   }
 }
+
+export function groupsEqual(x: Group, y: Group): boolean {
+  if (x.id != y.id || x.icon != y.icon) {
+    return false;
+  }
+  if (x.meetingIds.join('_') != y.meetingIds.join('_')) {
+    return false;
+  }
+  if (x.districts.map(it => it.id).join('_') != y.districts.map(it => it.id).join('_')) {
+    return false;
+  }
+  return true;
+}
+
+export function mergeGroups(prev: Group, next: Group) {
+  return {...prev, ...next};
+}
+

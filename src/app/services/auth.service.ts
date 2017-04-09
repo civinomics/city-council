@@ -3,6 +3,8 @@ import {AngularFireAuth, AngularFireDatabase, AuthMethods, AuthProviders, Fireba
 import {BehaviorSubject, Observable, Observer, Subject} from 'rxjs';
 import {EmailSignupData, parseSessionUser, SessionUser, UserAddress} from '../models/user';
 import {FirebaseError} from 'firebase/app';
+import * as firebase from 'firebase';
+
 import {
   AUTH_ERRORED,
   AUTH_STATE_CHANGED,
@@ -14,6 +16,8 @@ import {
 import {Store} from '@ngrx/store';
 import {AppState, getSessionUser, getSessionUserId} from '../reducers/index';
 import {Actions, Effect, toPayload} from '@ngrx/effects';
+
+import AuthProvider = firebase.auth.AuthProvider;
 
 const DEFAULT_ICON = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/User_font_awesome.svg/500px-User_font_awesome.svg.png';
 
@@ -54,6 +58,11 @@ export class AuthService {
   public readonly displayAuthModal$ = this.authModalReq$.skip(1).share();
   public readonly displayVerificationRequired$ = this.verificationRequiredReq$.skip(1).share();
 
+  private socialSigninRequest$: Subject<AuthProvider> = new BehaviorSubject(null);
+  private emailSigninRequest$: Subject<{ email: string, password: string }> = new BehaviorSubject(null);
+  private logoutRequest$: Subject<any> = new BehaviorSubject(null);
+
+
   constructor(private authBackend: AngularFireAuth,
               private db: AngularFireDatabase,
               private store: Store<AppState>,
@@ -67,8 +76,24 @@ export class AuthService {
         this.store.dispatch(new AuthStateChangedAction(state));
       });
 
+    const SOCIAL_SIGNIN = 'SOCIAL_SIGNIN';
+    const EMAIL_SIGNIN = 'EMAIL_SIGNIN';
+    const SIGN_OUT = 'SIGN_OUT';
 
-    //whenever the auth state changes, check our user record
+    const authRequests$ = Observable.merge(
+      this.socialSigninRequest$.skip(1).map(provider => ({type: SOCIAL_SIGNIN, provider})),
+      this.emailSigninRequest$.skip(1).map(creds => ({
+        type: EMAIL_SIGNIN,
+        email: creds.email,
+        password: creds.password
+      })),
+      this.logoutRequest$.skip(1).map(() => ({type: SIGN_OUT}))
+    );
+
+    authRequests$.withLatestFrom(this.authBackend);
+
+
+    //whenever the auth state changes, check our user record and u
     this.authBackend
       .filter(it => !!it && !!it.auth)
       .distinctUntilChanged()

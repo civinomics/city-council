@@ -6,6 +6,7 @@ import {Meeting} from '../../models/meeting';
 import {Item} from '../../models/item';
 import {MeetingService} from '../../services/meeting.service';
 import {ItemService} from '../../services/item.service';
+import {AppFocusService} from '../../services/app-focus.service';
 
 @Component({
   selector: 'civ-meeting-container',
@@ -34,24 +35,19 @@ export class MeetingContainerComponent implements OnInit {
   items$: Observable<Item[]>;
 
 
-  constructor(private meetingSvc: MeetingService, private itemSvc: ItemService, private router: Router, private route: ActivatedRoute) {
+  constructor(private meetingSvc: MeetingService, private itemSvc: ItemService, private router: Router, private route: ActivatedRoute, private focusSvc: AppFocusService) {
     const id$ = this.route.params.map(params => params['meetingId']).distinctUntilChanged();
 
-    this.meeting$ = id$
-      .flatMap(it => this.meetingSvc.get(it));
+    this.route.params.subscribe(params => {
+      this.focusSvc.selectItem(params['itemId']);
+      this.focusSvc.selectGroup(params['groupId']);
+      this.focusSvc.selectMeeting(params['meetingId']);
+    });
 
-    /* const agendaIds = this.meeting$
-     .map(mtg => mtg.agendaIds)
-     .distinctUntilChanged((x, y) => x.length == y.length);
 
-     this.items$ = agendaIds
-     .take(1)
-     .flatMap(ids => Observable.forkJoin(...ids.map(id => this.itemSvc.get(id, true).take(1))));
-     */
+    this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
 
-    this.items$ = id$.flatMap(id => this.meetingSvc.getMeetingAgenda(id).take(1));
-
-    this.items$.subscribe(it => console.log(it));
+    this.items$ = this.meetingSvc.getAgendaItemsOfSelectedMeeting().map(arr => arr.filter(it => !!it));
 
     /*
     this.items$ = this.meeting$

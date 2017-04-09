@@ -15,8 +15,8 @@ export interface AppState {
 
 const reducers = {
   auth: fromAuth.reducer,
-  // focus: fromFocus.reducer,
-  //s data: fromData.reducer
+  focus: fromFocus.reducer,
+  data: fromData.reducer
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(combineReducers)(reducers);
@@ -70,6 +70,14 @@ export const getEntities = createSelector(getDataState, fromData.getEntities);
 export const getItems = createSelector(getDataState, fromData.getItemEntities);
 export const getMeetings = createSelector(getDataState, fromData.getMeetingEntities);
 export const getGroups = createSelector(getDataState, fromData.getGroupEntities);
+export const getVotes = createSelector(getDataState, fromData.getVoteEntities);
+
+export const getLoadedItemIds = createSelector(getDataState, fromData.getItemIds);
+export const getLoadedGroupIds = createSelector(getDataState, fromData.getGroupIds);
+export const getLoadedMeetingIds = createSelector(getDataState, fromData.getMeetingIds);
+export const getLoadedVoteIds = createSelector(getDataState, fromData.getVoteIds);
+
+
 
 export const getFocusedGroup = createSelector(getFocusedGroupId, getGroups, (groupId, groups) => {
   console.log('getFocusedGroup firing');
@@ -84,4 +92,27 @@ export const getFocusedMeeting = createSelector(getFocusedMeetingId, getMeetings
 
 export const getFocusedItem = createSelector(getFocusedItemId, getItems, (itemId, items) => {
   return !itemId || !items[itemId] ? null : items[itemId];
+});
+
+
+export const getMeetingsOfSelectedGroup = createSelector(getFocusedGroup, getMeetings, (group, meetings) => {
+  if (group == null) {
+    return []
+  }
+  return group.meetingIds.map(id => meetings[id]);
+});
+
+export const getItemsOnSelectedMeetingAgenda = createSelector(getFocusedMeeting, getItems, (meeting, items) => {
+  if (meeting == null) {
+    return []
+  }
+  return meeting.agendaIds.map(id => items[id]);
+});
+
+export const getUserVoteForSelectedItem = createSelector(getSessionUser, getFocusedItemId, getVotes, (user, itemId, votes) => {
+  if (!user || !itemId || !user.votes[itemId]) {
+    return null;
+  }
+  return votes[user.votes[itemId]];
+
 });

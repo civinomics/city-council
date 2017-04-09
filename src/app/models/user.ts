@@ -55,6 +55,8 @@ export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) =>
     joined: moment(data.joined),
     isVerified: data.isVerified,
     lastOn: moment(data.lastOn),
-    districts: data.districts || {}
+    districts: data.districts || {},
+    votes: data.votes || {},
+    comments: data.comments || {}
   }
 };

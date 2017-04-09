@@ -50,6 +50,7 @@ export class SignInContainerComponent implements OnInit {
       console.info('Social signin result:');
       console.info(auth);
       if (!!auth && !!auth.auth) {
+
         let firstName, lastName, email;
         if (!auth.auth.displayName) {
           console.error(`Account initiated but we didn't get a name`);

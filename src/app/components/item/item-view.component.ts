@@ -64,6 +64,7 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @Input() userVote: Vote | null;
   @Input() userComment: Comment | null;
 
+  @Input() votes: Vote[];
 
   @Output() vote: EventEmitter<{ itemId: string, value: number }> = new EventEmitter();
   @Output() comment: EventEmitter<{ itemId: string, text: string, role: string }> = new EventEmitter();

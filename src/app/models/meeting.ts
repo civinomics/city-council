@@ -41,6 +41,17 @@ export const parseMeeting: (data: RawMeeting) => Meeting = (data: RawMeeting) =>
 };
 
 export const meetingsEqual: (x: Meeting, y: Meeting) => boolean = (x, y) => {
-  //TODO
-  return x.id == y.id
+  if (x.id != y.id || x.title != y.title || x.status != y.status) {
+    return false;
+  }
+  if (x.agendaIds.join('_') != y.agendaIds.join('_')) {
+    return false;
+  }
+  return true;
+};
+
+export const mergeMeetings: (prev: Meeting, next: Meeting) => Meeting = (prev, next) => {
+  return {
+    ...prev, ...next
+  }
 };

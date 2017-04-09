@@ -11,11 +11,15 @@ export interface Vote extends Entity {
 export type RawVote = RawEntity & {[P in 'value' | 'userDistrict']: Vote[P]} & { posted: string };
 
 export function parseVote(data: RawVote): Vote {
-  console.log(data);
+
   return {
     ...parseEntity(data),
     value: data.value,
     posted: moment(data.posted),
     userDistrict: data.userDistrict || null
   }
+}
+
+export function votesEqual(x: Vote, y: Vote) {
+  return (x.id == y.id && x.value == y.value && x.userDistrict == y.userDistrict);
 }

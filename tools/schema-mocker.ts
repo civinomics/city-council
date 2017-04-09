@@ -84,7 +84,7 @@ function randRole(): 'pro' | 'con' | 'neutral' {
   }
 }
 
-/*function randItemActivity(): ItemActivityAdt {
+/*function randItemActivity(): ItemActivitySummary {
  let pros = random(0, 50),
  cons = random(0, 50),
  yeses = random(0, 100),
