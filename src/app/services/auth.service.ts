@@ -6,9 +6,7 @@ import {FirebaseError} from 'firebase/app';
 import * as firebase from 'firebase';
 
 import {
-  AUTH_ERRORED,
   AUTH_STATE_CHANGED,
-  AuthErroredAction,
   AuthStateChangedAction,
   SESSION_USER_LOADED,
   SessionUserLoadedAction
@@ -24,7 +22,10 @@ const DEFAULT_ICON = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/
 export type SocialAuthProvider = 'facebook' | 'twitter' | 'google';
 
 export type AuthModalRequestOutcome = 'logged-in' | 'signed-up' | 'none';
-export type AuthModalRequest = { message?: string, callback?: (outcome: AuthModalRequestOutcome) => any }
+export type AuthModalRequest = { message?: string, callback?: (outcome: AuthResult) => any }
+export type AuthResult =
+  { success: true, extantAccount: boolean, resultantState: FirebaseAuthState }
+  | { success: false, error: FirebaseError, resultantState: FirebaseAuthState };
 
 @Injectable()
 export class AuthService {
@@ -113,7 +114,7 @@ export class AuthService {
 
   }
 
-  public requestAuthModal(message?: string, callback?: (outcome: AuthModalRequestOutcome) => any) {
+  public requestAuthModal(message?: string, callback?: (outcome: AuthResult) => any) {
     this.authModalReq$.next({message, callback});
   }
 
@@ -150,8 +151,6 @@ export class AuthService {
         console.info(err);
       });
 
-      console.info('mkay creating private - curr stateL');
-      console.info(this.authBackend.getAuth());
       this.db.object(`/user_private/${id}`).update({
         email: data.email,
         address: addr,
@@ -169,8 +168,12 @@ export class AuthService {
         })
 
 
-    }).catch(err => {
+      }).catch((err: FirebaseError) => {
       console.error(`error creating user: ${err.message}`);
+      if (err.code == 'auth/email-already-in-use') {
+        console.info(`email already in use - attempting to sign in to extant account with given creds`);
+        this.authBackend.login({password: data.password, email: data.email})
+      }
     });
 
     return this.actions.ofType(SESSION_USER_LOADED)
@@ -178,13 +181,8 @@ export class AuthService {
       .map(toPayload);
   }
 
-  public socialSignIn(provider: SocialAuthProvider): Observable<FirebaseAuthState> {
-    this.doSocialLogin(provider);
-
-    return this.actions.ofType(AUTH_STATE_CHANGED)
-      .map(action => action.payload)
-      .filter(auth => !!auth && !!auth.auth)
-      .takeUntil(this.actions.ofType(AUTH_ERRORED));
+  public socialSignIn(provider: SocialAuthProvider): Observable<AuthResult> {
+    return this.doSocialLogin(provider);
   }
 
   public completeSocialSignin(data: UserAddress): Observable<SessionUser> {
@@ -225,19 +223,32 @@ export class AuthService {
   }
 
 
-  private doSocialLogin(provider: SocialAuthProvider): void {
-    let arg = provider == 'facebook' ? {
-      provider: providerMap[ provider ],
-      method: AuthMethods.Popup,
-      scope: [ 'email' ]
-    } : {
-      provider: providerMap[ provider ],
-      method: AuthMethods.Popup,
-    };
-    this.authBackend.login(arg).then((it: FirebaseAuthState) => {
+  private doSocialLogin(provider: SocialAuthProvider): Observable<AuthResult> {
+    return Observable.create((observer: Observer<AuthResult>) => {
 
-    }).catch((err: FirebaseError) => {
-      this.store.dispatch(new AuthErroredAction(err));
+      let arg = provider == 'facebook' ? {
+        provider: providerMap[provider],
+        method: AuthMethods.Popup,
+        scope: ['email']
+      } : {
+        provider: providerMap[provider],
+        method: AuthMethods.Popup,
+      };
+
+      this.authBackend.login(arg).then((resultantState: FirebaseAuthState) => {
+        this.db.object(`/user_private/${resultantState.uid}`).take(1).subscribe(val => {
+          if (val.$exists) {
+            observer.next({success: true, extantAccount: true, resultantState});
+          } else {
+            observer.next({success: true, extantAccount: false, resultantState});
+          }
+          observer.complete();
+        })
+      }).catch((error: FirebaseError) => {
+        observer.next({success: false, error, resultantState: null});
+        observer.complete();
+      });
+
     });
   }
 

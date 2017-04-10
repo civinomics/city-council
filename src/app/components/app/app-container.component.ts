@@ -29,7 +29,7 @@ export class AppContainerComponent implements OnInit {
     this.authService.displayAuthModal$.subscribe(req => {
       let dialog = this.dialog.open(AuthModalComponent);
       dialog.afterClosed().subscribe(result => {
-        if (!!req.callback && (result == 'signed-up' || result == 'logged-in')) {
+        if (!!req.callback) {
           req.callback(result);
         }
       })

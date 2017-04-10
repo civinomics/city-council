@@ -47,7 +47,7 @@ export class VoteService {
           setTimeout(() => {
             console.debug(`modal callback - result ${result} : casting again`);
             this.castVote(itemId, value);
-          }, 1000);
+          });
         });
         return;
       } else if (user.isVerified == false) {
