@@ -32,7 +32,7 @@ export const createUserRecords = functions.auth.user().onCreate(event => {
 
     database.ref(`/user_private/${user.uid}`).set({
       email: user.email,
-      isVerified: user.emailVerified == true
+      isVerified: true
     }).then(res => {
       console.info(`created private record successfully for ${user.uid}`);
     }, err => {

@@ -2,6 +2,8 @@
 
 /functions/node_modules
 /functions/creds.json
+/funtions/*.js
+/functions/*js.map
 #only track the yaml version
 database.rules.json
 
@@ -14,7 +16,7 @@ database.rules.json
 /node_modules
 
 # IDEs and editors
-/.idea
+**/.idea
 .project
 .classpath
 .c9/
