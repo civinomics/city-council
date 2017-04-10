@@ -8,13 +8,16 @@ import {BehaviorSubject, Subject} from 'rxjs';
 @Component({
   selector: 'civ-auth-modal',
   template: `
-    <civ-sign-in-view (startSocial)="initSocialSignin($event)"
-                      (completeSocial)="completeSocial($event)"
-                      (emailSignup)="emailSignup($event)"
-                      [firstName]="(values$ | async).firstName"
-                      [lastName]="(values$ | async).lastName"
-                      [email]="(values$ | async).email"></civ-sign-in-view>`,
-  styleUrls: ['./auth-modal.component.scss']
+    <md-dialog-content style="max-height:90vh">
+      <civ-sign-in-view
+        (startSocial)="initSocialSignin($event)"
+        (completeSocial)="completeSocial($event)"
+        (emailSignup)="emailSignup($event)"
+        [firstName]="(values$ | async).firstName"
+        [lastName]="(values$ | async).lastName"
+        [email]="(values$ | async).email"></civ-sign-in-view>
+    </md-dialog-content>
+  `
 })
 export class AuthModalComponent implements OnInit {
   private _socialAccountInitiated: boolean = false;

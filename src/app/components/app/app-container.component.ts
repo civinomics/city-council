@@ -27,7 +27,9 @@ export class AppContainerComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.displayAuthModal$.subscribe(req => {
-      let dialog = this.dialog.open(AuthModalComponent);
+      let dialog = this.dialog.open(AuthModalComponent, {
+        height: '90vh'
+      });
       dialog.afterClosed().subscribe(result => {
         if (!!req.callback) {
           req.callback(result);

@@ -7,6 +7,9 @@ $google-orange: #dd4b39;
 :host {
   display: block;
   padding-top: 20px;
+  @include mq-xs {
+    padding-top: 10px;
+  }
   .outer > div {
     margin-bottom: 20px;
   }
@@ -54,10 +57,11 @@ $google-orange: #dd4b39;
 }
 
 .signup-form {
-  width: 80%;
+  // width: 80%;
   border-radius: 5px;
   padding: 10px;
   border: 1px solid mat-color($mat-grey, 500);
+
   @include mq-gt-xs {
     width: 520px;
   }

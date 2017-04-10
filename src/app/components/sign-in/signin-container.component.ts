@@ -46,27 +46,32 @@ export class SignInContainerComponent implements OnInit {
   }
 
   initSocialSignin(provider: SocialAuthProvider) {
-    this.authSvc.socialSignIn(provider).subscribe(auth => {
+    this.authSvc.socialSignIn(provider).subscribe(result => {
       console.info('Social signin result:');
-      console.info(auth);
-      if (!!auth && !!auth.auth) {
+      console.info(result);
 
-        let firstName, lastName, email;
-        if (!auth.auth.displayName) {
-          console.error(`Account initiated but we didn't get a name`);
-          firstName = lastName = ''
+      if (result.success == true) {
+        if (result.extantAccount) {
+          this.router.navigate(['group', 'id_acc'])
         } else {
-          firstName = auth.auth.displayName.split(' ')[ 0 ];
-          lastName = auth.auth.displayName.split(' ')[ 1 ];
+          let authInfo = result.resultantState.auth;
+          let firstName, lastName, email;
+          if (!authInfo.displayName) {
+            console.error(`Account initiated but we didn't get a name`);
+            firstName = lastName = ''
+          } else {
+            firstName = authInfo.displayName.split(' ')[0];
+            lastName = authInfo.displayName.split(' ')[1];
+          }
+
+          email = authInfo.email;
+
+          this._socialAccountInitiated = true;
+
+          this.values$.next({firstName, lastName, email});
         }
-
-        email = auth.auth.email;
-
-        this._socialAccountInitiated = true;
-
-        this.values$.next({ firstName, lastName, email });
-
       }
+
     })
   }
 
