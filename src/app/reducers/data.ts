@@ -3,14 +3,14 @@ import {Meeting, meetingsEqual, mergeMeetings} from '../models/meeting';
 import {Item, itemsEqual, mergeItems} from '../models/item';
 import {Action} from '@ngrx/store';
 import {Group, groupsEqual, mergeGroups} from '../models/group';
-import {Vote, votesEqual} from '../models/vote';
+import {mergeVotes, Vote, votesEqual} from '../models/vote';
 
 type StateEntities = {
   places: { [id: string]: Place },
   meetings: { [id: string]: Meeting },
   groups: { [id: string]: Group },
   items: { [id: string]: Item },
-  votes: { [id: string]: Vote },
+  votes: { [id: string]: { [id: string]: Vote } },
   comments: { [id: string]: Comment }
 };
 
@@ -20,7 +20,7 @@ export type State = {
     groups: string[],
     meetings: string[],
     items: string[],
-    votes: string[],
+    votes: { [id: string]: string[] }
     comments: string[]
   },
   entities: StateEntities
@@ -38,19 +38,22 @@ export const VOTES_LOADED = '[Data] votesLoaded';
 export class MeetingLoadedAction implements Action {
   public readonly type = MEETING_LOADED;
 
-  constructor(public readonly payload: Meeting) {}
+  constructor(public readonly payload: Meeting) {
+  }
 }
 
 export class PlaceLoadedAction implements Action {
   public readonly type = PLACE_LOADED;
 
-  constructor(public readonly payload: Place) {}
+  constructor(public readonly payload: Place) {
+  }
 }
 
 export class ItemLoadedAction implements Action {
   public readonly type = ITEM_LOADED;
 
-  constructor(public readonly payload: Item) {}
+  constructor(public readonly payload: Item) {
+  }
 }
 
 
@@ -80,15 +83,13 @@ export class VotesLoadedAction implements Action {
 }
 
 
-
-
 const initialState = {
   ids: {
     places: [],
     meetings: [],
     items: [],
     groups: [],
-    votes: [],
+    votes: {},
     comments: []
   },
   entities: {
@@ -236,62 +237,50 @@ export function reducer(state: State = initialState, action: Action): State {
       };
 
     case VOTES_LOADED:
-      let newVoteIds = [], newVotes = {};
-      let votes = action.payload.votes;
 
-      votes.forEach(vote => {
-        if (state.ids.votes.indexOf(vote.id) >= 0) {
-          //and there's nothing new about the data
-          if (votesEqual(state.entities.votes[vote.id], vote)) {
-            //return the same object if nothing has changed to prevent unnecessary rerenders
-            return;
-          }
-          //or if there is something new in the data, merge it into the cached object
-          newVotes[vote.id] = vote;
-        } else {
-          newVoteIds.push(vote.id);
-          newVotes[vote.id] = vote;
-        }
+      let payloadVotes = action.payload.votes;
+      let itemId = action.payload.itemId;
 
-      });
+      let currentVoteIds = state.ids.votes[itemId] || [];
+      let currentVotes = state.entities.votes[itemId] || {};
 
+      let newVoteIds = payloadVotes.filter(vote => currentVoteIds.indexOf(vote.id) < 0).map(vote => vote.id);
+      let changedVoteIds = payloadVotes.filter(vote =>
+        currentVoteIds.indexOf(vote.id) >= 0 && !votesEqual(currentVotes[vote.id], vote)
+      ).map(vote => vote.id);
+      let newOrChanged = [...newVoteIds, ...changedVoteIds];
+      let unchangedVoteIds = currentVoteIds.filter(id => newOrChanged.indexOf(id) < 0);
 
-      let newState = {
+      let payloadVoteDict = payloadVotes.reduce((result, vote) => ({...result, [vote.id]: vote}), {});
+
+      let updatedIds = [...newVoteIds, ...changedVoteIds, ...unchangedVoteIds];
+
+      let updatedEntities = {
+        ...newVoteIds.reduce((result, id) => ({...result, [id]: payloadVoteDict[id]}), {}),
+        ...changedVoteIds.reduce((result, id) => ({
+          ...result,
+          [id]: mergeVotes(currentVotes[id], payloadVoteDict[id])
+        }), {}),
+        ...unchangedVoteIds.reduce((result, id) => ({...result, [id]: currentVotes[id]}), {})
+      };
+
+      return {
         ids: {
           ...state.ids,
-          votes: [...state.ids.votes, ...newVoteIds]
+          votes: {
+            ...state.ids.votes,
+            [itemId]: updatedIds
+          }
         },
         entities: {
           ...state.entities,
           votes: {
             ...state.entities.votes,
-            ...newVotes
+            [itemId]: updatedEntities
           }
         }
       };
 
-
-      let itemId = action.payload.itemId;
-
-      if (state.ids.items.indexOf(itemId) >= 0) {
-        //TODO consider case where vote is loaded before item
-
-        newState = {
-          ids: newState.ids,
-          entities: {
-            ...newState.entities,
-            items: {
-              ...newState.entities.items,
-              [itemId]: {
-                ...newState.entities.items[itemId],
-                voteIds: [...(newState.entities.items[itemId].voteIds || []), ...newVoteIds]
-              }
-            }
-          }
-        }
-      }
-
-      return newState;
 
 
 

@@ -21,8 +21,6 @@ export interface Item extends Entity {
   agendaNumber: number;
   feedbackDeadline: Moment;
   activity?: ItemActivitySummary;
-  voteIds?: string[],
-  commentIds?: string[]
 }
 
 //export const ItemSchema
@@ -66,7 +64,5 @@ export const itemsEqual: (x: Item, y: Item) => boolean = (x, y) => {
 };
 
 export function mergeItems(prev: Item, next: Item): Item {
-  let voteIds = [...(prev.voteIds || []), ...(next.voteIds || []).filter(id => (prev.voteIds || []).indexOf(id) < 0)];
-
-  return {...prev, ...next, voteIds};
+  return {...prev, ...next};
 }

@@ -71,8 +71,18 @@ export class ItemViewComponent implements OnInit, OnChanges {
 
   newComment: string;
 
+  voteStats: { yes: number, no: number };
+
   @ViewChild('addComment', { read: MdInputDirective }) addCommentInput: MdInputDirective;
   addCommentPlaceholder = 'why you haven\'t voted';
+
+
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
@@ -81,14 +91,13 @@ export class ItemViewComponent implements OnInit, OnChanges {
         this.addCommentInput.focus();
       }
     }
+    if (changes['votes'] && !!changes['votes'].currentValue) {
+      this.voteStats = {
+        yes: this.votes.filter(vote => vote.value == 1).length,
+        no: this.votes.filter(vote => vote.value == -1).length,
+      }
+    }
   }
-
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
 
   castVote(value: number) {
     this.vote.emit({itemId: this.item.id, value});

@@ -109,10 +109,15 @@ export const getItemsOnSelectedMeetingAgenda = createSelector(getFocusedMeeting,
   return meeting.agendaIds.map(id => items[id]);
 });
 
+export const getVotesForSelectedItem = createSelector(getFocusedItemId, getVotes, (itemId, votes) => {
+  return votes[itemId] || []
+});
+
 export const getUserVoteForSelectedItem = createSelector(getSessionUser, getFocusedItemId, getVotes, (user, itemId, votes) => {
   if (!user || !itemId || !user.votes[itemId]) {
     return null;
   }
-  return votes[user.votes[itemId]];
+
+  return votes[itemId][user.votes[itemId]];
 
 });

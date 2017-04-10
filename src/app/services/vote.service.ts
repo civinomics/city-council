@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as moment from 'moment';
+import {values} from 'lodash';
 import {AuthService} from './auth.service';
 import {AngularFireDatabase} from 'angularfire2';
 import {Observable} from 'rxjs';
@@ -7,7 +8,7 @@ import {parseVote, Vote} from '../models/vote';
 import {SessionUser} from '../models/user';
 import {Actions, Effect, toPayload} from '@ngrx/effects';
 import {Store} from '@ngrx/store';
-import {AppState, getSessionUser, getUserVoteForSelectedItem} from '../reducers/index';
+import {AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelectedItem} from '../reducers/index';
 import {SELECT_ITEM} from '../reducers/focus';
 import {VotesLoadedAction} from '../reducers/data';
 
@@ -71,6 +72,14 @@ export class VoteService {
     })
   }
 
+  public getUserVoteForSelectedItem() {
+    return this.store.select(getUserVoteForSelectedItem);
+  }
+
+  public getVotesForSelectedItem() {
+    return this.store.select(getVotesForSelectedItem).map(dict => values(dict || {}));
+  }
+
 
   private loadVotesForItem(itemId: string): Observable<Vote[]> {
     return this.db.list(`/vote/${itemId}`).map(votes => votes.map(vote => parseVote(vote)));
@@ -120,11 +129,7 @@ export class VoteService {
       .catch((err) => `error deleting user vote entry: ${err.message}`);
   }
 
-  getUserVoteForSelectedItem() {
-    return this.store.select(getUserVoteForSelectedItem);
-  }
-
-  getUserVoteFor(itemId: string): Observable<Vote | null> {
+  private getUserVoteFor(itemId: string): Observable<Vote | null> {
     console.log(`getting user vote for ${itemId}`);
     let userVoteId: Observable<string | null> = this.authService.sessionUserId$.flatMap(userId =>
       !userId ? Observable.of(null) : this.db.object(`/user_private/${userId}/votes/${itemId}`).map(it =>

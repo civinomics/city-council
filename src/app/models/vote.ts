@@ -23,3 +23,7 @@ export function parseVote(data: RawVote): Vote {
 export function votesEqual(x: Vote, y: Vote) {
   return (x.id == y.id && x.value == y.value && x.userDistrict == y.userDistrict);
 }
+
+export function mergeVotes(prev: Vote, next: Vote): Vote {
+  return {...prev, ...next}
+}
