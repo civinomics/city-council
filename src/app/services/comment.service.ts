@@ -5,17 +5,51 @@ import {AngularFireDatabase} from 'angularfire2';
 import {Observable} from 'rxjs';
 import {Comment, parseComment} from '../models/comment';
 import {SessionUser} from '../models/user';
+import {Actions, Effect, toPayload} from '@ngrx/effects';
+import {AppState, getCommentsForSelectedItem, getSessionUser, getUserCommentForSelectedItem} from '../reducers/index';
+import {SELECT_ITEM} from '../reducers/focus';
+import {Store} from '@ngrx/store';
+import {CommentsLoadedAction} from '../reducers/data';
 
 @Injectable()
 export class CommentService {
+  @Effect()
+  loadSessionUserCommentForSelectedItemEffect =
+    this.store.select(getSessionUser)
+      .withLatestFrom(this.actions.ofType(SELECT_ITEM)
+        .map(toPayload)
+        .filter(it => !!it)
+      )
+      .filter(([user, itemId]) => !!user && !!user.comments[itemId])
+      .flatMap(([user, itemId]) =>
+        this.loadSingleComment(itemId, user.comments[itemId]).map(comment =>
+          new CommentsLoadedAction([comment], itemId)
+        )
+      );
 
-  constructor(private authService: AuthService, private db: AngularFireDatabase) {
 
+  @Effect()
+  loadCommentsForSelectedItemEffect = this.actions.ofType(SELECT_ITEM)
+    .map(toPayload)
+    .filter(it => !!it)
+    .flatMap(id => this.loadCommentsForItem(id).take(1).map(votes => new CommentsLoadedAction(votes, id)));
+
+
+  constructor(private authService: AuthService, private db: AngularFireDatabase, private store: Store<AppState>, private actions: Actions) {
+
+  }
+
+  public getCommentsForSelectedItem() {
+    return this.store.select(getCommentsForSelectedItem);
+  }
+
+  public getUserCommentForSelectedItem() {
+    return this.store.select(getUserCommentForSelectedItem);
   }
 
 
   public postComment(itemId: string, text: string, role: string) {
-    console.log(`CommentService.postComment(${itemId}, ${text}, ${role})`)
+    console.log(`CommentService.postComment(${itemId}, ${text}, ${role})`);
     this.authService.sessionUser$.take(1).subscribe(user => {
       //if user tries to comment without being authenticated, show auth modal, call self in callback
       if (!user) {
@@ -83,8 +117,14 @@ export class CommentService {
         console.debug(`error editing ${extant.id}`);
         console.debug(err)
       })
+  }
 
+  private loadCommentsForItem(itemId: string): Observable<Comment[]> {
+    return this.db.list(`/comment/${itemId}`).map(arr => arr.map(comment => parseComment(comment)));
+  }
 
+  private loadSingleComment(itemId: string, commentId: string): Observable<Comment> {
+    return this.db.object(`/comment/${itemId}/${commentId}`).map(it => parseComment(it));
   }
 
   public getUserCommentFor(itemId: string): Observable<Comment | null> {

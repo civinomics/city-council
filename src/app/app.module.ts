@@ -23,6 +23,7 @@ import {MeetingService} from './services/meeting.service';
 import {GroupService} from './services/group.service';
 import {ItemService} from './services/item.service';
 import {VoteService} from './services/vote.service';
+import {CommentService} from './services/comment.service';
 
 @NgModule({
 
@@ -47,8 +48,8 @@ import {VoteService} from './services/vote.service';
     EffectsModule.run(MeetingService),
     EffectsModule.run(GroupService),
     EffectsModule.run(ItemService),
-    EffectsModule.run(VoteService)
-
+    EffectsModule.run(VoteService),
+    EffectsModule.run(CommentService)
 
   ],
   declarations: [

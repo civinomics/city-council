@@ -9,7 +9,7 @@
   <div class="row vote" fxLayout="row" fxLayoutAlign="start center">
     <div class="key row-label" [class.focused]="!userVote">vote</div>
     <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
-      <div class="vote-count">{{voteStats?.yes}}</div>
+      <div class="vote-count">{{voteStats?.no}}</div>
       <button md-button
               class="vote-button no"
               [class.rejected]="userVoteVal == 1"
@@ -25,7 +25,7 @@
               [@voteBtn]="userVoteVal == -1 ? 'rejected' : ''">yes
         <md-icon *ngIf="userVoteVal == 1" class="checkmark" [@checkmark]="'fromRight'">check</md-icon>
       </button>
-      <div class="vote-count">{{voteStats?.no}}</div>
+      <div class="vote-count">{{voteStats?.yes}}</div>
     </div>
   </div>
   <div class="row explain" fxLayout="row">

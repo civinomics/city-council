@@ -71,11 +71,13 @@ export const getItems = createSelector(getDataState, fromData.getItemEntities);
 export const getMeetings = createSelector(getDataState, fromData.getMeetingEntities);
 export const getGroups = createSelector(getDataState, fromData.getGroupEntities);
 export const getVotes = createSelector(getDataState, fromData.getVoteEntities);
+export const getComments = createSelector(getDataState, fromData.getCommentEntities);
 
 export const getLoadedItemIds = createSelector(getDataState, fromData.getItemIds);
 export const getLoadedGroupIds = createSelector(getDataState, fromData.getGroupIds);
 export const getLoadedMeetingIds = createSelector(getDataState, fromData.getMeetingIds);
 export const getLoadedVoteIds = createSelector(getDataState, fromData.getVoteIds);
+export const getLoadedCommentIds = createSelector(getDataState, fromData.getCommentIds);
 
 
 
@@ -119,5 +121,18 @@ export const getUserVoteForSelectedItem = createSelector(getSessionUser, getFocu
   }
 
   return votes[itemId][user.votes[itemId]];
+
+});
+
+export const getCommentsForSelectedItem = createSelector(getFocusedItemId, getComments, (itemId, comments) => {
+  return comments[itemId] || []
+});
+
+export const getUserCommentForSelectedItem = createSelector(getSessionUser, getFocusedItemId, getComments, (user, itemId, comments) => {
+  if (!user || !itemId || !user.comments[itemId]) {
+    return null;
+  }
+
+  return comments[itemId][user.comments[itemId]];
 
 });

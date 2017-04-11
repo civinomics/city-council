@@ -28,6 +28,7 @@ export class ItemContainerComponent implements OnInit {
   userComment$: Observable<Comment | null>;
 
   votes$: Observable<Vote[]>;
+  comments$: Observable<Comment[]>;
 
   activeMeeting$: Observable<string>;
 
@@ -51,12 +52,17 @@ export class ItemContainerComponent implements OnInit {
     });
 
 
-    this.item$ = this.itemSvc.getSelectedItem();
+    this.item$ = this.itemSvc.getSelectedItem().share();
     this.userVote$ = this.voteSvc.getUserVoteForSelectedItem();
-    this.userComment$ = itemId.flatMap(itemId => this.commentSvc.getUserCommentFor(itemId));
 
-    this.votes$ = Observable.timer(500) //get the initial page rendered before loading votes
+    this.votes$ = this.item$.take(1)//get the initial page rendered before loading votes
       .flatMapTo(this.voteSvc.getVotesForSelectedItem());
+
+    this.userComment$ = this.commentSvc.getUserCommentForSelectedItem();
+
+    this.comments$ = this.item$.take(1).flatMapTo(this.commentSvc.getCommentsForSelectedItem());
+
+
 
     this.activeMeeting$ = this.route.params.map(params => params['meetingId']);
   }

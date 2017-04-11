@@ -37,3 +37,14 @@ export const parseComment: (data: RawComment) => Comment = (data) => {
     userDistrict: data.userDistrict
   }
 };
+
+export function commentsEqual(x: Comment, y: Comment): boolean {
+  if (x.id != y.id || x.text != y.text || x.role != y.role || x.userDistrict != y.userDistrict) {
+    return false;
+  }
+  return true;
+}
+
+export function mergeComments(prev: Comment, next: Comment): Comment {
+  return {...prev, ...next};
+}
