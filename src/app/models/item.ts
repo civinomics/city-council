@@ -5,6 +5,14 @@ import Moment = moment.Moment;
 
 export type ItemStatus = 'CITIZEN_PROPOSAL' | 'ON_AGENDA';
 
+export type ItemOutcome = {
+  result: string,
+  votes: {
+    yes: number,
+    no: number
+  }
+}
+
 export type ItemActivitySummary = {
   comments: {
     total: number;
@@ -18,15 +26,22 @@ export type ItemActivitySummary = {
 export interface Item extends Entity {
   text: string;
   sireLink: string;
-  agendaNumber: number;
   feedbackDeadline: Moment;
   activity?: ItemActivitySummary;
+  onAgendas: {
+    [id: string]: {
+      groupId: string;
+      meetingId: string;
+      itemNumber: number;
+      outcome?: ItemOutcome
+    }
+  }
 }
 
 //export const ItemSchema
 
 export type RawItem = RawEntity & {
-  [P in 'text' | 'sireLink' | 'agendaNumber']: Item[P];
+  [P in 'text' | 'sireLink' | 'onAgendas']: Item[P];
   } & {
   activity?: ItemActivitySummary;
 } & {
@@ -48,13 +63,13 @@ export const parseItem: (it: RawItem | any) => Item = (it) => {
     ...it,
     id: it.$key || it.id,
     feedbackDeadline: moment(it.feedbackDeadline),
-    agendaNumber: it.agendaNumber,
+    onAgendas: it.onAgendas,
     activity: it.activity
   }
 }
 
 export const itemsEqual: (x: Item, y: Item) => boolean = (x, y) => {
-  if (x.id != y.id || x.text != y.text || x.sireLink != y.sireLink || x.agendaNumber != y.agendaNumber) {
+  if (x.id != y.id || x.text != y.text || x.sireLink != y.sireLink) {
     return false;
   }
   if (x.activity != y.activity) {

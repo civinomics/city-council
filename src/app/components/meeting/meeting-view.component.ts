@@ -22,10 +22,11 @@ export class MeetingViewComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
   }
 
   get agendaItems() {
     return !this.items ? [] : this.items
-      .sort((x, y) => (x as Item).agendaNumber - (y as Item).agendaNumber);
+      .sort((x, y) => x.onAgendas[this.meeting.id].itemNumber - y.onAgendas[this.meeting.id].itemNumber);
   }
 }

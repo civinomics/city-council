@@ -39,7 +39,9 @@ export type MockVoteInput = MockInput & { value?: 1 | -1 };
 
 export type MockCommentInput = MockInput & { role?: 'pro' | 'con', text?: string };
 
-export type MockItemInput = MockInput & { text?: string, agendaNumber?: number, deadline?: Moment }
+export type MockItemInput =
+  MockInput
+  & { text?: string, agendas: { meetingId: string, groupId: string, itemNumber: number }[], deadline?: Moment }
 
 export type MockMeetingInput = { startTime?: Moment, past?: boolean, items?: Item[], numItems?: number, owner?: string }
 
@@ -103,12 +105,14 @@ export function mockUser(input?: MockUserInput): SessionUser {
     joined: randTime(sixMonthsAgo),
     lastOn: randTime(),
     districts: input && input.accDistrict ? {'id_acc': input.accDistrict} : {},
+    isVerified: true,
     id,
     email: Faker.internet.email(),
     address: {
       line1: `${Faker.address.streetAddress()}`,
       city: `${Faker.address.city()}`,
-      zip: `${Faker.address.zipCode()}`
+      zip: `${Faker.address.zipCode()}`,
+      state: Faker.address.stateAbbr()
     },
     votes: {},
     comments: {},
@@ -143,7 +147,7 @@ export function mockItem(input?: MockItemInput): Item {
   let itemNo = _lastNo++ % 100;
   return {
     text: input && input.text || Faker.lorem.paragraph(),
-    agendaNumber: input && input.agendaNumber || itemNo,
+    onAgendas: input.agendas.reduce((result, next) => ({...result, [next.meetingId]: next}), {}),
     id: randId('item'),
     feedbackDeadline: input && input.deadline || randTime(),
     sireLink: `https://austin.siretechnologies.com/sirepub/agdocs.aspx?doctype=agenda&itemid=${67000 + random()}`,
@@ -273,7 +277,11 @@ export function schema(input?: MockSchemaInput): any {
     let agenda: { [id: string]: number } = {};
 
     for (let i = 0; i < ITEMS_PER_MEETING; i++) {
-      let item = mockItem({owner: adminId, agendaNumber: i + 1, deadline: feedbackEnd});
+      let item = mockItem({
+        owner: adminId,
+        agendas: [{itemNumber: i + 1, meetingId: meeting.id, groupId: 'id_acc'}],
+        deadline: feedbackEnd
+      });
       agenda[item.id] = i + 1;
 
       let numVotes = random(MIN_VOTES_PER, MAX_VOTES_PER),

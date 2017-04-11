@@ -62,12 +62,16 @@ export class ItemViewComponent implements OnInit, OnChanges {
 
   @Input() item: Item;
   @Input() userVote: Vote | null;
+  @Input() activeMeeting: string;
+
   @Input() userComment: Comment | null;
 
   @Input() votes: Vote[];
 
+
   @Output() vote: EventEmitter<{ itemId: string, value: number }> = new EventEmitter();
   @Output() comment: EventEmitter<{ itemId: string, text: string, role: string }> = new EventEmitter();
+
 
   newComment: string;
 
@@ -97,6 +101,13 @@ export class ItemViewComponent implements OnInit, OnChanges {
         no: this.votes.filter(vote => vote.value == -1).length,
       }
     }
+  }
+
+  get itemNumber() {
+    if (!this.item || !this.activeMeeting) {
+      return 0;
+    }
+    return this.item.onAgendas[this.activeMeeting].itemNumber;
   }
 
   castVote(value: number) {

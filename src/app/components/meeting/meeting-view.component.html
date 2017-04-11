@@ -11,7 +11,7 @@
 
   <div *ngFor="let item of agendaItems" class="item-row" fxLayout="row">
     <div class="item-no" fxFlex="0 0 100px" fxFlex.xs="0 0 40px">
-      {{item.agendaNumber}}
+      {{item.onAgendas[meeting.id].itemNumber}}
     </div>
     <div fxFlex="1 1 auto">
       <div class="item-text" (click)="showItem.emit(item.id)">{{item.text}}</div>

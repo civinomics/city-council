@@ -17,6 +17,7 @@ import {AppFocusService} from '../../services/app-focus.service';
   template: `
     <civ-item-view [item]="item$ | async" [userVote]="userVote$ | async" [userComment]="userComment$ | async"
                    [votes]="votes$ | async"
+                   [activeMeeting]="activeMeeting$ | async"
                    (vote)="castVote($event)" (comment)="postComment($event)"></civ-item-view>
   `,
   styles: []
@@ -27,6 +28,8 @@ export class ItemContainerComponent implements OnInit {
   userComment$: Observable<Comment | null>;
 
   votes$: Observable<Vote[]>;
+
+  activeMeeting$: Observable<string>;
 
   constructor(private store: Store<AppState>,
               private router: Router,
@@ -51,7 +54,11 @@ export class ItemContainerComponent implements OnInit {
     this.item$ = this.itemSvc.getSelectedItem();
     this.userVote$ = this.voteSvc.getUserVoteForSelectedItem();
     this.userComment$ = itemId.flatMap(itemId => this.commentSvc.getUserCommentFor(itemId));
-    this.votes$ = Observable.timer(1000).flatMapTo(this.voteSvc.getVotesForSelectedItem());
+
+    this.votes$ = Observable.timer(500) //get the initial page rendered before loading votes
+      .flatMapTo(this.voteSvc.getVotesForSelectedItem());
+
+    this.activeMeeting$ = this.route.params.map(params => params['meetingId']);
   }
 
   castVote(it: { itemId: string, value: 1 | -1 }) {
