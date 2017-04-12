@@ -1,5 +1,4 @@
 import {GroupViewComponent} from './group/group-view.component';
-import {MeetingViewComponent} from './meeting/meeting-view.component';
 import {ItemViewComponent} from './item/item-view.component';
 import {AboutComponent} from './corp/about/about.component';
 import {CareersComponent} from './corp/careers/careers.component';
@@ -33,15 +32,20 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {MomentModule} from 'angular2-moment';
 import {MeetingAdminComponent} from './meeting/meeting-admin/meeting-admin.component';
 import {MeetingStatsComponent} from './meeting/meeting-stats/meeting-stats.component';
+import {NgxChartsModule} from 'ngx-charts';
+import {MeetingAgendaContainerComponent} from './meeting/meeting-agenda/meeting-agenda-container.component';
+import {MeetingAgendaViewComponent} from './meeting/meeting-agenda/meeting-agenda.component';
+import {MeetingStatsContainerComponent} from './meeting/meeting-stats/meeting-stats-container.component';
 
 export const VIEW_COMPONENTS = [
-  GroupViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent,
+  GroupViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent,
   SignInViewComponent, AuthWidgetComponent, CommentComponent, VerifyModalComponent, AuthModalComponent,
-  MeetingAdminComponent, MeetingStatsComponent
+  MeetingAdminComponent, MeetingStatsComponent, MeetingAgendaViewComponent
 ];
 
 export const CONTAINER_COMPONENTS = [
-  AppContainerComponent, BrowseContainerComponent, ItemContainerComponent, MeetingContainerComponent, GroupContainerComponent, SignInContainerComponent, SplashComponent
+  AppContainerComponent, BrowseContainerComponent, ItemContainerComponent, MeetingContainerComponent, GroupContainerComponent, SignInContainerComponent, SplashComponent,
+  MeetingAgendaContainerComponent, MeetingStatsContainerComponent
 ];
 
 export const VIEW_PROVIDERS = [
@@ -59,5 +63,6 @@ export const VIEW_PROVIDERS = [
 
   FlexLayoutModule,
   MomentModule,
+  NgxChartsModule
 ];
 

@@ -3,22 +3,34 @@ import {animate, style, transition, trigger} from '@angular/animations';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {Meeting} from '../../models/meeting';
-import {Item} from '../../models/item';
 import {MeetingService} from '../../services/meeting.service';
 import {ItemService} from '../../services/item.service';
 import {AppFocusService} from '../../services/app-focus.service';
-import {Group} from '../../models/group';
 import {GroupService} from '../../services/group.service';
 
 @Component({
   selector: 'civ-meeting-container',
   template: `
-    <civ-meeting-view [meeting]="meeting$ | async" [items]="items$ | async" [group]="group$ | async"
-                      (showItem)="showItem($event)">
+    <div class="meeting-title">{{(meeting$ | async)?.title}}: {{(meeting$ | async)?.startTime | amDateFormat: 'MM/DD/YY'}}</div>
 
-    </civ-meeting-view>
+    <div class="content-wrapper">
+      <nav md-tab-nav-bar>
+        <a md-tab-link
+           [routerLink]="baseUrl | async"
+           [routerLinkActiveOptions]="{exact: true}"
+           routerLinkActive #rlaHome="routerLinkActive"
+           [active]="rlaHome.isActive"
+        >AGENDA</a>
+        <a md-tab-link
+           routerLink="stats"
+           routerLinkActive #rlaStats="routerLinkActive"
+           [active]="rlaStats.isActive"
+        >STATS</a>
+      </nav>
+      <router-outlet></router-outlet>
+    </div>
   `,
-  styles: [ `:host { display: block }` ],
+  styleUrls: ['./meeting-container.component.scss'],
   host: { '[@host]': '' },
   animations: [
     trigger('host', [
@@ -34,10 +46,9 @@ import {GroupService} from '../../services/group.service';
 })
 export class MeetingContainerComponent implements OnInit {
 
-  group$: Observable<Group>;
   meeting$: Observable<Meeting>;
-  items$: Observable<Item[]>;
 
+  baseUrl: Observable<string[]>;
 
   constructor(private meetingSvc: MeetingService, private groupSvc: GroupService, private itemSvc: ItemService, private router: Router, private route: ActivatedRoute, private focusSvc: AppFocusService) {
     const id$ = this.route.params.map(params => params['meetingId']).distinctUntilChanged();
@@ -48,11 +59,12 @@ export class MeetingContainerComponent implements OnInit {
       this.focusSvc.selectMeeting(params['meetingId']);
     });
 
+    this.baseUrl = this.route.params.take(1).map(params =>
+      ['/group', params['groupId'], 'meeting', params['meetingId']]
+    );
 
-    this.group$ = this.groupSvc.getSelectedGroup();
-    this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
 
-    this.items$ = this.meetingSvc.getAgendaItemsOfSelectedMeeting().map(arr => arr.filter(it => !!it));
+    this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it).share();
 
     /*
     this.items$ = this.meeting$

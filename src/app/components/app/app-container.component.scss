@@ -2,6 +2,16 @@
 
 $main-nav-height: 60px;
 
+:host {
+  display: block;
+  height: 100%;
+}
+
+.stage {
+  height: calc(100% - #{$main-nav-height} - 10px);
+  position: relative;
+}
+
 .main-nav {
   height: $main-nav-height;
   background-color: mat-color($civ-primary);

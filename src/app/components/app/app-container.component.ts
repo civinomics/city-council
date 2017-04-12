@@ -13,7 +13,9 @@ import {VerifyModalComponent} from '../auth/verify-modal/verify-modal.component'
       <civ-auth-widget></civ-auth-widget>
     </md-toolbar>
 
-    <router-outlet></router-outlet>
+    <div class="stage">
+      <router-outlet></router-outlet>
+    </div>
 
   `,
   styleUrls: [ './app-container.component.scss' ]

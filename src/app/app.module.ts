@@ -24,7 +24,6 @@ import {GroupService} from './services/group.service';
 import {ItemService} from './services/item.service';
 import {VoteService} from './services/vote.service';
 import {CommentService} from './services/comment.service';
-import {ParticipationByDistrictComponent} from './components/meeting/meeting-stats/participation-by-district/participation-by-district.component';
 
 @NgModule({
 
@@ -55,7 +54,7 @@ import {ParticipationByDistrictComponent} from './components/meeting/meeting-sta
 
   ],
   declarations: [
-    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS, ParticipationByDistrictComponent
+    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS
   ],
   providers: [ ...APP_PROVIDERS ],
   entryComponents: [AuthModalComponent, VerifyModalComponent],

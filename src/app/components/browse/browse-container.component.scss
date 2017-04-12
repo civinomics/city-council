@@ -1,5 +1,10 @@
 @import "../../../assets/style/all";
 
+:host {
+  display: block;
+  height: 100%;
+}
+
 .traversal-bar {
   background-color: mat-color($mat-blue-grey, 200);
   color: mat-contrast($mat-blue-grey, 200);

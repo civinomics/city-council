@@ -1,0 +1,43 @@
+<div class="outer-wrapper" *ngIf="!!data" fxLayout="column" fxLayoutGap="40px">
+  <div></div>
+  <div class="squares" fxLayout="row" fxLayoutGap="20px" *ngIf="!!data" fxFlexAlign="center">
+    <div class="square">
+      <div class="value">{{data.numItems}}</div>
+      <div class="key">
+        agenda items
+      </div>
+    </div>
+    <div class="square">
+      <div class="value">{{data.totComments}}</div>
+      <div class="key">
+        comments
+      </div>
+    </div>
+    <div class="square">
+      <div class="value">{{data.totVotes}}</div>
+      <div class="key">
+        votes
+      </div>
+    </div>
+    <div class="square">
+      <div class="value">{{data.totParticipants}}</div>
+      <div class="key">
+        participants
+      </div>
+    </div>
+  </div>
+
+
+  <div class="by-district-pie row">
+    <div class="heading">Participation by district</div>
+    <ngx-charts-pie-chart
+      [results]="data.participationByDistrict"
+      [scheme]="colorScheme"
+      [labels]="true"
+      labelFormatting="labelFunction"
+    >
+    </ngx-charts-pie-chart>
+  </div>
+
+
+</div>

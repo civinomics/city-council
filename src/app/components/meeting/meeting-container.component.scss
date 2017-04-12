@@ -1,0 +1,22 @@
+@import "../../../assets/style/all";
+
+:host {
+  @include flex(column, $align: center);
+  padding-top: 20px;
+  & > div {
+    margin-bottom: 20px;
+  }
+}
+
+.meeting-title {
+  font-size: 2em;
+  text-align: center;
+}
+
+.content-wrapper {
+
+  @include mq-gt-xs {
+    width: 960px;
+  }
+
+}

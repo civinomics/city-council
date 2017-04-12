@@ -1,0 +1,36 @@
+@import "../../../../assets/style/all";
+
+:host {
+  display: block;
+  padding: 15px;
+}
+
+.squares {
+  .square {
+    background-color: mat-color($mat-grey, 300);
+    border: 1px solid mat-color($mat-grey, 700);
+    color: mat-contrast($mat-grey, 300);
+    padding: 10px;
+    text-align: center;
+    .value {
+      font-size: 1.75em;
+      margin-bottom: 5px;
+    }
+
+    .key {
+      text-transform: uppercase;
+      font-weight: 200;
+    }
+
+  }
+}
+
+.row {
+  .heading {
+    font-size: 1.25em;
+  }
+}
+
+.by-district-pie {
+  height: 400px;
+}

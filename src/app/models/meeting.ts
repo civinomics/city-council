@@ -29,6 +29,7 @@ export type RawMeeting = RawEntity & {
 
 
 export type MeetingStatsAdt = {
+  priors: { date: string, value: number }[]
 
   total: {
     votes: number;

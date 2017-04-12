@@ -1,23 +1,10 @@
-@import "../../../assets/style/all";
-@import "../../../assets/style/all";
-
-:host {
-  @include flex(column, $align: center);
-  padding-top: 20px;
-  & > div {
-    margin-bottom: 20px;
-  }
-}
+@import "../../../../assets/style/all";
 
 .tab-container {
   max-width: 800px;
   margin: auto;
 }
 
-.meeting-title {
-  font-size: 2em;
-  text-align: center;
-}
 
 .agenda {
   padding: 10px;

@@ -1,23 +1,30 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Meeting} from '../../models/meeting';
+import {Meeting, MeetingStatsAdt} from '../../../models/meeting';
 
-import {Item} from '../../models/item';
-import {Group} from '../../models/group';
+import {Item} from '../../../models/item';
+import {Group} from '../../../models/group';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
-  selector: 'civ-meeting-view',
+  selector: 'civ-meeting-agenda-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './meeting-view.component.html',
-  styleUrls: [ './meeting-view.component.scss' ]
+
+  templateUrl: './meeting-agenda.component.html',
+  styleUrls: ['./meeting-agenda.component.scss']
 })
-export class MeetingViewComponent implements OnInit {
+export class MeetingAgendaViewComponent implements OnInit {
 
   @Input() meeting: Meeting;
   @Input() group: Group;
   @Input() items: Item[];
+
+  //note: this is an observable because we don't want to get it unless we have to (i.e. the stats tab is accessed)
+  @Input() stats: Observable<MeetingStatsAdt>;
+
   @Output() showItem = new EventEmitter();
 
   agendaSortOptions = [ 'Item Number', 'Most Active' ];
+
 
   sortBy = this.agendaSortOptions[ 0 ];
 
