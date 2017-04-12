@@ -2,18 +2,24 @@
   "name": "civ-cc-cloud-functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
-    "deploy": "tsc -p tsconfig.json && firebase deploy --only functions"
+    "deploy": "tsc -p tsconfig.json && firebase deploy --only functions",
+    "tsc": "tsc"
   },
   "dependencies": {
     "firebase-admin": "^4.1.2",
     "firebase-functions": "^0.5",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
     "node-geocoder": "^3.16.0",
     "point-in-polygon": "^1.0.1",
     "rxjs": "^5.3.0"
   },
   "private": true,
   "devDependencies": {
+    "@types/express": "^4.0.35",
     "@types/geojson": "^1.0.1",
+    "@types/lodash": "^4.14.62",
+    "@types/moment": "^2.13.0",
     "@types/node": "^7.0.12"
   }
 }

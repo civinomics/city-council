@@ -8,8 +8,9 @@ export interface Comment extends Entity {
   text: string;
   role: CommentRole;
   posted: Moment;
-
   userDistrict: string | null,
+
+  //
 
 }
 

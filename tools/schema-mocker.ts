@@ -7,8 +7,8 @@ import {Comment} from '../src/app/models/comment';
 import {Item} from '../src/app/models/item';
 import {SessionUser, User} from '../src/app/models/user';
 import {Place} from '../src/app/models/place';
-import {Office} from '../src/app/models/office';
 import * as fs from 'fs';
+import {Meeting} from '../src/app/models/meeting';
 import Moment = moment.Moment;
 
 const tenMinsAgo = moment().subtract(10, 'minutes');
@@ -86,7 +86,7 @@ function randRole(): 'pro' | 'con' | 'neutral' {
   }
 }
 
-/*function randItemActivity(): ItemActivitySummary {
+/*function randItemActivity(): ItemStatsAdt {
  let pros = random(0, 50),
  cons = random(0, 50),
  yeses = random(0, 100),
@@ -155,7 +155,7 @@ export function mockItem(input?: MockItemInput): Item {
   }
 }
 
-export function mockMeeting(input?: MockMeetingInput) {
+export function mockMeeting(input?: MockMeetingInput): Meeting {
   let start, end, deadline, status;
   let past = input && input.past || false;
 
@@ -173,7 +173,8 @@ export function mockMeeting(input?: MockMeetingInput) {
     status,
     id: randId('meeting'),
     owner: input && input.owner || 'id_doug',
-    agenda: []
+    agendaIds: [],
+    groupId: 'id_acc'
   }
 }
 
@@ -194,17 +195,18 @@ function mockDistrict() {
 
 export function mockAcc(input?: { meetingIds?: string[] }) {
 
+  let districts = range(1, 11).map(num => ({
+    name: `District ${num}`,
+    id: randId('district'),
+    owner: 'id_doug'
+  })).reduce((result, next) => ({...result, [next.id]: next}), {});
 
   return {
     name: 'Austin City Council',
     icon: 'https://cmgstatesmanaustin.files.wordpress.com/2015/08/city-of-austin-flag.png',
     id: 'id_acc',
     owner: 'id_doug',
-    districts: range(1, 11).map(num => ({
-      name: `District ${num}`,
-      id: randId('district'),
-      owner: 'id_doug'
-    })),
+    districts,
     meetings: input && input.meetingIds || []
   }
 }
@@ -240,7 +242,7 @@ export function schema(input?: MockSchemaInput): any {
 
   const atx = mockAustin(), acc = mockAcc();
 
-  const districtIds = acc.districts.map(it => it as Office).map(it => it.id);
+  const districtIds = Object.keys(acc.districts);
 
 
   const users = range(0, NUM_USERS).map(() => mockUser({accDistrict: random(0, 8) == 6 ? null : districtIds[random(0, districtIds.length - 1)]}));

@@ -1,5 +1,5 @@
 import {Entity, parseEntity, RawEntity} from './index';
-import {Office, parseOffice, RawOffice} from './office';
+import {Office, RawOffice} from './office';
 
 export interface Group extends Entity {
   name: string;
@@ -21,7 +21,7 @@ export function parseGroup(data: RawGroup): Group {
     name: data.name,
     icon: data.icon,
     meetingIds: data.meetings,
-    districts: data.districts.map(it => parseOffice(it))
+    districts: Object.keys(data.districts).map(id => ({...data.districts[id], id}))
   }
 }
 

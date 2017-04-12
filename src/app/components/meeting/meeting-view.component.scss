@@ -1,4 +1,5 @@
 @import "../../../assets/style/all";
+@import "../../../assets/style/all";
 
 :host {
   @include flex(column, $align: center);
@@ -8,15 +9,18 @@
   }
 }
 
+.tab-container {
+  max-width: 800px;
+  margin: auto;
+}
+
 .meeting-title {
   font-size: 2em;
   text-align: center;
 }
 
 .agenda {
-  max-width: 800px;
   padding: 10px;
-  margin: auto;
 }
 
 .section-title {

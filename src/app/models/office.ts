@@ -11,6 +11,7 @@ export type RawOffice = RawEntity & {
 }
 
 export function parseOffice(data: RawOffice): Office {
+  console.log(data);
   return {
     name: data.name,
     id: data.$key,

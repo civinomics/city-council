@@ -7,7 +7,7 @@
          fxLayout="row"
          fxLayoutAlign="start center"
          fxLayoutGap="5px"
-         [routerLink]="['/place', group.id]"
+         [routerLink]="['/group', group.id]"
          [@travEl]>
       <img [src]="group.icon" class="flag">
       <div class="entry-text">{{group.name}}</div>
@@ -19,7 +19,7 @@
          fxLayout="row"
          fxLayoutAlign="start center"
          fxLayoutGap="5px"
-         [routerLink]="['/place', (focusedGroup$ | async).id, 'meeting', (focusedMeeting$ | async).id]"
+         [routerLink]="['/group', (focusedGroup$ | async).id, 'meeting', (focusedMeeting$ | async).id]"
          [@travEl]>
 
       <div class="entry-text" *ngIf="focusedMeeting$ | async as meeting">{{meeting.startTime | amDateFormat:

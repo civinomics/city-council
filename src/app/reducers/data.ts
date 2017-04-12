@@ -304,10 +304,13 @@ export function reducer(state: State = initialState, action: Action): State {
       let currentComments = state.entities.comments[itemId] || {};
 
       let newCommentIds = payloadComments.filter(comment => currentCommentIds.indexOf(comment.id) < 0).map(comment => comment.id);
+
       let changedCommentIds = payloadComments.filter(comment =>
         currentCommentIds.indexOf(comment.id) >= 0 && !commentsEqual(currentComments[comment.id], comment)
       ).map(comment => comment.id);
+
       let newOrChanged = [...newCommentIds, ...changedCommentIds];
+
       let unchangedCommentIds = currentCommentIds.filter(id => newOrChanged.indexOf(id) < 0);
 
       let payloadCommentDict = payloadComments.reduce((result, comment) => ({...result, [comment.id]: comment}), {});

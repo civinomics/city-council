@@ -1,6 +1,7 @@
 import {Entity, EntityField, parseEntity, RawEntity} from './index';
 import * as moment from 'moment';
 import {keys} from 'lodash';
+import {ItemStatsAdt} from './item';
 import Moment = moment.Moment;
 
 export type MeetingStatus = 'open' | 'closed' | 'draft'
@@ -13,17 +14,43 @@ export interface Meeting extends Entity {
   endTime: Moment;
   feedbackDeadline: Moment;
   status: MeetingStatus;
-
-  agendaIds: string[]
+  agendaIds: string[];
+  groupId: string;
 }
 
 
 export type RawMeeting = RawEntity & {
-  [P in EntityField | 'title' | 'status']: Meeting[P];
+  [P in EntityField | 'title' | 'status' | 'groupId']: Meeting[P];
   } & {
   [P in 'startTime' | 'endTime' | 'feedbackDeadline']: string;
   } & {
   agenda: string[]
+}
+
+
+export type MeetingStatsAdt = {
+
+  total: {
+    votes: number;
+    comments: number;
+    participants: number;
+    byDistrict: {
+      [id: string]: {
+        votes: number;
+        comments: number;
+        participants: number;
+      }
+    };
+  };
+
+  byItem: {
+    [itemId: string]: {
+      total: ItemStatsAdt;
+      byDistrict: { [districtId: string]: ItemStatsAdt }
+    }
+  }
+
+
 }
 
 export const parseMeeting: (data: RawMeeting) => Meeting = (data: RawMeeting) => {
@@ -32,6 +59,7 @@ export const parseMeeting: (data: RawMeeting) => Meeting = (data: RawMeeting) =>
     ...parseEntity(data),
     id: data.$key,
     title: data.title,
+    groupId: data.groupId,
     status: moment(data.feedbackDeadline).isAfter(moment()) ? 'open' : 'closed',
     startTime: moment(data.startTime),
     endTime: moment(data.endTime),

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Meeting, parseMeeting, RawMeeting} from '../models/meeting';
+import {Meeting, MeetingStatsAdt, parseMeeting, RawMeeting} from '../models/meeting';
 import {AngularFireDatabase} from 'angularfire2';
 import {Item} from '../models/item';
 import {ItemService} from './item.service';
@@ -15,6 +15,7 @@ import {
   getLoadedMeetingIds
 } from '../reducers/index';
 import {MeetingLoadedAction} from '../reducers/data';
+import {Http} from '@angular/http';
 
 const LOAD_MEETING = '[MeetingSvcInternal] loadMeeting';
 
@@ -42,7 +43,17 @@ export class MeetingService {
       .map(id => ({type: LOAD_MEETING, payload: id}));
 
 
-  constructor(private db: AngularFireDatabase, private itemSvc: ItemService, private actions: Actions, private store: Store<AppState>) {
+  constructor(private db: AngularFireDatabase, private itemSvc: ItemService, private actions: Actions, private store: Store<AppState>, private http: Http) {
+  }
+
+
+  public getAgendaItemsOfSelectedMeeting(): Observable<Item[]> {
+    return this.store.select(getItemsOnSelectedMeetingAgenda)
+  }
+
+  public getMeetingStats(meetingId: string): Observable<MeetingStatsAdt> {
+    return this.http.get(`https://us-central1-civ-cc.cloudfunctions.net/stats?meeting=${meetingId}`)
+      .map(it => it.json() as MeetingStatsAdt);
   }
 
   private load(mtgId: string): Observable<Meeting> {
@@ -54,14 +65,5 @@ export class MeetingService {
     return this.store.select(getFocusedMeeting);
   }
 
-  public get(mtgId: string): Observable<Meeting> {
-    console.log(`MeetingService getting ${mtgId}`);
-    return this.db.object(`/meeting/${mtgId}`)
-      .map((it: RawMeeting) => parseMeeting(it))
-  }
-
-  public getAgendaItemsOfSelectedMeeting(): Observable<Item[]> {
-    return this.store.select(getItemsOnSelectedMeetingAgenda)
-  }
 
 }

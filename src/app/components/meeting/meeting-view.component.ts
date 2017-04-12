@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output}
 import {Meeting} from '../../models/meeting';
 
 import {Item} from '../../models/item';
+import {Group} from '../../models/group';
 
 @Component({
   selector: 'civ-meeting-view',
@@ -12,6 +13,7 @@ import {Item} from '../../models/item';
 export class MeetingViewComponent implements OnInit {
 
   @Input() meeting: Meeting;
+  @Input() group: Group;
   @Input() items: Item[];
   @Output() showItem = new EventEmitter();
 
@@ -23,6 +25,14 @@ export class MeetingViewComponent implements OnInit {
 
   ngOnInit() {
 
+  }
+
+  totalVotes(item: Item) {
+    return item.activity.votes.yes + item.activity.votes.no;
+  }
+
+  totalComments(item: Item) {
+    return item.activity.comments.pro + item.activity.comments.con + item.activity.comments.neutral;
   }
 
   get agendaItems() {

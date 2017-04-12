@@ -13,12 +13,13 @@ export type ItemOutcome = {
   }
 }
 
-export type ItemActivitySummary = {
+export type ItemStatsAdt = {
   comments: {
-    total: number;
+    pro: number;
+    con: number;
+    neutral: number;
   };
   votes: {
-    total: number;
     yes: number;
     no: number;
   }
@@ -27,7 +28,7 @@ export interface Item extends Entity {
   text: string;
   sireLink: string;
   feedbackDeadline: Moment;
-  activity?: ItemActivitySummary;
+  activity?: ItemStatsAdt;
   onAgendas: {
     [id: string]: {
       groupId: string;
@@ -43,7 +44,7 @@ export interface Item extends Entity {
 export type RawItem = RawEntity & {
   [P in 'text' | 'sireLink' | 'onAgendas']: Item[P];
   } & {
-  activity?: ItemActivitySummary;
+  activity?: ItemStatsAdt;
 } & {
   [P in 'posted' | 'feedbackDeadline']: string
   } & {

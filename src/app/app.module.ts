@@ -24,12 +24,14 @@ import {GroupService} from './services/group.service';
 import {ItemService} from './services/item.service';
 import {VoteService} from './services/vote.service';
 import {CommentService} from './services/comment.service';
+import {ParticipationByDistrictComponent} from './components/meeting/meeting-stats/participation-by-district/participation-by-district.component';
 
 @NgModule({
 
   imports: [
     BrowserModule,
     FormsModule,
+    HttpModule,
     ReactiveFormsModule,
     HttpModule,
 
@@ -53,7 +55,7 @@ import {CommentService} from './services/comment.service';
 
   ],
   declarations: [
-    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS
+    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS, ParticipationByDistrictComponent
   ],
   providers: [ ...APP_PROVIDERS ],
   entryComponents: [AuthModalComponent, VerifyModalComponent],

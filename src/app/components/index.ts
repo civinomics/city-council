@@ -25,14 +25,19 @@ import {
   MdInputModule,
   MdMenuModule,
   MdSelectModule,
+  MdTabsModule,
   MdToolbarModule,
   MdTooltipModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MomentModule} from 'angular2-moment';
+import {MeetingAdminComponent} from './meeting/meeting-admin/meeting-admin.component';
+import {MeetingStatsComponent} from './meeting/meeting-stats/meeting-stats.component';
 
 export const VIEW_COMPONENTS = [
-  GroupViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent, SignInViewComponent, AuthWidgetComponent, CommentComponent, VerifyModalComponent, AuthModalComponent
+  GroupViewComponent, MeetingViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent,
+  SignInViewComponent, AuthWidgetComponent, CommentComponent, VerifyModalComponent, AuthModalComponent,
+  MeetingAdminComponent, MeetingStatsComponent
 ];
 
 export const CONTAINER_COMPONENTS = [
@@ -50,6 +55,7 @@ export const VIEW_PROVIDERS = [
   MdTooltipModule,
   MdMenuModule,
   MdDialogModule,
+  MdTabsModule,
 
   FlexLayoutModule,
   MomentModule,

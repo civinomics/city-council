@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AngularFireDatabase} from 'angularfire2';
 import {Observable} from 'rxjs';
-import {Item, ItemActivitySummary, parseItem} from '../models/item';
+import {Item, ItemStatsAdt, parseItem} from '../models/item';
 import {Actions, Effect, toPayload} from '@ngrx/effects';
 import {AppState, getFocusedItem, getLoadedItemIds, getMeetings} from '../reducers/index';
 import {Store} from '@ngrx/store';
@@ -53,14 +53,21 @@ export class ItemService {
   }
 
 
-  private getItemActivity(itemId: String): Observable<ItemActivitySummary> {
+  private getItemActivity(itemId: String): Observable<ItemStatsAdt> {
     const votes = this.db.list(`/vote/${itemId}`).map(votes => ({
-      total: votes.length,
       yes: votes.filter(vote => vote.value == 1).length,
       no: votes.filter(vote => vote.value == -1).length
     })).take(1);
 
-    const comments = this.db.list(`/comment/${itemId}`).map(comments => ({total: comments.length})).take(1);
+    const comments = this.db.list(`/comment/${itemId}`).map(comments =>
+      (
+        {
+          pro: comments.filter(comm => comm.role == 'pro').length,
+          con: comments.filter(comm => comm.role == 'con').length,
+          neutral: comments.filter(comm => comm.role == 'neutral').length,
+        }
+      )
+    ).take(1);
 
     return Observable.combineLatest(votes, comments, (votes, comments) => ({votes, comments})).take(1);
 
