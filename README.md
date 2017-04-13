@@ -7,7 +7,7 @@ Application Architecture
 
 
 ```
-|--web                                              
+|--browser                                              
     |--dist                                           * public directory (ng build output) - NOT TRACKED 
     |
     |--lib                 

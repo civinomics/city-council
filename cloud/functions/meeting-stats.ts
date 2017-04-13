@@ -3,10 +3,6 @@ import {uniqBy} from 'lodash';
 import {initializeApp} from './_internal';
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
-import {Meeting, MeetingStatsAdt, parseMeeting} from './models/meeting';
-import {Vote} from './models/vote';
-import {Group, parseGroup} from './models/group';
-import {Comment} from './models/comment';
 import {merge} from 'rxjs/observable/merge';
 import * as moment from 'moment';
 import 'rxjs/add/operator/take';
@@ -14,9 +10,11 @@ import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/combineLatest';
 import 'rxjs/add/observable/forkJoin';
-
 import 'rxjs/add/operator/mergeMap';
 import * as fs from 'fs';
+
+import {Comment, Group, Meeting, MeetingStatsAdt, parseGroup, parseMeeting, Vote} from '@civ/city-council';
+
 
 const cors = require('cors')({origin: true});
 

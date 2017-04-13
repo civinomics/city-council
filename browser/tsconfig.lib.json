@@ -3,9 +3,11 @@
   "compilerOptions": {
     "outDir": "./dist",
     "baseUrl": "src",
+    "rootDir": "src",
     "module": "commonjs",
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -18,6 +20,13 @@
       "dom"
     ]
   },
+  "include": [
+    "src/"
+  ],
+  "exclude": [
+    "src/test.ts",
+    "**/*.spec.ts"
+  ],
   "angularCompilerOptions": {
     "skipTemplateCodegen": true
   }

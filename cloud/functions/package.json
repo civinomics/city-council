@@ -1,14 +1,17 @@
 {
-  "name": "civ-cc-cloud-functions",
+  "name": "@civ/cloud-functions",
+  "version": "0.0.0",
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "deploy": "tsc -p tsconfig.json && firebase deploy --only functions",
     "tsc": "tsc"
   },
   "dependencies": {
+    "@civ/city-council": "0.0.4",
     "cors": "^2.8.3",
     "firebase-admin": "^4.1.2",
     "firebase-functions": "^0.5",
+    "html-pdf": "^2.1.0",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "node-geocoder": "^3.16.0",
