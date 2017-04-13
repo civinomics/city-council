@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import {uniqBy} from 'lodash';
-import {initializeApp} from './_internal';
+import {initializeApp} from '../_internal';
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
 import {merge} from 'rxjs/observable/merge';

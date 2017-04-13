@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 
 import * as admin from 'firebase-admin';
-import {initializeApp} from './_internal';
+import {initializeApp} from '../_internal';
 import UserRecord = admin.auth.UserRecord;
 
 const app = initializeApp();

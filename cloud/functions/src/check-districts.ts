@@ -71,7 +71,7 @@ function loadShapefile(groupId: string): Observable<FeatureCollection<MultiPolyg
    });
    });*/
 
-  return Observable.of(require('./austin.districts.json'));
+  return Observable.of(require('../austin.districts.json'));
 
 }
 

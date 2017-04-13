@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {fxn} from './check-districts';
+import {fxn} from './src/check-districts';
 
 const app = express();
 
