@@ -5,6 +5,10 @@
   padding: 15px;
 }
 
+.outer-wrapper {
+  padding-top: 10px;
+}
+
 .squares {
   .square {
     background-color: mat-color($mat-grey, 300);
@@ -27,10 +31,15 @@
 
 .row {
   .heading {
-    font-size: 1.25em;
+    text-align: center;
+    text-transform: uppercase;
   }
 }
 
 .by-district-pie {
-  height: 400px;
+  height: 50vh;
+}
+
+.by-item {
+  height: auto;
 }

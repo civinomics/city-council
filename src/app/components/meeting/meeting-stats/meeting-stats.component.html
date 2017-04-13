@@ -1,5 +1,4 @@
-<div class="outer-wrapper" *ngIf="!!data" fxLayout="column" fxLayoutGap="40px">
-  <div></div>
+<div class="outer-wrapper" *ngIf="!!data" fxLayout="column" fxLayoutGap="50px">
   <div class="squares" fxLayout="row" fxLayoutGap="20px" *ngIf="!!data" fxFlexAlign="center">
     <div class="square">
       <div class="value">{{data.numItems}}</div>
@@ -28,15 +27,27 @@
   </div>
 
 
+
   <div class="by-district-pie row">
     <div class="heading">Participation by district</div>
     <ngx-charts-pie-chart
       [results]="data.participationByDistrict"
-      [scheme]="colorScheme"
-      [labels]="true"
-      labelFormatting="labelFunction"
-    >
+      [scheme]="pieColorScheme"
+      [labels]="true">
     </ngx-charts-pie-chart>
+  </div>
+
+  <div class="by-item row" [style.height.px]="activityByItemHeight">
+    <div class="heading">Activity by item</div>
+    <ngx-charts-bar-horizontal-stacked
+      [results]="data.activityByItem"
+      [barPadding]="4"
+      [customColors]="barColors"
+      [scheme]="pieColorScheme"
+      [yAxis]="true"
+    >
+
+    </ngx-charts-bar-horizontal-stacked>
   </div>
 
 

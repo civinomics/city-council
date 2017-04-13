@@ -3,11 +3,12 @@ import {uniqBy} from 'lodash';
 import {initializeApp} from './_internal';
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
-import {Meeting, parseMeeting} from './models/meeting';
+import {Meeting, MeetingStatsAdt, parseMeeting} from './models/meeting';
 import {Vote} from './models/vote';
 import {Group, parseGroup} from './models/group';
 import {Comment} from './models/comment';
 import {merge} from 'rxjs/observable/merge';
+import * as moment from 'moment';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/map';
@@ -15,6 +16,9 @@ import 'rxjs/add/observable/combineLatest';
 import 'rxjs/add/observable/forkJoin';
 
 import 'rxjs/add/operator/mergeMap';
+import * as fs from 'fs';
+
+const cors = require('cors')({origin: true});
 
 const app = initializeApp();
 
@@ -22,17 +26,21 @@ export const stats = functions.https.onRequest((req, res) => {
   let meetingId = req.query['meeting'];
 
   computeMeetingStats(meetingId).subscribe(result => {
-    res.send(200, JSON.stringify(result))
+    cors(req, res, () => {
+      res.send(200, JSON.stringify(result));
+    })
   });
 });
 
-export function computeMeetingStats(meetingId: string)/*: Observable<MeetingStatsAdt>*/ {
+export function computeMeetingStats(meetingId: string): Observable<MeetingStatsAdt> {
 
   return getMeeting(meetingId)
     .mergeMap(meeting => {
       console.log(meeting);
 
       let group = getGroup(meeting.groupId);
+
+      let priorMtgActivity = getPriorMeetingActivity(meetingId);
 
       let itemVotes$ = merge(...meeting.agendaIds.map(id => getVotesForItem(id).take(1).map(votes => ({
         itemId: id,
@@ -53,9 +61,10 @@ export function computeMeetingStats(meetingId: string)/*: Observable<MeetingStat
           [next.itemId]: next.comments
         }), {});
 
-      return Observable.combineLatest(group.take(1), itemVotes$.take(1), itemComments$.take(1))
-        .map(([group, votes, comments]) => ({
+      return Observable.combineLatest(group.take(1), priorMtgActivity.take(1), itemVotes$.take(1), itemComments$.take(1))
+        .map(([group, priors, votes, comments]) => ({
           group,
+          priors,
           meeting,
           votes,
           comments
@@ -63,16 +72,18 @@ export function computeMeetingStats(meetingId: string)/*: Observable<MeetingStat
 
     }).map((data: {
         meeting: Meeting,
+      priors: { date: string, value: number }[],
         group: Group,
         votes: { [id: string]: Vote[] },
         comments: { [id: string]: (Comment & { votes: { up: number; down: number; } })[] }
       }) =>
-        prepareReport(data.meeting, data.group, data.votes, data.comments)
+      prepareReport(data.meeting, data.group, data.priors, data.votes, data.comments)
     );
 }
 
 function prepareReport(meeting: Meeting,
                        group: Group,
+                       priors: { date: string, value: number }[],
                        votes: { [id: string]: Vote[] },
                        comments: { [id: string]: (Comment & { votes: { up: number; down: number; } })[] }) {
 
@@ -87,15 +98,15 @@ function prepareReport(meeting: Meeting,
   let districtTotals = districtIds.reduce((result, districtId) => ({
     ...result,
     [districtId]: {
-      votes: allVotes.filter(vote => vote.userDistrict == districtId),
-      comments: allComments.filter(comment => comment.userDistrict == districtId),
-      participants: uniqueParticipants.filter(it => it.district == districtId)
+      votes: allVotes.filter(vote => vote.userDistrict == districtId).length,
+      comments: allComments.filter(comment => comment.userDistrict == districtId).length,
+      participants: uniqueParticipants.filter(it => it.district == districtId).length
     }
   }), {
     'NO_DISTRICT': {
-      votes: allVotes.filter(vote => vote.userDistrict == null),
-      comments: allComments.filter(comment => comment.userDistrict == null),
-      participants: uniqueParticipants.filter(it => it.district == null)
+      votes: allVotes.filter(vote => vote.userDistrict == null).length,
+      comments: allComments.filter(comment => comment.userDistrict == null).length,
+      participants: uniqueParticipants.filter(it => it.district == null).length
     }
   });
 
@@ -113,13 +124,13 @@ function prepareReport(meeting: Meeting,
 
     let total = {
       votes: {
-        yes: itemVotes.filter(vote => vote.value == 1),
-        no: itemVotes.filter(vote => vote.value == -1)
+        yes: itemVotes.filter(vote => vote.value == 1).length,
+        no: itemVotes.filter(vote => vote.value == -1).length
       },
       comments: {
-        pro: itemComments.filter(it => it.role == 'pro'),
-        con: itemComments.filter(it => it.role == 'con'),
-        neutral: itemComments.filter(it => it.role == 'neutral')
+        pro: itemComments.filter(it => it.role == 'pro').length,
+        con: itemComments.filter(it => it.role == 'con').length,
+        neutral: itemComments.filter(it => it.role == 'neutral').length
       }
     };
 
@@ -135,9 +146,9 @@ function prepareReport(meeting: Meeting,
             no: itemVotesInDistrict.filter(it => it.value == -1).length
           },
           comments: {
-            pro: itemCommentsInDistrict.filter(it => it.role == 'pro'),
-            con: itemCommentsInDistrict.filter(it => it.role == 'con'),
-            neutral: itemCommentsInDistrict.filter(it => it.role == 'neutral')
+            pro: itemCommentsInDistrict.filter(it => it.role == 'pro').length,
+            con: itemCommentsInDistrict.filter(it => it.role == 'con').length,
+            neutral: itemCommentsInDistrict.filter(it => it.role == 'neutral').length
           }
         }
       }
@@ -152,10 +163,79 @@ function prepareReport(meeting: Meeting,
   }, {});
 
   return {
-    total, byItem
+    priors, total, byItem
   }
+}
+
+function getPriorMeetingActivity(meetingId: string): Observable<{ date: string, value: number }[]> {
+  return Observable.create((observer: Observer<{ date: string, value: number }[]>) => {
+    app.database().ref(`/meeting`).once('value', (snapshot) => {
+      let meetingDict = snapshot.val();
+
+      let targetMtg = meetingDict[meetingId],
+        targetMtgDate = moment(targetMtg.startTime);
+
+      let prevMeetings = Object.keys(meetingDict)
+        .filter(id => moment(meetingDict[id].startTime).isBefore(targetMtgDate));
+
+      Observable.forkJoin(...prevMeetings.map(id => getSimpleActivityTotalForMeeting(id).map(value => ({
+          date: meetingDict[id].startTime,
+          value
+        })
+      ))).subscribe(result => {
+        observer.next(result);
+        observer.complete();
+      }, err => {
+        observer.error(err);
+      });
 
 
+    }, err => {
+      observer.error(err);
+    })
+  })
+}
+
+function getSimpleActivityTotalForMeeting(mtgId: string): Observable<number> {
+  return Observable.create((observer: Observer<number>) => {
+    let totVotes = -1, totComments = -1;
+
+    app.database().ref(`/vote/${mtgId}`).once('value', (snapshot) => {
+      let val = snapshot.val();
+      if (val == null) {
+        totVotes = 0;
+      } else {
+        totVotes = Object.keys(val).length;
+      }
+      ;
+      tryComplete();
+    }, err => {
+      observer.error(err);
+    });
+
+
+    app.database().ref(`/comment/${mtgId}`).once('value', (snapshot) => {
+      let val = snapshot.val();
+      if (val == null) {
+        totComments = 0;
+      } else {
+        totComments = Object.keys(val).length;
+      }
+      ;
+      tryComplete();
+    }, err => {
+      observer.error(err);
+    });
+
+
+    function tryComplete() {
+      if (totVotes >= 0 && totComments >= 0) {
+        observer.next(totVotes + totComments);
+        observer.complete();
+      }
+    }
+
+  })
 }
 
 function getVotesForItem(itemId: string): Observable<Vote[]> {
@@ -249,5 +329,6 @@ function getGroup(groupId): Observable<Group> {
 
 
 computeMeetingStats('id_meeting_511').subscribe(it => {
-  console.log(it);
-})
+  fs.writeFileSync('dev-stats.json', JSON.stringify(it));
+  console.log('done');
+});
