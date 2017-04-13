@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import {uniqBy} from 'lodash';
-import {initializeApp} from '../_internal';
+import {initializeAdminApp} from './_internal';
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
 import {merge} from 'rxjs/observable/merge';
@@ -18,7 +18,7 @@ import {Comment, Group, Meeting, MeetingStatsAdt, parseGroup, parseMeeting, Vote
 
 const cors = require('cors')({origin: true});
 
-const app = initializeApp();
+const app = initializeAdminApp();
 
 export const stats = functions.https.onRequest((req, res) => {
   let meetingId = req.query['meeting'];

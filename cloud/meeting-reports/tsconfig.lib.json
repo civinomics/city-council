@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "outDir": "dist",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "typeRoots": [
+      "node_modules/@types/"
+    ]
+  },
+  "files": [
+    "src/report.module.ts",
+    "src/main.ts",
+    "src/index.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "angularCompilerOptions": {
+    "genDir": "./src/ngfactory",
+    "entryModule": "./src/reports.module#MeetingReportModule",
+    "skipMetadataEmit": true
+  }
+}

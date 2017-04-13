@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 import * as firebase from 'firebase';
-import {firebaseAppConfig, serviceAppCreds} from '../firebase-creds';
+import {firebaseAppConfig, serviceAppCreds} from './firebase-creds';
 import {Observable} from 'rxjs/Observable';
 import {Observer} from 'rxjs/Observer';
 import * as gcloud from 'gcloud';

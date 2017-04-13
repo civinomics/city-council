@@ -15,7 +15,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:lib": "ngc -p tsconfig.lib.json",
+    "build:lib": "rimraf dist && ngc -p tsconfig.lib.json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

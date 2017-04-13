@@ -12,6 +12,9 @@ database.rules.json
 /tmp
 /out-tsc
 
+src/**/*.js
+src/**/*.js.map
+
 # dependencies
 /node_modules
 

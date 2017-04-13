@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist",
-    "baseUrl": "src",
+    "baseUrl": "",
     "rootDir": "src",
     "module": "commonjs",
     "sourceMap": true,
@@ -28,6 +28,8 @@
     "**/*.spec.ts"
   ],
   "angularCompilerOptions": {
+    "entryModule": "src/app/app.module#AppModule",
+    "genDir": "src/ngfactory",
     "skipTemplateCodegen": true
   }
 }
