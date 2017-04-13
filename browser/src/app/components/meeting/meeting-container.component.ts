@@ -11,7 +11,7 @@ import {GroupService} from '../../services/group.service';
 @Component({
   selector: 'civ-meeting-container',
   template: `
-    <div class="meeting-title">{{(meeting$ | async)?.title}}: {{(meeting$ | async)?.startTime | amDateFormat: 'MM/DD/YY'}}</div>
+    <div class="meeting-title">{{(meeting$ | async)?.title}}: {{(meeting$ | async)?.startTime | amDateFormat: 'M/DD/YY'}}</div>
 
     <div class="content-wrapper">
       <nav md-tab-nav-bar>

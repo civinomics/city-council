@@ -1,4 +1,4 @@
-import { CityCouncilPage } from './app.po';
+import {CityCouncilPage} from './app.po';
 
 describe('city-council App', () => {
   let page: CityCouncilPage;
