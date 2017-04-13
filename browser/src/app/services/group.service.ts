@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Group, parseGroup, RawGroup} from '../models/group';
+import {Group, Meeting, parseGroup, RawGroup} from '../models';
 import {AngularFireDatabase} from 'angularfire2';
 import {Actions, Effect, toPayload} from '@ngrx/effects';
 import {Store} from '@ngrx/store';
 import {AppState, getFocusedGroup, getLoadedGroupIds, getMeetingsOfSelectedGroup} from '../reducers/index';
 import {GroupLoadedAction} from '../reducers/data';
 import {SELECT_GROUP} from '../reducers/focus';
+let _ignore: Meeting;//so IDEA won't remove above import, which is needed for tsc to compile with declarations
 
 const LOAD_GROUP = '[GroupSvcInternal] loadGroup';
 

@@ -1,4 +1,4 @@
-import {Entity, RawEntity} from './index';
+import {Entity, RawEntity} from './entity';
 import * as moment from 'moment';
 import {Vote} from './vote';
 import Moment = moment.Moment;

@@ -1,4 +1,4 @@
-import {Entity, RawEntity} from './index';
+import {Entity, RawEntity} from './entity';
 
 export interface Office extends Entity {
   name: string;

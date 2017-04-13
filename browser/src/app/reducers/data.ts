@@ -8,7 +8,7 @@ import {Group, groupsEqual, mergeGroups} from '../models/group';
 import {mergeVotes, Vote, votesEqual} from '../models/vote';
 import {Comment, commentsEqual, mergeComments} from '../models/comment';
 
-type StateEntities = {
+export type StateEntities = {
   places: { [id: string]: Place },
   meetings: { [id: string]: Meeting },
   groups: { [id: string]: Group },

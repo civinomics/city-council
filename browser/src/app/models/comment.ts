@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import {Entity, parseEntity, RawEntity} from './index';
+import {Entity, parseEntity, RawEntity} from './entity';
 import {User} from './user';
 import Moment = moment.Moment;
 export type CommentRole = 'pro' | 'con' | 'neutral';

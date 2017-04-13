@@ -1,5 +1,5 @@
 import {Group} from './group';
-import {Entity, EntityField} from './index';
+import {Entity, EntityField} from './entity';
 
 export interface Place extends Entity {
   name: string;

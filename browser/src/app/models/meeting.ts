@@ -1,4 +1,4 @@
-import {Entity, EntityField, parseEntity, RawEntity} from './index';
+import {Entity, EntityField, parseEntity, RawEntity} from './entity';
 import * as moment from 'moment';
 import {keys} from 'lodash';
 import {ItemStatsAdt} from './item';

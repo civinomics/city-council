@@ -2,10 +2,12 @@ import * as fromFocus from './focus';
 import * as fromData from './data';
 import * as fromAuth from './auth';
 
+import {Comment, Group, Item, Meeting, SessionUser, User, Vote} from './../models';
 import {ActionReducer, combineReducers} from '@ngrx/store';
 import {compose} from '@ngrx/core';
 import {environment} from '../../environments/environment';
 import {createSelector} from 'reselect';
+let _ignore: Vote | Group | Item | Comment | Meeting | User | SessionUser; //so IDEA won't remove above import, which is needed for tsc to compile with declarations
 
 export interface AppState {
   auth: fromAuth.State,

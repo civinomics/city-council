@@ -1,22 +1,9 @@
-export interface Entity {
-  id: string;
-  owner: string;
-  editors?: string[];
-}
-
-export type EntityField = 'id' | 'owner' | 'editors';
-
-
-export interface RawEntity {
-  $key: string;
-  owner: string;
-  editors?: string[];
-}
-
-export const parseEntity = (it: RawEntity) => {
-  return {
-    id: it.$key,
-    owner: it.owner,
-    editors: it.editors || [it.owner]
-  }
-};
+export * from './comment';
+export * from './entity';
+export * from './group';
+export * from './item';
+export * from './meeting';
+export * from './office';
+export * from './place';
+export * from './user';
+export * from './vote';

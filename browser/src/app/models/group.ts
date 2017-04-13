@@ -1,4 +1,4 @@
-import {Entity, parseEntity, RawEntity} from './index';
+import {Entity, parseEntity, RawEntity} from './entity';
 import {Office, RawOffice} from './office';
 
 export interface Group extends Entity {
