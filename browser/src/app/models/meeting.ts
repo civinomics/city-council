@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import {keys} from 'lodash';
 import {ItemStatsAdt} from './item';
 import {Group, RawGroup} from './group';
+import {Comment, RawComment} from './comment';
 import Moment = moment.Moment;
 
 export type MeetingStatus = 'open' | 'closed' | 'draft'
@@ -30,7 +31,7 @@ export type RawMeeting = RawEntity & {
 
 
 export type MeetingStats = {
-  priors: { date: string, value: number }[]
+  priors: { date: string, value: number }[];
 
   total: {
     votes: number;
@@ -49,6 +50,11 @@ export type MeetingStats = {
     [itemId: string]: {
       total: ItemStatsAdt;
       byDistrict: { [districtId: string]: ItemStatsAdt }
+      topComments: {
+        pro: Comment | RawComment;
+        con: Comment | RawComment;
+        byDistrict: { [districtId: string]: { pro: Comment | RawComment | null, con: Comment | RawComment | null } }
+      }
     }
   }
 }
