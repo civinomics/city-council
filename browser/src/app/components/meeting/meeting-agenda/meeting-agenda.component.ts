@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Meeting, MeetingStatsAdt} from '../../../models/meeting';
+import {Meeting, MeetingStats} from '../../../models/meeting';
 
 import {Item} from '../../../models/item';
 import {Group} from '../../../models/group';
@@ -19,7 +19,7 @@ export class MeetingAgendaViewComponent implements OnInit {
   @Input() items: Item[];
 
   //note: this is an observable because we don't want to get it unless we have to (i.e. the stats tab is accessed)
-  @Input() stats: Observable<MeetingStatsAdt>;
+  @Input() stats: Observable<MeetingStats>;
 
   @Output() showItem = new EventEmitter();
 

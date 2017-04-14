@@ -1,10 +1,14 @@
 {
   "compileOnSave": false,
+  "include": [
+    "src"
+  ],
   "compilerOptions": {
     "baseUrl": "src",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
+    "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowJs": true,

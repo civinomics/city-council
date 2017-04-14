@@ -2,6 +2,7 @@ import {Entity, EntityField, parseEntity, RawEntity} from './entity';
 import * as moment from 'moment';
 import {keys} from 'lodash';
 import {ItemStatsAdt} from './item';
+import {Group, RawGroup} from './group';
 import Moment = moment.Moment;
 
 export type MeetingStatus = 'open' | 'closed' | 'draft'
@@ -28,7 +29,7 @@ export type RawMeeting = RawEntity & {
 }
 
 
-export type MeetingStatsAdt = {
+export type MeetingStats = {
   priors: { date: string, value: number }[]
 
   total: {
@@ -50,15 +51,19 @@ export type MeetingStatsAdt = {
       byDistrict: { [districtId: string]: ItemStatsAdt }
     }
   }
-
-
 }
 
-export const parseMeeting: (data: RawMeeting) => Meeting = (data: RawMeeting) => {
+export type MeetingReportAdt = {
+  meeting: Meeting | RawMeeting,
+  group: Group | RawGroup,
+  stats: MeetingStats
+}
+
+export const parseMeeting: (data: RawMeeting | Meeting | any) => Meeting = (data: RawMeeting) => {
 
   return {
     ...parseEntity(data),
-    id: data.$key,
+    id: data.$key || data.id,
     title: data.title,
     groupId: data.groupId,
     status: moment(data.feedbackDeadline).isAfter(moment()) ? 'open' : 'closed',

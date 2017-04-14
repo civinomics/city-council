@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
-import {Meeting, MeetingStatsAdt} from '../../../models/meeting';
+import {Meeting, MeetingStats} from '../../../models/meeting';
 import {Item} from '../../../models/item';
 import {MeetingService} from '../../../services/meeting.service';
 import {ItemService} from '../../../services/item.service';
@@ -40,7 +40,7 @@ export class MeetingAgendaContainerComponent implements OnInit {
   group$: Observable<Group>;
   meeting$: Observable<Meeting>;
   items$: Observable<Item[]>;
-  stats$: Observable<MeetingStatsAdt>;
+  stats$: Observable<MeetingStats>;
 
   constructor(private meetingSvc: MeetingService, private groupSvc: GroupService, private itemSvc: ItemService, private router: Router, private route: ActivatedRoute, private focusSvc: AppFocusService) {
     const id$ = this.route.params.map(params => params['meetingId']).distinctUntilChanged();

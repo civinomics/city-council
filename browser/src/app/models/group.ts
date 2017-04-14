@@ -1,4 +1,4 @@
-import {Entity, parseEntity, RawEntity} from './entity';
+import {Entity, RawEntity} from './entity';
 import {Office, RawOffice} from './office';
 
 export interface Group extends Entity {
@@ -15,9 +15,11 @@ export type RawGroup = RawEntity & {
   districts: RawOffice[]
 }
 
-export function parseGroup(data: RawGroup): Group {
+export function parseGroup(data: RawGroup | Group | any): Group {
   return {
-    ...parseEntity(data),
+    id: data.$key || data.id,
+    owner: data.owner,
+    editors: data.editors || [data.owner],
     name: data.name,
     icon: data.icon,
     meetingIds: data.meetings,

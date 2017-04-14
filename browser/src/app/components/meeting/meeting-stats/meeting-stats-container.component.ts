@@ -3,7 +3,7 @@ import {MeetingService} from '../../../services/meeting.service';
 import {Observable} from 'rxjs/Observable';
 import {Group} from '../../../models/group';
 import {Item} from '../../../models/item';
-import {Meeting, MeetingStatsAdt} from '../../../models/meeting';
+import {Meeting, MeetingStats} from '../../../models/meeting';
 import {GroupService} from '../../../services/group.service';
 
 @Component({
@@ -21,7 +21,7 @@ import {GroupService} from '../../../services/group.service';
 export class MeetingStatsContainerComponent implements OnInit {
   group$: Observable<Group>;
   meeting$: Observable<Meeting>;
-  stats$: Observable<MeetingStatsAdt>;
+  stats$: Observable<MeetingStats>;
   items$: Observable<Item[]>;
 
   constructor(private meetingSvc: MeetingService, private groupSvc: GroupService) {

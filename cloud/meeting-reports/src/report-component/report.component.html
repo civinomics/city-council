@@ -1,1 +1,7 @@
-<div>report!</div>
+<div class="group-info">
+  <img class="flag" [src]="group.icon">
+  <div class="title">{{group.name}}</div>
+</div>
+
+
+<civ-participation-pie [data]="pieData"></civ-participation-pie>

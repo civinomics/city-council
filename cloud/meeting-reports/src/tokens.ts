@@ -1,4 +1,4 @@
 import {InjectionToken} from '@angular/core';
-import {MeetingStatsAdt} from '@civ/city-council/dist/app/models';
+import {MeetingReportAdt} from '@civ/city-council';
 
-export const MEETING_STATS = new InjectionToken<MeetingStatsAdt>('MEETING_STATS');
+export const REPORT_DATA = new InjectionToken<MeetingReportAdt>('REPORT_DATA');

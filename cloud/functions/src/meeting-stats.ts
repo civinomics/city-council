@@ -13,7 +13,7 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/mergeMap';
 import * as fs from 'fs';
 
-import {Comment, Group, Meeting, MeetingStatsAdt, parseGroup, parseMeeting, Vote} from '@civ/city-council';
+import {Comment, Group, Meeting, MeetingStats, parseGroup, parseMeeting, Vote} from '@civ/city-council';
 
 
 const cors = require('cors')({origin: true});
@@ -30,7 +30,7 @@ export const stats = functions.https.onRequest((req, res) => {
   });
 });
 
-export function computeMeetingStats(meetingId: string): Observable<MeetingStatsAdt> {
+export function computeMeetingStats(meetingId: string): Observable<MeetingStats> {
 
   return getMeeting(meetingId)
     .mergeMap(meeting => {

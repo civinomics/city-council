@@ -5,7 +5,9 @@
   "version": "0.0.7",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && ngc -p tsconfig.lib.json"
+    "build": "rimraf dist && ngc -p tsconfig.lib.json && webpack",
+    "webpack": "webpack",
+    "dev": "concurrently \"webpack --watch\" && \"node dist/bundle/server.js\""
   },
   "dependencies": {
     "@angular/animations": "^4.0.0",
@@ -14,7 +16,7 @@
     "@angular/core": "^4.0.0",
     "@angular/http": "^4.0.0",
     "@angular/platform-browser": "^4.0.0",
-    "@angular/platform-server": "^4.0.0",
+    "@angular/router": "^4.0.0",
     "core-js": "^2.4.1",
     "d3": "^4.7.4",
     "express": "^4.15.2",
@@ -28,7 +30,11 @@
     "@types/express": "^4.0.35",
     "@types/jasmine": "2.5.38",
     "@types/node": "^6.0.68",
+    "angular2-template-loader": "^0.6.2",
+    "autoprefixer-loader": "^3.2.0",
     "codelyzer": "~2.0.0",
+    "concurrently": "^3.4.0",
+    "css-loader": "^0.28.0",
     "jasmine-core": "~2.5.2",
     "jasmine-spec-reporter": "~3.2.0",
     "karma": "~1.4.1",
@@ -38,8 +44,11 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "lite-server": "^2.3.0",
+    "node-sass": "^4.5.2",
     "protractor": "~5.1.0",
     "raw-loader": "^0.5.1",
+    "sass-loader": "^6.0.3",
+    "to-string-loader": "^1.1.5",
     "ts-node": "~2.0.0",
     "tslint": "~4.5.0",
     "typescript": "~2.2.0",

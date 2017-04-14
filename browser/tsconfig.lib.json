@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "./dist/src",
     "baseUrl": "",
     "rootDir": "src",
     "module": "commonjs",
@@ -30,6 +30,7 @@
   "angularCompilerOptions": {
     "entryModule": "src/app/app.module#AppModule",
     "genDir": "src/ngfactory",
+    "strictMetadataEmit": true,
     "skipTemplateCodegen": true
   }
 }

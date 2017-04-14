@@ -2,8 +2,9 @@
   "name": "@civ/city-council",
   "version": "0.0.4",
   "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "typings": "dist/src/index.d.ts",
+  "module": "dist/src/index.js",
   "contributors": [
     {
       "name": "Drew Moore",
@@ -14,8 +15,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "build:lib": "rimraf dist && ngc -p tsconfig.lib.json",
+    "build": "rimraf dist && npm run build:lib && ng build --prod --aot --output-hashing none",
+    "build:lib": "rimraf dist/src && ngc -p tsconfig.lib.json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Meeting, MeetingStatsAdt, parseMeeting, RawMeeting} from '../models/meeting';
+import {Meeting, MeetingStats, parseMeeting, RawMeeting} from '../models/meeting';
 import {AngularFireDatabase} from 'angularfire2';
 import {Item} from '../models/item';
 import {ItemService} from './item.service';
@@ -44,7 +44,7 @@ export class MeetingService {
       .map(id => ({type: LOAD_MEETING, payload: id}));
 
 
-  private statsCache$: { [id: string]: MeetingStatsAdt } = {};
+  private statsCache$: { [id: string]: MeetingStats } = {};
 
   constructor(private db: AngularFireDatabase, private itemSvc: ItemService, private actions: Actions, private store: Store<AppState>, private http: Http) {
   }
@@ -54,13 +54,13 @@ export class MeetingService {
     return this.store.select(getItemsOnSelectedMeetingAgenda)
   }
 
-  public getMeetingStats(meetingId: string): Observable<MeetingStatsAdt> {
+  public getMeetingStats(meetingId: string): Observable<MeetingStats> {
     if (!!this.statsCache$[meetingId]) {
       console.log(`returning cached meeting stats`);
       return Observable.of(this.statsCache$[meetingId]);
     }
     console.log(`fetching new mtg stats`);
-    //return this.http.get(`https://us-central1-civ-cc.cloudfunctions.net/stats?meeting=${meetingId}`).map(it => it.json() as MeetingStatsAdt)
+    //return this.http.get(`https://us-central1-civ-cc.cloudfunctions.net/stats?meeting=${meetingId}`).map(it => it.json() as MeetingStats)
     return Observable.of(devStats)
       .do(it => {
         this.statsCache$[meetingId] = it;

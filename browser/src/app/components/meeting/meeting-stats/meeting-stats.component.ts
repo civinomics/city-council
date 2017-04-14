@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {Meeting, MeetingStatsAdt} from '../../../models/meeting';
+import {Meeting, MeetingStats} from '../../../models/meeting';
 import {MeetingService} from '../../../services/meeting.service';
 import {Office} from '../../../models/office';
 import {Item} from '../../../models/item';
@@ -18,7 +18,7 @@ export class MeetingStatsComponent implements OnChanges {
 
   @Input() districts: Office[];
 
-  @Input() stats: MeetingStatsAdt;
+  @Input() stats: MeetingStats;
 
   itemMap: { [id: string]: Item };
 
