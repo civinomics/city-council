@@ -22,10 +22,17 @@ export class MeetingStatsComponent implements OnChanges {
 
   itemMap: { [id: string]: Item };
 
+  private _items: Item[];
+
   @Input() set items(items: Item[]) {
     if (!!items) {
       this.itemMap = items.reduce((result, next) => ({...result, [next.id]: next}), {});
+      this._items = items.sort((x, y) => this.itemNumber(x) - this.itemNumber(y));
     }
+  }
+
+  get items() {
+    return this._items;
   }
 
   data: {
@@ -35,10 +42,6 @@ export class MeetingStatsComponent implements OnChanges {
     totParticipants: number;
     participationByDistrict: { name: string, value: number }[]
     activityByItem: { name: string, series: { name: string, value: number }[] }[]
-  };
-
-  labelFunction = (name: string) => {
-    return name.split(' ')[1];
   };
 
   pieColorScheme = {
@@ -56,6 +59,20 @@ export class MeetingStatsComponent implements OnChanges {
     }
   ];
 
+  activeDistrict = null;
+
+  setActiveDistrict(it: Office | null) {
+    this.activeDistrict = it;
+  }
+
+
+  numItemsShown = 5;
+
+  scrolled(x) {
+    this.numItemsShown = Math.min(this.numItemsShown + 5, this.items.length)
+  }
+
+
   get activityByItemHeight() {
     return (this.data.activityByItem.length) * (20 + 5);
   }
@@ -71,6 +88,55 @@ export class MeetingStatsComponent implements OnChanges {
     if (!!this.stats && !!this.itemMap) {
       this.updateData();
     }
+  }
+
+
+  itemVotes(item: Item) {
+    let src = this.activeDistrict == null ?
+        this.stats.byItem[item.id].total.votes :
+        this.stats.byItem[item.id].byDistrict[this.activeDistrict.id].votes;
+
+    return src.yes + src.no;
+  }
+
+  itemComments(item: Item) {
+    let src = this.activeDistrict == null ?
+        this.stats.byItem[item.id].total.comments :
+        this.stats.byItem[item.id].byDistrict[this.activeDistrict.id].comments;
+
+    return src.pro + src.con + src.neutral;
+  }
+
+  topPro(item: Item) {
+
+    let src = this.activeDistrict == null ?
+        this.stats.byItem[item.id].topComments :
+        this.stats.byItem[item.id].topComments.byDistrict[this.activeDistrict.id];
+
+    return src.pro;
+
+  }
+
+
+  topCon(item: Item) {
+    let src = this.activeDistrict == null ?
+        this.stats.byItem[item.id].topComments :
+        this.stats.byItem[item.id].topComments.byDistrict[this.activeDistrict.id];
+
+    return src.con;
+  }
+
+  districtTableData(item: Item) {
+    return this.districts.map(district => ({
+      district,
+      votes: this.stats.byItem[item.id].byDistrict[district.id].votes,
+      comments: this.stats.byItem[item.id].byDistrict[district.id].comments
+    }))
+  }
+
+
+  itemNumber(item: Item) {
+    return item.onAgendas[this.meeting.id].itemNumber;
   }
 
 

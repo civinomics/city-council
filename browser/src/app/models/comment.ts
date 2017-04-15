@@ -42,7 +42,9 @@ export const parseComment: (data: RawComment) => Comment = (data) => {
         text: data.text,
         role: data.role,
         posted: moment(data.posted),
-        userDistrict: data.userDistrict || null
+        userDistrict: data.userDistrict || null,
+        votes: data.votes,
+        replies: data.replies
     }
 };
 

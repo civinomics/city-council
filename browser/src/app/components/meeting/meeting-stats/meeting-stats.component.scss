@@ -43,3 +43,23 @@
 .by-item {
   height: auto;
 }
+
+.item-details {
+  padding: 0 10px;
+
+  .item {
+    margin: 15px 0;
+
+    .totals {
+      .entry {
+        text-transform: uppercase;
+      }
+    }
+
+    .details {
+      padding: 0 15px;
+    }
+
+  }
+
+}

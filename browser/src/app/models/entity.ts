@@ -8,14 +8,17 @@ export type EntityField = 'id' | 'owner' | 'editors';
 
 
 export interface RawEntity {
-  $key: string;
+    $key?: string;
   owner: string;
   editors?: string[];
 }
 
-export const parseEntity = (it: RawEntity) => {
+export const parseEntity = (it: RawEntity | any) => {
+    if (!it.$key && !it.id) {
+        throw new Error(`cannot parse entity without ID: ${JSON.stringify(it)}`);
+    }
   return {
-    id: it.$key,
+      id: it.$key || it.id,
     owner: it.owner,
     editors: it.editors || [it.owner]
   }

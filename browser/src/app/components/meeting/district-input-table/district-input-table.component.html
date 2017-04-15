@@ -1,0 +1,54 @@
+<div class="table" fxLayout="row">
+
+    <div class="column district-names" fxFlex="1 1">
+        <div class="heading row">district</div>
+        <div *ngFor="let entry of data" class="row">
+            <div class="cell">{{entry.district.name}}</div>
+        </div>
+    </div>
+
+    <div class="column comments" fxFlex="1 1">
+        <div class="heading row">comments</div>
+        <div *ngFor="let entry of data" class="row">
+            <div class="cell">{{entry.comments.pro + entry.comments.con + entry.comments.neutral}}</div>
+        </div>
+    </div>
+
+    <div class="column votes" fxFlex="1 1">
+        <div class="heading row">votes</div>
+        <div *ngFor="let entry of data" class="row">
+            <div class="cell">{{entry.votes.yes + entry.votes.no}}</div>
+        </div>
+    </div>
+
+
+    <div class="column pro-con" fxFlex="1 1ss">
+        <div class="heading row"><span class="green">pro</span> : <span class="red">con</span></div>
+        <div *ngFor="let entry of data" class="row">
+            <div class="cell"><span class="green">{{entry.votes.yes + entry.comments.pro}}</span> : <span class="red">{{entry.votes.no + entry.comments.con}}</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--
+<table class="table table-striped table-responsive">
+
+    <thead>
+    <tr>
+
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let entry of data">
+        <td>{{entry.district.name}}</td>
+        <td>{{entry.comments.pro + entry.comments.con + entry.comments.neutral}}</td>
+        <td>{{entry.votes.yes + entry.votes.no}}</td>
+        <td></td>
+    </tr>
+    </tbody>
+
+</table>
+-->

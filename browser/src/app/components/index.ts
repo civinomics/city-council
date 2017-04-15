@@ -36,11 +36,13 @@ import {
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {MomentModule} from 'angular2-moment';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import {DistrictInputTableComponent} from './meeting/district-input-table/district-input-table.component';
 
 export const VIEW_COMPONENTS = [
   GroupViewComponent, ItemViewComponent, AboutComponent, CareersComponent, TermsComponent,
   SignInViewComponent, AuthWidgetComponent, CommentComponent, VerifyModalComponent, AuthModalComponent,
-  MeetingAdminComponent, MeetingStatsComponent, MeetingAgendaViewComponent
+  MeetingAdminComponent, MeetingStatsComponent, MeetingAgendaViewComponent, DistrictInputTableComponent
 ];
 
 export const CONTAINER_COMPONENTS = [
@@ -63,7 +65,8 @@ export const VIEW_PROVIDERS = [
 
   FlexLayoutModule,
   MomentModule,
-  NgxChartsModule
+  NgxChartsModule,
+  InfiniteScrollModule
 ];
 
 

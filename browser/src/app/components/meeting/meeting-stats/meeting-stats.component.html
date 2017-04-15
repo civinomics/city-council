@@ -37,6 +37,7 @@
     </ngx-charts-pie-chart>
   </div>
 
+  <!-- we need to set the height explicitly or the chart will draw itself too small  -->
   <div class="by-item row" [style.height.px]="activityByItemHeight">
     <div class="heading">Activity by item</div>
     <ngx-charts-bar-horizontal-stacked
@@ -48,6 +49,30 @@
     >
 
     </ngx-charts-bar-horizontal-stacked>
+  </div>
+
+  <div class="item-details row" infinite-scroll
+       [infiniteScrollDistance]="0.25"
+       (scrolled)="scrolled($event)" #itemDetails>
+    <div class="heading">PUBLIC INPUT</div>
+    <div *ngFor="let item of items | limit:numItemsShown;" class="item" fxLayout="column" fxLayoutGap="10px">
+      <div class="item-text">
+        <strong>{{itemNumber(item)}}. </strong> <span>{{item.text}}</span>
+      </div>
+      <div class="totals" fxLayout="row" fxLayoutGap="10px">
+        <div class="entry">{{itemVotes(item)}} votes</div>
+        <div class="entry">{{itemComments(item)}} comments</div>
+      </div>
+
+      <div class="details">
+
+        <civ-district-input-table [data]="districtTableData(item)">
+
+        </civ-district-input-table>
+      </div>
+
+    </div>
+
   </div>
 
 
