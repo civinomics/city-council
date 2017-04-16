@@ -6,7 +6,7 @@
       <md-option *ngFor="let district of districtSortOptions" [value]="district">{{district.name}}</md-option>
     </md-select>
   </div>
-  <div class="squares" fxLayout="row" fxLayoutGap="20px" *ngIf="!!data" fxFlexAlign="center">
+    <div class="squares" fxLayout="row" fxLayoutGap="20px" *ngIf="!!data" fxFlexAlign="center" fxLayoutWrap="wrap">
     <div class="square">
       <div class="value">{{data.numItems}}</div>
       <div class="key">
@@ -71,8 +71,10 @@
       </div>
 
       <div class="details">
-        <civ-comment [comment]="topPro(item)"></civ-comment>
-        <civ-district-input-table [data]="districtTableData(item)" *ngIf="!showingSingleDistrict"></civ-district-input-table>
+          <civ-comment [comment]="data.topComments[item.id].pro" *ngIf="!!data.topComments[item.id].pro"></civ-comment>
+          <civ-comment [comment]="data.topComments[item.id].con" *ngIf="!!data.topComments[item.id].con"></civ-comment>
+
+          <civ-district-input-table [data]="districtTableData(item)" *ngIf="!showingSingleDistrict"></civ-district-input-table>
       </div>
 
     </div>

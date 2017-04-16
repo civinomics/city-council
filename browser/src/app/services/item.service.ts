@@ -1,12 +1,12 @@
-import {Injectable} from '@angular/core';
-import {AngularFireDatabase} from 'angularfire2';
-import {Observable} from 'rxjs';
-import {Item, ItemStatsAdt, parseItem} from '../models/item';
-import {Actions, Effect, toPayload} from '@ngrx/effects';
-import {AppState, getFocusedItem, getLoadedItemIds, getMeetings} from '../reducers/index';
-import {Store} from '@ngrx/store';
-import {ItemLoadedAction, ItemsLoadedAction} from '../reducers/data';
-import {SELECT_ITEM, SELECT_MEETING} from '../reducers/focus';
+import { Injectable } from '@angular/core';
+import { AngularFireDatabase } from 'angularfire2';
+import { Observable } from 'rxjs';
+import { Item, ItemStatsAdt, parseItem } from '../models/item';
+import { Actions, Effect, toPayload } from '@ngrx/effects';
+import { AppState, getFocusedItem, getLoadedItemIds, getMeetings } from '../reducers/index';
+import { Store } from '@ngrx/store';
+import { ItemLoadedAction, ItemsLoadedAction } from '../reducers/data';
+import { SELECT_ITEM, SELECT_MEETING } from '../reducers/focus';
 
 
 const LOAD_SINGLE_ITEM = '[ItemSvcInternal] loadSingleItem';
@@ -31,7 +31,7 @@ export class ItemService {
     .map(toPayload)
     .withLatestFrom(this.store.select(getLoadedItemIds), (toLoadIds, loadedIds) =>
       toLoadIds.filter(id => loadedIds.indexOf(id) < 0)
-    ).flatMap(idsToLoad => Observable.forkJoin(idsToLoad.map(id => this.load(id).take(1)))) //NOTE: take(1), meaning
+    ).flatMap(idsToLoad => Observable.combineLatest(idsToLoad.map(id => this.load(id)/*.take(1)*/))) //NOTE: take(1), meaning
     .map((items: Item[]) => new ItemsLoadedAction(items));
 
 
@@ -75,6 +75,12 @@ export class ItemService {
 
   public getSelectedItem() {
     return this.store.select(getFocusedItem);
+  }
+
+  public updateFeedbackStatus(itemId: string, meetingId: string, value: boolean) {
+    this.db.object(`/item/${itemId}/onAgendas/${meetingId}`).update({ closedSession: value }).then(res => {
+      console.log(res);
+    })
   }
 
   private load(id: string): Observable<Item> {

@@ -1,25 +1,27 @@
 <div class="outer-wrapper {{comment.role}}">
   <div *ngIf="showAuthor" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" class="author-row">
     <img class="avatar" [src]="comment.author.icon">
-    <div class="name">{{comment.author.firstName}} {{comment.author.lastName}}, {{authorDistrict.name}}</div>
+      <div class="name">{{comment.author.firstName}} {{comment.author.lastName}}<span *ngIf="!!authorDistrict">, {{authorDistrict.name}}</span>
+      </div>
 
   </div>
   <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="space-between center">
-    <div *ngIf="!isEditing" class="text-box">
-      {{comment.text}}
+      <div *ngIf="!isEditing" class="text-box" fxLayout="column" fxLayoutGap="5px" fxFlex="1 1">
+          <div>{{comment.text}}</div>
+          <div fxFlexAlign="end">{{comment.votes.up - comment.votes.down}} vote{{comment.votes.up - comment.votes.down
+              == 1 ? '' : 's' }}
+          </div>
     </div>
-    <button md-icon-button *ngIf="isEditing" (click)="toggleEditing()" [@resetBtn]>
+      <button md-icon-button *ngIf="isEditing" (click)="toggleEditing()" [@resetBtn] fxFlex="0 0">
       <md-icon class="yellow">replay</md-icon>
     </button>
-    <md-input-container *ngIf="isEditing">
+      <md-input-container *ngIf="isEditing" fxFlex="1 1">
       <input type="text" mdInput #editInput [(ngModel)]="newText">
     </md-input-container>
 
     <button md-icon-button *ngIf="canEdit && !isEditing" (click)="toggleEditing()" [@editBtn]>
       <md-icon>edit</md-icon>
     </button>
-
-
   </div>
   <div *ngIf="isEditing" fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="15px" [@editBtnRow]>
     <button md-button class="red">

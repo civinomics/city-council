@@ -41,9 +41,16 @@ root:
     .write: isSuperuser()
     $id:
       .write: (!data.exists()) || data.owner == auth.uid
-      text: required string
-      feedbackDeadline: required string
+      text: string
+      feedbackDeadline: string
       owner: userExists(newData.owner)
+
+      onAgendas:
+        $meetingId:
+          groupId: string
+          meetingId: string
+          itemNumber: string
+          closedSession: boolean
 
   group:
     .read: true

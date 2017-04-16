@@ -1,0 +1,67 @@
+<div class="status" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="20px">
+    <span>STATUS: <strong>{{meeting.published == true ? 'OPEN' : 'DRAFT'}}</strong></span>
+</div>
+<div class="section">
+    <div class="heading">Basic Info</div>
+    <div class="basic-info body" [formGroup]="basicForm">
+        <div class="row" fxLayout="row" fxLayoutAlign="start center">
+            <div class="key" fxFlex="0 0 120px">Date:</div>
+            <md-input-container class="value" fxFlex="0 1 auto">
+                <input mdInput type="date" formControlName="date">
+            </md-input-container>
+        </div>
+        <div class="row" fxLayout="row" fxLayoutAlign="start center">
+            <div class="key" fxFlex="0 0 120px">Name:</div>
+            <md-input-container class="value" fxFlex="1 1 auto">
+                <input mdInput type="text" formControlName="name">
+            </md-input-container>
+        </div>
+        <div class="row" fxLayout="row" fxLayoutAlign="start center">
+            <div class="key" fxFlex="0 0 120px">Deadline:</div>
+            <div class="value feedback" fxFlex="1 1 auto" fxLayout="column">
+                <div class="expl">
+                    This meeting will close automatically at the following date and time. A report will be generated
+                    automatically
+                    and sent to all followers.
+                </div>
+
+                <div fxLayout="row" fxLayouAlign="start center" fxLayoutGap="10px">
+
+                    <md-input-container class="value">
+                        <input mdInput type="date" formControlName="deadlineDate">
+                    </md-input-container>
+                    <md-input-container class="value">
+                        <input mdInput type="time" formControlName="deadlineTime">
+                    </md-input-container>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<div class="section agenda">
+    <div class="heading">Agenda</div>
+
+    <div class="body">
+        <div *ngFor="let item of agenda" class="item" fxLayout="column" fxLayoutGap="10px">
+            <div class="text"><strong>{{item.agendaInfo.itemNumber}}.</strong> {{item.text}}</div>
+            <div class="feedback-status"
+                 fxFlexAlign="end"
+                 fxLayout="row"
+                 fxLayoutAlign="start center"
+                 fxLayoutGap="20px">
+                <div class="current">Open for feedback:
+                    <span class="value {{item.agendaInfo.closedSession ? 'red' : 'green'}}">{{item.agendaInfo.closedSession ? 'NO' : 'YES'}}</span>
+                </div>
+                <button md-raised-button
+                        [color]="item.agendaInfo.closedSession ? 'primary' : 'warn'"
+                        (click)="toggleFeedbackStatus(item)">
+                    {{item.agendaInfo.closedSession ? 'Unmark as closed session' : 'Mark closed session'}}
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>

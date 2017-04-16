@@ -1,7 +1,7 @@
-import {Entity, RawEntity} from './entity';
+import { Entity, RawEntity } from './entity';
 import * as moment from 'moment';
-import {Vote} from './vote';
-import {Comment} from './comment';
+import { Vote } from './vote';
+import { Comment } from './comment';
 import Moment = moment.Moment;
 
 export type ItemStatus = 'CITIZEN_PROPOSAL' | 'ON_AGENDA';
@@ -12,6 +12,14 @@ export type ItemOutcome = {
     yes: number,
     no: number
   }
+}
+
+export type AgendaInfo = {
+  groupId: string;
+  meetingId: string;
+  itemNumber: number;
+  closedSession: boolean;
+  outcome?: ItemOutcome
 }
 
 export type ItemStatsAdt = {
@@ -31,12 +39,7 @@ export interface Item extends Entity {
   feedbackDeadline: Moment;
   activity?: ItemStatsAdt;
   onAgendas: {
-    [id: string]: {
-      groupId: string;
-      meetingId: string;
-      itemNumber: number;
-      outcome?: ItemOutcome
-    }
+    [id: string]: AgendaInfo;
   }
 }
 

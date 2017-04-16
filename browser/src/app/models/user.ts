@@ -68,7 +68,7 @@ export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) =>
     id: data.$key,
     email: data.email,
     address: data.address,
-      superuser: data.superuser,
+    superuser: data.superuser||false,
     isVerified: data.isVerified,
     following: data.following,
     votes: data.votes || {},

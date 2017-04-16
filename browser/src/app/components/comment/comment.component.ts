@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {MdInputDirective} from '@angular/material';
-import {animate, state, style, transition, trigger} from '@angular/animations';
-import {User, Comment} from '../../models';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MdInputDirective } from '@angular/material';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Comment } from '../../models';
 
 @Component({
   selector: 'civ-comment',
@@ -37,7 +37,8 @@ export class CommentComponent implements OnInit {
    */
   @Input() activeContext: string = 'id_acc';
 
-  _showAuthor: boolean = true;
+
+    _showAuthor: boolean = true;
 
   @Input() set showAuthor(val: boolean){
     this._showAuthor = val;

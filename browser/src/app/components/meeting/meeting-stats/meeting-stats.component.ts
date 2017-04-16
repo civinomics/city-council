@@ -8,11 +8,21 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import {Meeting, MeetingStats, Office, Item, User, RawUser, CommentWithAuthor, RawCommentWithAuthor} from '../../../models';
-let x: User|RawUser|CommentWithAuthor|RawCommentWithAuthor;
-import {MeetingService} from '../../../services/meeting.service';
+import {
+    CommentWithAuthor,
+    Item,
+    Meeting,
+    MeetingStats,
+    Office,
+    RawCommentWithAuthor,
+    RawUser,
+    User
+} from '../../../models';
+import { MeetingService } from '../../../services/meeting.service';
 
-import {schemeCategory10} from 'd3-scale';
+import { schemeCategory10 } from 'd3-scale';
+import { Comment } from '../../../models/comment';
+let x: User | RawUser | CommentWithAuthor | RawCommentWithAuthor;
 
 @Component({
   selector: 'civ-meeting-stats-view',
@@ -64,7 +74,8 @@ export class MeetingStatsComponent implements OnChanges {
     totVotes: number;
     totParticipants: number;
     participationByDistrict: { name: string, value: number }[]
-    activityByItem: { name: string, series: { name: string, value: number }[] }[]
+      activityByItem: { name: string, series: { name: string, value: number }[] }[],
+      topComments: { [id: string]: { pro: Comment, con: Comment } }
   };
 
   pieColorScheme = {
@@ -102,7 +113,7 @@ export class MeetingStatsComponent implements OnChanges {
 
 
   get activityByItemHeight() {
-    return (this.data.activityByItem.length) * (20 + 5);
+      return this._items.length * (20 + 5);
   }
 
     constructor(private meetingSvc: MeetingService, private cdr: ChangeDetectorRef) {
@@ -148,12 +159,6 @@ export class MeetingStatsComponent implements OnChanges {
   }
 
   topPro(item: Item) {
-
-      let src = this.activeDistrict.id == null ?
-        this.stats.byItem[item.id].topComments :
-        this.stats.byItem[item.id].topComments.byDistrict[this.activeDistrict.id];
-
-    return src.pro;
 
   }
 
@@ -215,13 +220,25 @@ export class MeetingStatsComponent implements OnChanges {
         }
       });
 
+      let topComments = this.items.reduce((result, item) => {
+          let src = this.activeDistrict.id == null ?
+              this.stats.byItem[ item.id ].topComments :
+              this.stats.byItem[ item.id ].topComments.byDistrict[ this.activeDistrict.id ];
+
+          return {
+              ...result,
+              [item.id]: { pro: src.pro, con: src.con }
+          }
+      }, {});
+
     this.data = {
       numItems,
       totComments,
       totVotes,
       totParticipants,
       participationByDistrict,
-      activityByItem
+        activityByItem,
+        topComments
     }
   }
 

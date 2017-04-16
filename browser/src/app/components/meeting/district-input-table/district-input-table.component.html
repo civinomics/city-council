@@ -3,7 +3,9 @@
     <div class="column district-names" fxFlex="1 1">
         <div class="heading row">district</div>
         <div *ngFor="let entry of data" class="row">
-            <div class="cell">{{entry.district.name}}</div>
+            <div class="cell"><span fxHide="false" fxHide.xs="true">{{entry.district.name.split(' ')[0]}}</span>
+                {{entry.district.name.split(' ')[1]}}
+            </div>
         </div>
     </div>
 

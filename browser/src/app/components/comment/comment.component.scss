@@ -9,24 +9,30 @@
   border-radius: 5px;
 
   &.con {
-    background-color: mat-color($mat-red, A100);
+    background-color: mat-color($mat-red, A200);
   }
 
   &.pro {
-    background-color: mat-color($mat-green, A100);
+    background-color: mat-color($mat-green, A200);
   }
 
 }
 
 .author-row {
+  font-weight: 500;
   .avatar {
-    height: 20px;
+    height: 30px;
+    width: 30px;
     border-radius: 50%;
   }
 }
 
 .text-box {
-  padding: 5px;
+  margin-left: 10px;
+  padding: 10px 0;
+  @include mq-gt-xs {
+    margin-left: 40px;
+  }
   border-radius: 5px;
 
 

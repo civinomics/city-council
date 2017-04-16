@@ -2,7 +2,7 @@
 
 :host {
   display: block;
-  font-size: 0.85em;
+  font-size: 0.75em;
 
   .table {
 
@@ -15,6 +15,8 @@
       border-right: 1px solid mat-color($mat-grey, 400);
 
       .row {
+        white-space: nowrap;
+
         padding: 10px 5px;
         border-bottom: 1px solid mat-color($mat-grey, 400);
         text-align: center;

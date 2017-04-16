@@ -15,6 +15,7 @@
     border: 1px solid mat-color($mat-grey, 700);
     color: mat-contrast($mat-grey, 300);
     padding: 10px;
+    margin-bottom: 5px; //need this when the row wraps
     text-align: center;
     .value {
       font-size: 1.75em;
@@ -53,7 +54,9 @@
 
 
   .item {
-    margin: 20px 0;
+    margin: 15px 0;
+    padding: 15px 0;
+    border-bottom: 1px solid mat-color($mat-grey, 300);
 
     & > div {
       margin: 10px 0;
@@ -68,6 +71,9 @@
 
     .details {
       padding: 0 15px;
+      & > * {
+        margin: 10px 0;
+      }
     }
 
   }
