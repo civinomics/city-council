@@ -47,12 +47,22 @@
 .item-details {
   padding: 0 10px;
 
+  @include mq-gt-sm {
+    padding: 0 30px;
+  }
+
+
   .item {
-    margin: 15px 0;
+    margin: 20px 0;
+
+    & > div {
+      margin: 10px 0;
+    }
 
     .totals {
       .entry {
         text-transform: uppercase;
+        margin: 0 10px;
       }
     }
 

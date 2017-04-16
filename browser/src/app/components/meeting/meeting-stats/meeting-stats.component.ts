@@ -1,4 +1,13 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 import {Meeting, MeetingStats} from '../../../models/meeting';
 import {MeetingService} from '../../../services/meeting.service';
 import {Office} from '../../../models/office';
@@ -8,6 +17,7 @@ import {schemeCategory10} from 'd3-scale';
 
 @Component({
   selector: 'civ-meeting-stats-view',
+    changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './meeting-stats.component.html',
   styleUrls: ['./meeting-stats.component.scss']
 })
@@ -19,6 +29,10 @@ export class MeetingStatsComponent implements OnChanges {
   @Input() districts: Office[];
 
   @Input() stats: MeetingStats;
+
+    /*  we run changes in activeDistrict through an output/input cycle so that we can use CDS.OnPush  */
+    @Input() activeDistrict: { id: string | null, name: string } = {id: null, name: 'All Districts'};
+    @Output() activeDistrictChanged = new EventEmitter;
 
   itemMap: { [id: string]: Item };
 
@@ -59,12 +73,17 @@ export class MeetingStatsComponent implements OnChanges {
     }
   ];
 
-  activeDistrict = null;
+    districtSortOptions: { id: string, name: string }[] = [{name: 'All Districts', id: null}];
 
-  setActiveDistrict(it: Office | null) {
-    this.activeDistrict = it;
+
+    setActiveDistrict(it: string | null) {
+        console.log(it);
+        this.activeDistrictChanged.emit(it);
   }
 
+    get showingSingleDistrict() {
+        return this.activeDistrict.id != null;
+    }
 
   numItemsShown = 5;
 
@@ -77,22 +96,34 @@ export class MeetingStatsComponent implements OnChanges {
     return (this.data.activityByItem.length) * (20 + 5);
   }
 
-  constructor(private meetingSvc: MeetingService) {
+    constructor(private meetingSvc: MeetingService, private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit() {
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!!this.stats && !!this.itemMap) {
+      if ((changes['stats'] || changes['items'] || changes['activeDistrict']) && (!!this.stats && !!this.itemMap)) {
       this.updateData();
+          this.cdr.detectChanges();
+
     }
+
+      if (changes['districts'] && !!this.districts) {
+
+          this.districtSortOptions = [{
+              id: null,
+              name: 'All Districts'
+          }, ...this.districts];
+
+      }
+
+
   }
 
 
   itemVotes(item: Item) {
-    let src = this.activeDistrict == null ?
+      let src = this.activeDistrict.id == null ?
         this.stats.byItem[item.id].total.votes :
         this.stats.byItem[item.id].byDistrict[this.activeDistrict.id].votes;
 
@@ -100,7 +131,7 @@ export class MeetingStatsComponent implements OnChanges {
   }
 
   itemComments(item: Item) {
-    let src = this.activeDistrict == null ?
+      let src = this.activeDistrict.id == null ?
         this.stats.byItem[item.id].total.comments :
         this.stats.byItem[item.id].byDistrict[this.activeDistrict.id].comments;
 
@@ -109,7 +140,7 @@ export class MeetingStatsComponent implements OnChanges {
 
   topPro(item: Item) {
 
-    let src = this.activeDistrict == null ?
+      let src = this.activeDistrict.id == null ?
         this.stats.byItem[item.id].topComments :
         this.stats.byItem[item.id].topComments.byDistrict[this.activeDistrict.id];
 
@@ -119,7 +150,7 @@ export class MeetingStatsComponent implements OnChanges {
 
 
   topCon(item: Item) {
-    let src = this.activeDistrict == null ?
+      let src = this.activeDistrict.id == null ?
         this.stats.byItem[item.id].topComments :
         this.stats.byItem[item.id].topComments.byDistrict[this.activeDistrict.id];
 
@@ -141,34 +172,37 @@ export class MeetingStatsComponent implements OnChanges {
 
 
   updateData() {
+
+      let totalSrc = this.activeDistrict.id == null ? this.stats.total : this.stats.total.byDistrict[this.activeDistrict.id];
+
     let numItems = this.meeting.agendaIds.length;
-    let participationByDistrict = this.districts.map(district => ({
+
+      let participationByDistrict = this.activeDistrict.id == null ? this.districts.map(district => ({
       name: district.name,
       value: this.stats.total.byDistrict[district.id].participants
-    }));
+      })) : null;
 
-    let totParticipants = this.stats.total.participants;
-    let totComments = this.stats.total.comments;
-    let totVotes = this.stats.total.votes;
+      let totParticipants = totalSrc.participants;
+      let totComments = totalSrc.comments;
 
-    let activityByItem = Object.keys(this.itemMap)
-      .sort((x, y) => {
-        return this.itemMap[y].onAgendas[this.meeting.id].itemNumber - this.itemMap[x].onAgendas[this.meeting.id].itemNumber;
-      }).map(itemId => {
-        let item = this.itemMap[itemId];
-        let itemStats = this.stats.byItem[itemId];
+      let totVotes = totalSrc.votes;
+
+      let activityByItem = this.items.map(item => {
+          let src = this.activeDistrict.id == null ? this.stats.byItem[item.id].total :
+              this.stats.byItem[item.id].byDistrict[this.activeDistrict.id];
+
         return {
-          name: `${item.onAgendas[this.meeting.id].itemNumber}. ${item.text}`,
-          series: [
-            {
-              name: 'pro',
-              value: itemStats.total.votes.yes + itemStats.total.comments.pro
-            },
-            {
-              name: 'con',
-              value: itemStats.total.votes.no + itemStats.total.comments.con
-            },
-          ]
+            name: `${item.onAgendas[this.meeting.id].itemNumber}. ${item.text}`,
+            series: [
+                {
+                    name: 'pro',
+                    value: src.votes.yes + src.comments.pro,
+                },
+                {
+                    name: 'con',
+                    value: src.votes.no + src.comments.con,
+                }
+            ]
         }
       });
 
