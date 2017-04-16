@@ -1,4 +1,4 @@
-import {Entity, parseEntity, RawEntity} from './entity';
+import { Entity, parseEntity, RawEntity } from './entity';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -27,6 +27,7 @@ export interface SessionUser extends User {
   votes: { [id: string]: string }
   comments: { [id: string]: string }
   following: string[];
+    superuser: boolean;
   isVerified: boolean;
 }
 
@@ -43,7 +44,7 @@ export type RawSessionUser = {
   }
 
 export type EmailSignupData = {
-  [P in 'firstName' | 'lastName' | 'address' | 'email']: SessionUser[P]
+    [P in 'firstName' | 'lastName' | 'address' | 'email' | 'superuser']: SessionUser[P]
   } & {
   password: string;
 }
@@ -56,7 +57,7 @@ export function parseUser(data: RawUser|any): User {
     joined: moment(data.joined),
     lastOn: moment(data.lastOn),
     icon: data.icon,
-    districts: data.districts,
+      districts: data.districts||{},
 
   }
 }
@@ -67,6 +68,7 @@ export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) =>
     id: data.$key,
     email: data.email,
     address: data.address,
+      superuser: data.superuser,
     isVerified: data.isVerified,
     following: data.following,
     votes: data.votes || {},

@@ -1,14 +1,14 @@
 import * as Faker from 'faker';
 
 import * as moment from 'moment';
-import {keys, random, range} from 'lodash';
-import {Vote} from '../src/app/models/vote';
-import {Comment} from '../src/app/models/comment';
-import {Item} from '../src/app/models/item';
-import {SessionUser, User} from '../src/app/models/user';
-import {Place} from '../src/app/models/place';
+import { keys, random, range } from 'lodash';
+import { Vote } from '../src/app/models/vote';
+import { Comment } from '../src/app/models/comment';
+import { Item } from '../src/app/models/item';
+import { SessionUser, User } from '../src/app/models/user';
+import { Place } from '../src/app/models/place';
 import * as fs from 'fs';
-import {Meeting} from '../src/app/models/meeting';
+import { Meeting } from '../src/app/models/meeting';
 import Moment = moment.Moment;
 
 const tenMinsAgo = moment().subtract(10, 'minutes');
@@ -43,7 +43,7 @@ export type MockItemInput =
   MockInput
   & { text?: string, agendas: { meetingId: string, groupId: string, itemNumber: number }[], deadline?: Moment }
 
-export type MockMeetingInput = { startTime?: Moment, past?: boolean, items?: Item[], numItems?: number, owner?: string }
+export type MockMeetingInput = { startTime?: Moment, past?: boolean, items?: Item[], numItems?: number, owner?: string, published?: boolean }
 
 
 export type MockSchemaInput = { numUsers?: number, numMeetings?: number, numItems?: number, numItemsPerMeeting: number }
@@ -114,6 +114,7 @@ export function mockUser(input?: MockUserInput): SessionUser {
       zip: `${Faker.address.zipCode()}`,
       state: Faker.address.stateAbbr()
     },
+    superuser: false,
     votes: {},
     comments: {},
     following: [],
@@ -170,6 +171,7 @@ export function mockMeeting(input?: MockMeetingInput): Meeting {
     startTime: start,
     endTime: end,
     feedbackDeadline: deadline,
+    published: input&&input.published||true,
     status,
     id: randId('meeting'),
     owner: input && input.owner || 'id_doug',
@@ -277,7 +279,7 @@ export function schema(input?: MockSchemaInput): any {
     let feedbackEnd = moment(mtgDate).subtract(24, 'hours');
     let feedbackStart = moment(feedbackEnd).subtract(2, 'weeks');
 
-    let meeting = mockMeeting({startTime: mtgDate, owner: adminId});
+    let meeting = mockMeeting({ startTime: mtgDate, owner: adminId, published: m < NUM_MEETINGS - 1 });
 
     let agenda: { [id: string]: number } = {};
 

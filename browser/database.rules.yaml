@@ -6,6 +6,8 @@ functions:
   - userHasVotedOn(id): root.user_private[auth.uid].votes.exists() && root.user_private[auth.uid].votes[id].exists()
   - userHasCommentedOn(id): root.user_private[auth.uid].comments.exists() && root.user_private[auth.uid].comments[id].exists()
   - itemOrCommentExists(id): root.item[id].exists() || root.comment[id].exists()
+  - isSuperuser: auth != null && root.user_private[auth.uid].superuser == true
+
 root:
   user:
     .read: true
@@ -20,6 +22,7 @@ root:
       .read/write: auth != null && auth.uid == $id
       isVerified: boolean
       email: string
+      superuser: boolean
       address:
         line1: string
         line2: string
@@ -35,6 +38,7 @@ root:
 #
   item:
     .read: true
+    .write: isSuperuser()
     $id:
       .write: (!data.exists()) || data.owner == auth.uid
       text: required string
@@ -48,9 +52,10 @@ root:
 
   meeting:
     .read: true
+    .write: isSuperuser()
 
     $id:
-      .write: (!data.exists()) || data.owner == auth.uid
+      .write: isSuperuser() || (!data.exists()) || data.owner == auth.uid
       owner: userExists(newData.owner)
       startTime: required string
       endTime: required string
@@ -66,7 +71,7 @@ root:
         #they're posting a new comment and have not yet commented on this item, OR
         #they're editing an existing comment and are the owner of that comment
 
-
+      .write: isSuperuser()
       $commentId:
         .write: auth != null && ((!data.exists() && !userHasCommentedOn($targetId)) || (data.exists() && data.owner == auth.uid))
         role: required string
@@ -83,7 +88,7 @@ root:
       #allow if: user is authenticated, AND
         #they're casting a new vote and have not yet voted on this item, OR
         #they're changing an existing vote and are the owner of that vote
-
+      .write: isSuperuser()
       $voteId:
         .write: auth != null && ((!data.exists() && !userHasVotedOn($itemId)) || (data.exists() && data.owner == auth.uid))
         value: oneOf(1, -1)

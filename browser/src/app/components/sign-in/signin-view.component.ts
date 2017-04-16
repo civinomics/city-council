@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {SocialAuthProvider} from '../../services/auth.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {EmailSignupData, UserAddress} from '../../models/user';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { SocialAuthProvider } from '../../services/auth.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { EmailSignupData, UserAddress } from '../../models/user';
 
 @Component({
   selector: 'civ-sign-in-view',
@@ -83,7 +83,8 @@ export class SignInViewComponent implements OnChanges {
       this.emailSignup.emit({
         ...this.getNameAndEmailValues(),
         address: this.getAddressValues(),
-        password: this.signupForm.controls['password'].value
+          password: this.signupForm.controls[ 'password' ].value,
+          superuser: false
       });
     }
   }
