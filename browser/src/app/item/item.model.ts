@@ -1,7 +1,7 @@
 import { Entity, RawEntity } from '../models/entity';
 import * as moment from 'moment';
 import { Vote } from '../models/vote';
-import { Comment } from '../models/comment';
+import { Comment } from '../comment/comment.model';
 import Moment = moment.Moment;
 
 export type ItemStatus = 'CITIZEN_PROPOSAL' | 'ON_AGENDA';

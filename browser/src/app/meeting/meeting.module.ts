@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { MeetingService } from './meeting.service';
 import { MeetingStatsContainerComponent } from './meeting-stats/meeting-stats-container.component';
 import { MeetingStatsComponent } from './meeting-stats/meeting-stats.component';
+import { CommentModule } from '../comment/comment.module';
 
 export const MEETING_ROUTES = [
     {
@@ -35,8 +36,9 @@ export const MEETING_ROUTES = [
 
 @NgModule({
     imports: [
+        RouterModule.forChild(MEETING_ROUTES),
         SharedModule,
-        RouterModule.forChild(MEETING_ROUTES)
+        CommentModule
     ],
     declarations: [
         MeetingAgendaContainerComponent,

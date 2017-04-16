@@ -1,6 +1,6 @@
 import { AuthService } from './auth.service';
 import { VoteService } from './vote.service';
-import { CommentService } from './comment.service';
+import { CommentService } from '../comment/comment.service';
 import { AppFocusService } from './app-focus.service';
 
 export const APP_PROVIDERS = [

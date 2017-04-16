@@ -15,7 +15,7 @@ import {
     getLoadedMeetingIds
 } from '../reducers/index';
 import { Http } from '@angular/http';
-import { parseComment } from '../models/comment';
+import { parseComment } from '../comment/comment.model';
 import { MeetingLoadedAction } from './meeting.reducer';
 
 const LOAD_MEETING = '[MeetingSvcInternal] loadMeeting';

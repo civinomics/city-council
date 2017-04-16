@@ -21,7 +21,7 @@ import {
 import { MeetingService } from '../meeting.service';
 
 import { schemeCategory10 } from 'd3-scale';
-import { Comment } from '../../models/comment';
+import { Comment } from '../../comment/comment.model';
 let x: User | RawUser | CommentWithAuthor | RawCommentWithAuthor;
 
 @Component({
@@ -187,7 +187,7 @@ export class MeetingStatsComponent implements OnChanges {
 
   updateData() {
 
-      let totalSrc = this.activeDistrict.id == null ? this.stats.total : this.stats.total.byDistrict[this.activeDistrict.id];
+      let totalSrc = this.activeDistrict.id == null ? this.stats.total : this.stats.total.byDistrict[ this.activeDistrict.id ];
 
     let numItems = this.meeting.agendaIds.length;
 

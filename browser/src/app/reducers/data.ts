@@ -6,7 +6,7 @@ import { Item } from '../item/item.model';
 import { Action } from '@ngrx/store';
 import { Group } from '../group/group.model';
 import { mergeVotes, Vote, votesEqual } from '../models/vote';
-import { Comment, commentsEqual, mergeComments } from '../models/comment';
+import { Comment } from '../comment/comment.model';
 
 export type StateEntities = {
   places: { [id: string]: Place },
@@ -32,7 +32,6 @@ export type State = {
 export const USER_LOADED = '[Data] meetingLoaded';
 export const PLACE_LOADED = '[Data] placeLoaded';
 export const VOTES_LOADED = '[Data] votesLoaded';
-export const COMMENTS_LOADED = '[Data] commentsLoaded';
 
 
 export class PlaceLoadedAction implements Action {
@@ -51,15 +50,6 @@ export class VotesLoadedAction implements Action {
 
   constructor(votes: Vote[], itemId: string) {
     this.payload = {votes, itemId};
-  }
-}
-
-export class CommentsLoadedAction implements Action {
-  public readonly type = COMMENTS_LOADED;
-  public readonly payload: { comments: Comment[], itemId: string }
-
-  constructor(comments: Comment[], itemId: string) {
-    this.payload = {comments, itemId};
   }
 }
 
@@ -135,54 +125,6 @@ export function reducer(state: State = initialState, action: Action): State {
         }
       };
 
-    case COMMENTS_LOADED:
-
-      let payloadComments = action.payload.comments;
-      itemId = action.payload.itemId;
-
-      let currentCommentIds = state.ids.comments[itemId] || [];
-      let currentComments = state.entities.comments[itemId] || {};
-
-      let newCommentIds = payloadComments.filter(comment => currentCommentIds.indexOf(comment.id) < 0).map(comment => comment.id);
-
-      let changedCommentIds = payloadComments.filter(comment =>
-        currentCommentIds.indexOf(comment.id) >= 0 && !commentsEqual(currentComments[comment.id], comment)
-      ).map(comment => comment.id);
-
-      let newOrChanged = [...newCommentIds, ...changedCommentIds];
-
-      let unchangedCommentIds = currentCommentIds.filter(id => newOrChanged.indexOf(id) < 0);
-
-      let payloadCommentDict = payloadComments.reduce((result, comment) => ({...result, [comment.id]: comment}), {});
-
-      let updatedIds = [...newCommentIds, ...changedCommentIds, ...unchangedCommentIds];
-
-      let updatedEntities = {
-        ...newCommentIds.reduce((result, id) => ({...result, [id]: payloadCommentDict[id]}), {}),
-        ...changedCommentIds.reduce((result, id) => ({
-          ...result,
-          [id]: mergeComments(currentComments[id], payloadCommentDict[id])
-        }), {}),
-        ...unchangedCommentIds.reduce((result, id) => ({...result, [id]: currentComments[id]}), {})
-      };
-
-      return {
-        ids: {
-          ...state.ids,
-          comments: {
-            ...state.ids.comments,
-            [itemId]: updatedIds
-          }
-        },
-        entities: {
-          ...state.entities,
-          comments: {
-            ...state.entities.comments,
-            [itemId]: updatedEntities
-          }
-        }
-      };
-
 
 
     default:
@@ -194,5 +136,3 @@ export const getEntities = (state: State) => state.entities;
 export const getPlaceEntities = (state: State) => state.entities.places;
 export const getVoteIds = (state: State) => state.ids.votes;
 export const getVoteEntities = (state: State) => state.entities.votes;
-export const getCommentIds = (state: State) => state.ids.comments;
-export const getCommentEntities = (state: State) => state.entities.comments;

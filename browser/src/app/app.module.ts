@@ -23,11 +23,12 @@ import { MeetingService } from './meeting/meeting.service';
 import { GroupService } from './group/group.service';
 import { ItemService } from './item/item.service';
 import { VoteService } from './services/vote.service';
-import { CommentService } from './services/comment.service';
+import { CommentService } from './comment/comment.service';
 import { SharedModule } from './shared/shared.module';
 import { MeetingModule } from './meeting/meeting.module';
 import { GroupModule } from './group/group.module';
 import { ItemModule } from './item/item.module';
+import { CommentModule } from './comment/comment.module';
 
 @NgModule({
 
@@ -46,6 +47,7 @@ import { ItemModule } from './item/item.module';
     MeetingModule,
     GroupModule,
     ItemModule,
+    CommentModule,
 
     AngularFireModule.initializeApp(environment.firebase),
     StoreModule.provideStore(rootReducer),

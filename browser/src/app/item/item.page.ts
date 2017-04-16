@@ -7,9 +7,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ItemService } from './item.service';
 import { VoteService } from '../services/vote.service';
 import { Vote } from '../models/vote';
-import { Comment } from '../models/comment';
+import { Comment } from '../comment/comment.model';
 
-import { CommentService } from '../services/comment.service';
+import { CommentService } from '../comment/comment.service';
 import { AppFocusService } from '../services/app-focus.service';
 
 @Component({

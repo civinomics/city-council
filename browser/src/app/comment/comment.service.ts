@@ -1,15 +1,15 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as moment from 'moment';
-import {AuthService} from './auth.service';
-import {AngularFireDatabase} from 'angularfire2';
-import {Observable} from 'rxjs';
-import {Comment, parseComment} from '../models/comment';
-import {SessionUser} from '../models/user';
-import {Actions, Effect, toPayload} from '@ngrx/effects';
-import {AppState, getCommentsForSelectedItem, getSessionUser, getUserCommentForSelectedItem} from '../reducers/index';
-import {SELECT_ITEM} from '../reducers/focus';
-import {Store} from '@ngrx/store';
-import {CommentsLoadedAction} from '../reducers/data';
+import { AuthService } from '../services/auth.service';
+import { AngularFireDatabase } from 'angularfire2';
+import { Observable } from 'rxjs';
+import { Comment, parseComment } from './comment.model';
+import { SessionUser } from '../models/user';
+import { Actions, Effect, toPayload } from '@ngrx/effects';
+import { AppState, getCommentsForSelectedItem, getSessionUser, getUserCommentForSelectedItem } from '../reducers/index';
+import { SELECT_ITEM } from '../reducers/focus';
+import { Store } from '@ngrx/store';
+import { CommentsLoadedAction } from './comment.reducer';
 
 @Injectable()
 export class CommentService {

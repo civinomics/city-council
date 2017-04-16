@@ -1,4 +1,4 @@
-export * from './comment';
+export * from '../comment/comment.model';
 export * from './entity';
 export * from '../group/group.model';
 export * from '../item/item.model';

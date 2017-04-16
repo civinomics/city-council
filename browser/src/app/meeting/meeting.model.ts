@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { keys } from 'lodash';
 import { ItemStatsAdt } from '../item/item.model';
 import { Group, RawGroup } from '../group/group.model';
-import { CommentWithAuthor, RawCommentWithAuthor } from '../models/comment';
+import { CommentWithAuthor, RawCommentWithAuthor } from '../comment/comment.model';
 import Moment = moment.Moment;
 
 export type MeetingStatus = 'open' | 'closed' | 'draft'

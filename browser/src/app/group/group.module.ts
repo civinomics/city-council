@@ -5,6 +5,7 @@ import { GroupPage } from './group.page';
 import { GroupMeetingsPage } from './group-meetings/group-meetings.page';
 import { GroupMeetingsView } from './group-meetings/group-meetings.view';
 import { GroupService } from './group.service';
+import { CommentModule } from '../comment/comment.module';
 
 export const GROUP_ROUTES = [
     {
@@ -22,8 +23,9 @@ export const GROUP_ROUTES = [
 
 @NgModule({
     imports: [
+        RouterModule.forChild(GROUP_ROUTES),
         SharedModule,
-        RouterModule.forChild(GROUP_ROUTES)
+        CommentModule
     ],
     declarations: [
         GroupPage,

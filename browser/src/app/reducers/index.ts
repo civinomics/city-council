@@ -4,6 +4,7 @@ import * as fromAuth from './auth';
 import * as fromMeetings from './../meeting/meeting.reducer';
 import * as fromGroups from './../group/group.reducer';
 import * as fromItems from './../item/item.reducer';
+import * as fromComments from './../comment/comment.reducer';
 import { Comment, Group, Item, Meeting, SessionUser, User, Vote } from './../models';
 import { ActionReducer, combineReducers } from '@ngrx/store';
 import { compose } from '@ngrx/core';
@@ -17,7 +18,8 @@ export interface AppState {
   data: fromData.State,
   meetings: fromMeetings.State
   groups: fromGroups.State,
-  items: fromItems.State
+  items: fromItems.State,
+  comments: fromComments.State
 }
 
 const reducers = {
@@ -26,7 +28,8 @@ const reducers = {
   data: fromData.reducer,
   meetings: fromMeetings.reducer,
   groups: fromGroups.reducer,
-  items: fromItems.reducer
+  items: fromItems.reducer,
+  comments: fromComments.reducer
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(combineReducers)(reducers);
@@ -89,15 +92,14 @@ export const getItems = createSelector(getItemsState, fromItems.getEntities);
 export const getLoadedItemIds = createSelector(getItemsState, fromItems.getIds);
 
 
+export const getCommentsState = (state: AppState) => state.comments;
+export const getComments = createSelector(getCommentsState, fromComments.getEntities);
+export const getLoadedCommentIds = createSelector(getCommentsState, fromComments.getIds);
 
 
-
-export const getEntities = createSelector(getDataState, fromData.getEntities);
 export const getVotes = createSelector(getDataState, fromData.getVoteEntities);
-export const getComments = createSelector(getDataState, fromData.getCommentEntities);
 
 export const getLoadedVoteIds = createSelector(getDataState, fromData.getVoteIds);
-export const getLoadedCommentIds = createSelector(getDataState, fromData.getCommentIds);
 
 
 

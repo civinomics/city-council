@@ -18,8 +18,7 @@ import { MomentModule } from 'angular2-moment';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommentComponent } from './comment/comment.component';
-import { LimitPipe } from '../pipes/limit.pipe';
+import { LimitPipe } from './pipes/limit.pipe';
 
 const VIEW_PROVIDERS = [
     CommonModule,
@@ -43,9 +42,9 @@ const VIEW_PROVIDERS = [
 ]
 
 @NgModule({
-    declarations: [ CommentComponent, LimitPipe ],
+    declarations: [ LimitPipe ],
     imports: VIEW_PROVIDERS,
-    exports: [ ...VIEW_PROVIDERS, CommentComponent, LimitPipe ],
+    exports: [ ...VIEW_PROVIDERS, LimitPipe ],
 })
 export class SharedModule {
 }

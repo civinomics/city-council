@@ -3,7 +3,7 @@ import * as Faker from 'faker';
 import * as moment from 'moment';
 import { keys, random, range } from 'lodash';
 import { Vote } from '../src/app/models/vote';
-import { Comment } from '../src/app/models/comment';
+import { Comment } from '../src/app/comment/comment.model';
 import { Item } from '../src/app/item/item.model';
 import { SessionUser, User } from '../src/app/models/user';
 import { Place } from '../src/app/models/place';

@@ -9,7 +9,7 @@ import { SignInContainerComponent } from './sign-in/signin-container.component';
 import { SplashComponent } from './splash/splash.component';
 import { AppContainerComponent } from './app/app-container.component';
 import { AuthWidgetComponent } from './auth/auth-widget/auth-widget.component';
-import { CommentComponent } from '../shared/comment/comment.component';
+import { CommentComponent } from '../comment/comment-view/comment.component';
 import { VerifyModalComponent } from './auth/verify-modal/verify-modal.component';
 import { AuthModalComponent } from './auth/auth-modal/auth-modal.component';
 
@@ -38,6 +38,6 @@ export {SignInContainerComponent} from './sign-in/signin-container.component';
 export {SplashComponent} from './splash/splash.component';
 export {AppContainerComponent} from './app/app-container.component';
 export {AuthWidgetComponent} from './auth/auth-widget/auth-widget.component';
-export { CommentComponent } from '../shared/comment/comment.component';
+export { CommentComponent } from '../comment/comment-view/comment.component';
 export {VerifyModalComponent} from './auth/verify-modal/verify-modal.component';
 export {AuthModalComponent} from './auth/auth-modal/auth-modal.component';
