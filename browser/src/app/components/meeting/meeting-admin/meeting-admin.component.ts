@@ -17,6 +17,8 @@ export class MeetingAdminComponent implements OnInit, OnChanges {
 
     @Output() setFeedbackStatus = new EventEmitter<{ itemId: string, meetingId: string, value: boolean }>();
 
+    @Output() setPublished = new EventEmitter<{ meetingId: string, value: boolean }>();
+
     agenda: (Item & { agendaInfo: AgendaInfo })[];
 
 
@@ -64,6 +66,10 @@ export class MeetingAdminComponent implements OnInit, OnChanges {
             meetingId: this.meeting.id,
             value: !item.onAgendas[ this.meeting.id ].closedSession
         })
+    }
+
+    togglePublished() {
+        this.setPublished.emit({ meetingId: this.meeting.id, value: !this.meeting.published });
     }
 
 }

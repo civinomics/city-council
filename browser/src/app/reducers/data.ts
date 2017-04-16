@@ -1,12 +1,12 @@
 /* TODO: break this into separate reducers for each data type */
 
-import {Place} from '../models/place';
-import {Meeting, meetingsEqual, mergeMeetings} from '../models/meeting';
-import {Item, itemsEqual, mergeItems} from '../models/item';
-import {Action} from '@ngrx/store';
-import {Group, groupsEqual, mergeGroups} from '../models/group';
-import {mergeVotes, Vote, votesEqual} from '../models/vote';
-import {Comment, commentsEqual, mergeComments} from '../models/comment';
+import { Place } from '../models/place';
+import { Meeting, meetingsEqual, mergeMeetings } from '../models/meeting';
+import { Item, itemsEqual, mergeItems } from '../models/item';
+import { Action } from '@ngrx/store';
+import { Group, groupsEqual, mergeGroups } from '../models/group';
+import { mergeVotes, Vote, votesEqual } from '../models/vote';
+import { Comment, commentsEqual, mergeComments } from '../models/comment';
 
 export type StateEntities = {
   places: { [id: string]: Place },
@@ -130,7 +130,7 @@ export function reducer(state: State = initialState, action: Action): State {
           return state;
         }
         //or if there is something new in the data, merge it into the cached object
-        meetingIds = state.ids;
+        meetingIds = state.ids.meetings;
         meetings = {
           ...state.entities.meetings,
           [action.payload.id]: mergeMeetings(state.entities.meetings[action.payload.id], action.payload)

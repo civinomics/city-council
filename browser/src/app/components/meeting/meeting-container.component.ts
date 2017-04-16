@@ -82,9 +82,10 @@ export class MeetingContainerComponent implements OnInit {
             [ '/group', params[ 'groupId' ], 'meeting', params[ 'meetingId' ] ]
         );
 
-        this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it).share();
+        this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
 
-        this.isAdmin = Observable.of(true);//this.authSvc.sessionUserId$.withLatestFrom(this.meeting$, (userId, meeting) => meeting.owner == userId);
+        this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.meeting$, (user, meeting) => user.superuser||meeting.owner == user.id);
+
 
 
     }

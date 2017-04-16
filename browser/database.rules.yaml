@@ -62,11 +62,14 @@ root:
     .write: isSuperuser()
 
     $id:
-      .write: isSuperuser() || (!data.exists()) || data.owner == auth.uid
+      .write: (!data.exists()) || data.owner == auth.uid
       owner: userExists(newData.owner)
       startTime: required string
       endTime: required string
       title: required string
+      published: boolean
+      status: string
+
       agenda:
         $itemId:
           .value: number

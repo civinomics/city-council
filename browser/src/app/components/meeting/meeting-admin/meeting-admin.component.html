@@ -1,9 +1,17 @@
-<div class="status" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="20px">
-    <span>STATUS: <strong>{{meeting.published == true ? 'OPEN' : 'DRAFT'}}</strong></span>
-</div>
+
 <div class="section">
     <div class="heading">Basic Info</div>
     <div class="basic-info body" [formGroup]="basicForm">
+        <div class="row" fxLayout="row" fxLayoutAlign="start center">
+            <div class="key" fxFlex="0 0 120px">Status:</div>
+            <div class="value meeting-status" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+                <div class="current">{{meeting?.status}}</div>
+                <button md-raised-button [color]="meeting?.published ? 'primary' : 'warn'" (click)="togglePublished()">
+                    {{meeting?.published ? 'UNPUBLISH' : 'PUBLISH'}}
+                </button>
+            </div>
+        </div>
+
         <div class="row" fxLayout="row" fxLayoutAlign="start center">
             <div class="key" fxFlex="0 0 120px">Date:</div>
             <md-input-container class="value" fxFlex="0 1 auto">

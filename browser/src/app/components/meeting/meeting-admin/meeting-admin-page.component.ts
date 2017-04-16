@@ -10,7 +10,9 @@ import { ItemService } from '../../../services/item.service';
     selector: 'civ-meeting-admin',
     template: `
         <civ-meeting-admin-view [meeting]="meeting$ | async" [items]="items$ | async"
-                                (setFeedbackStatus)="setFeedbackStatus($event)"></civ-meeting-admin-view>
+                                (setFeedbackStatus)="setFeedbackStatus($event)"
+                                (setPublished)="setPublished($event)"
+        ></civ-meeting-admin-view>
     `,
     styles: []
 })
@@ -27,6 +29,10 @@ export class MeetingAdminPageComponent {
 
     setFeedbackStatus(it: { meetingId: string, itemId: string, value: boolean }) {
         this.itemSvc.updateFeedbackStatus(it.itemId, it.meetingId, it.value);
+    }
+
+    setPublished(it: { meetingId: string, value: boolean }) {
+        this.meetingSvc.setPublished(it.meetingId, it.value);
     }
 
 }

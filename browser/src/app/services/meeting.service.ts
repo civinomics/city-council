@@ -69,6 +69,10 @@ export class MeetingService {
             })
     }
 
+    public setPublished(meetingId: string, value: boolean) {
+        this.db.object(`/meeting/${meetingId}`).update({ published: value });
+    }
+
 
     private parseMeetingStats(rawStats) {
         return {

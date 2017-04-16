@@ -6,7 +6,11 @@
   margin: 20px auto;
 }
 
-.status {
+.meeting-status {
+  .current {
+    text-transform: uppercase;
+    font-weight: 600;
+  }
 }
 
 .section {
@@ -22,6 +26,14 @@
     @include mq-gt-sm {
       margin: 5px 20px;
     }
+    .key {
+      text-transform: uppercase;
+    }
+
+    .row {
+      margin-bottom: 10px;
+    }
+
   }
 }
 
@@ -33,10 +45,6 @@
 
 }
 
-.basic-info {
-  .row {
-  }
-}
 
 .agenda {
   .item {
