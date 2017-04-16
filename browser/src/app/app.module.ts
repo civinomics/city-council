@@ -7,7 +7,7 @@ import { AppContainerComponent } from './components/app/app-container.component'
 import { AppRoutingModule } from './routing';
 import { StoreModule } from '@ngrx/store';
 import { rootReducer } from './reducers/index';
-import { CONTAINER_COMPONENTS, VIEW_COMPONENTS, VIEW_PROVIDERS } from './components/index';
+import { CONTAINER_COMPONENTS, VIEW_COMPONENTS } from './components/index';
 
 import 'hammerjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -19,12 +19,14 @@ import { EffectsModule } from '@ngrx/effects';
 import { AuthService } from './services/auth.service';
 import { AuthModalComponent } from './components/auth/auth-modal/auth-modal.component';
 import { VerifyModalComponent } from './components/auth/verify-modal/verify-modal.component';
-import { MeetingService } from './services/meeting.service';
-import { GroupService } from './services/group.service';
+import { MeetingService } from './meeting/meeting.service';
+import { GroupService } from './group/group.service';
 import { ItemService } from './services/item.service';
 import { VoteService } from './services/vote.service';
 import { CommentService } from './services/comment.service';
-import { LimitPipe } from './pipes/limit.pipe';
+import { SharedModule } from './shared/shared.module';
+import { MeetingModule } from './meeting/meeting.module';
+import { GroupModule } from './group/group.module';
 
 @NgModule({
 
@@ -38,7 +40,10 @@ import { LimitPipe } from './pipes/limit.pipe';
     AppRoutingModule,
 
     BrowserAnimationsModule,
-    VIEW_PROVIDERS,
+    SharedModule,
+
+    MeetingModule,
+    GroupModule,
 
     AngularFireModule.initializeApp(environment.firebase),
     StoreModule.provideStore(rootReducer),
@@ -55,7 +60,7 @@ import { LimitPipe } from './pipes/limit.pipe';
 
   ],
   declarations: [
-    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS, LimitPipe
+    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS
   ],
   providers: [ ...APP_PROVIDERS ],
   entryComponents: [AuthModalComponent, VerifyModalComponent],

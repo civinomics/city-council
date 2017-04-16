@@ -1,0 +1,16 @@
+@import "../../assets/style/all";
+
+:host {
+  display: block;
+  padding-top: 20px;
+}
+
+.focus-title {
+  font-size: 2em;
+  text-align: center;
+}
+
+.content-wrapper {
+  max-width: 960px;
+  margin: auto;
+}

@@ -1,24 +1,30 @@
 import * as fromFocus from './focus';
 import * as fromData from './data';
 import * as fromAuth from './auth';
+import * as fromMeetings from './../meeting/meeting.reducer';
+import * as fromGroups from './../group/group.reducer';
 
-import {Comment, Group, Item, Meeting, SessionUser, User, Vote} from './../models';
-import {ActionReducer, combineReducers} from '@ngrx/store';
-import {compose} from '@ngrx/core';
-import {environment} from '../../environments/environment';
-import {createSelector} from 'reselect';
+import { Comment, Group, Item, Meeting, SessionUser, User, Vote } from './../models';
+import { ActionReducer, combineReducers } from '@ngrx/store';
+import { compose } from '@ngrx/core';
+import { environment } from '../../environments/environment';
+import { createSelector } from 'reselect';
 let _ignore: Vote | Group | Item | Comment | Meeting | User | SessionUser; //so IDEA won't remove above import, which is needed for tsc to compile with declarations
 
 export interface AppState {
   auth: fromAuth.State,
   focus: fromFocus.State,
-  data: fromData.State
+  data: fromData.State,
+  meetings: fromMeetings.State
+  groups: fromGroups.State
 }
 
 const reducers = {
   auth: fromAuth.reducer,
   focus: fromFocus.reducer,
-  data: fromData.reducer
+  data: fromData.reducer,
+  meetings: fromMeetings.reducer,
+  groups: fromGroups.reducer
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(combineReducers)(reducers);
@@ -68,16 +74,23 @@ export const getFocusedMeetingId = (state: AppState) => state.focus.meeting;
 export const getFocusedItemId = (state: AppState) => state.focus.item;
 
 
+export const getMeetingsState = (state: AppState) => state.meetings;
+export const getLoadedMeetingIds = createSelector(getMeetingsState, fromMeetings.getIds);
+export const getMeetings = createSelector(getMeetingsState, fromMeetings.getEntities);
+
+export const getGroupsState = (state: AppState) => state.groups;
+export const getGroups = createSelector(getGroupsState, fromGroups.getEntities);
+export const getLoadedGroupIds = createSelector(getGroupsState, fromGroups.getIds);
+
+
+
+
 export const getEntities = createSelector(getDataState, fromData.getEntities);
 export const getItems = createSelector(getDataState, fromData.getItemEntities);
-export const getMeetings = createSelector(getDataState, fromData.getMeetingEntities);
-export const getGroups = createSelector(getDataState, fromData.getGroupEntities);
 export const getVotes = createSelector(getDataState, fromData.getVoteEntities);
 export const getComments = createSelector(getDataState, fromData.getCommentEntities);
 
 export const getLoadedItemIds = createSelector(getDataState, fromData.getItemIds);
-export const getLoadedGroupIds = createSelector(getDataState, fromData.getGroupIds);
-export const getLoadedMeetingIds = createSelector(getDataState, fromData.getMeetingIds);
 export const getLoadedVoteIds = createSelector(getDataState, fromData.getVoteIds);
 export const getLoadedCommentIds = createSelector(getDataState, fromData.getCommentIds);
 

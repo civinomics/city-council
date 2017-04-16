@@ -1,0 +1,19 @@
+@import "../shared/pages";
+
+.flag {
+  height: 120px;
+  border-radius: 2px;
+  border: 1px solid mat-color($mat-grey, 700);
+  display: block;
+  align-self: center;
+
+  &.mini {
+    max-width: 20%;
+    height: auto;
+  }
+
+}
+
+.place-title {
+  font-size: 2em;
+}

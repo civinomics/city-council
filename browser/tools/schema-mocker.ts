@@ -8,7 +8,7 @@ import { Item } from '../src/app/models/item';
 import { SessionUser, User } from '../src/app/models/user';
 import { Place } from '../src/app/models/place';
 import * as fs from 'fs';
-import { Meeting } from '../src/app/models/meeting';
+import { Meeting } from '../src/app/meeting/meeting.model';
 import Moment = moment.Moment;
 
 const tenMinsAgo = moment().subtract(10, 'minutes');

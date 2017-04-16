@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowseContainerComponent } from './components/browse/browse-container.component';
-import { MeetingContainerComponent } from './components/meeting/meeting-container.component';
-import { GroupContainerComponent } from './components/group/group-container.component';
 import { TermsComponent } from './components/corp/terms/terms.component';
 import { CareersComponent } from './components/corp/careers/careers.component';
 import { AboutComponent } from './components/corp/about/about.component';
 import { SplashComponent } from './components/splash/splash.component';
 import { ItemContainerComponent } from './components/item/item-container.component';
 import { SignInContainerComponent } from './components/sign-in/signin-container.component';
-import { MeetingAgendaContainerComponent } from './components/meeting/meeting-agenda/meeting-agenda-container.component';
-import { MeetingStatsContainerComponent } from './components/meeting/meeting-stats/meeting-stats-container.component';
-import { MeetingAdminPageComponent } from './components/meeting/meeting-admin/meeting-admin-page.component';
+import { MeetingModule } from './meeting/meeting.module';
+import { GroupModule } from './group/group.module';
 
+//these need to be named and exported for the AoT compiler
+export function getMeetingModule() { return MeetingModule }
+export function getGroupModule() { return GroupModule }
 
 export const APP_ROUTES: Routes = [
   {
@@ -29,27 +29,12 @@ export const APP_ROUTES: Routes = [
         component: ItemContainerComponent
       },
       {
-        path: ':groupId/meeting/:meetingId',
-        component: MeetingContainerComponent,
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            component: MeetingAgendaContainerComponent
-          },
-          {
-            path: 'stats',
-            component: MeetingStatsContainerComponent
-          },
-            {
-                path: 'admin',
-                component: MeetingAdminPageComponent
-          }
-        ]
+        path: ':groupId/meeting',
+        loadChildren: getMeetingModule
       },
       {
         path: ':groupId',
-        component: GroupContainerComponent
+        loadChildren: getGroupModule
       }
     ]
   },
