@@ -14,23 +14,17 @@ import { CommentModule } from '../comment/comment.module';
 
 export const MEETING_ROUTES = [
     {
-        path: ':meetingId',
-        component: MeetingPage,
-        children: [
-            {
-                path: '',
-                pathMatch: 'full',
-                component: MeetingAgendaContainerComponent
-            },
-            {
-                path: 'stats',
-                component: MeetingStatsContainerComponent
-            },
-            {
-                path: 'admin',
-                component: MeetingAdminPage
-            }
-        ]
+        path: '',
+        pathMatch: 'full',
+        component: MeetingAgendaContainerComponent
+    },
+    {
+        path: 'stats',
+        component: MeetingStatsContainerComponent
+    },
+    {
+        path: 'admin',
+        component: MeetingAdminPage
     }
 ];
 

@@ -9,6 +9,8 @@ import { ItemPageComponent } from './item/item.page';
 import { SignInContainerComponent } from './components/sign-in/signin-container.component';
 import { MeetingModule } from './meeting/meeting.module';
 import { GroupModule } from './group/group.module';
+import { GroupPage } from './group/group.page';
+import { MeetingPage } from './meeting/meeting.page';
 
 //these need to be named and exported for the AoT compiler
 export function getMeetingModule() { return MeetingModule }
@@ -29,12 +31,14 @@ export const APP_ROUTES: Routes = [
         component: ItemPageComponent
       },
       {
-        path: ':groupId/meeting',
-        loadChildren: getMeetingModule
+        path: ':groupId/meeting/:meetingId',
+        component: MeetingPage,
+        loadChildren: './meeting/meeting.module#MeetingModule'
       },
       {
         path: ':groupId',
-        loadChildren: getGroupModule
+        component: GroupPage,
+        loadChildren: './group/group.module#GroupModule'
       }
     ]
   },

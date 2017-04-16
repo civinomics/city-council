@@ -39,7 +39,7 @@ const VIEW_PROVIDERS = [
     MomentModule,
     NgxChartsModule,
     InfiniteScrollModule
-]
+];
 
 @NgModule({
     declarations: [ LimitPipe ],

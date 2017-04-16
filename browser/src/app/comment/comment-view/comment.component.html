@@ -1,16 +1,14 @@
-<div class="outer-wrapper {{comment.role}}">
+<div class="outer-wrapper {{comment.role}}" fxLayout="column">
   <div *ngIf="showAuthor" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" class="author-row">
     <img class="avatar" [src]="comment.author.icon">
       <div class="name">{{comment.author.firstName}} {{comment.author.lastName}}<span *ngIf="!!authorDistrict">, {{authorDistrict.name}}</span>
       </div>
-
+      <div class="date">{{comment.posted | amTimeAgo}}</div>
   </div>
   <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="space-between center">
-      <div *ngIf="!isEditing" class="text-box" fxLayout="column" fxLayoutGap="5px" fxFlex="1 1">
+      <div *ngIf="!isEditing" class="text-box" fxLayout="column">
           <div>{{comment.text}}</div>
-          <div fxFlexAlign="end">{{comment.votes.up - comment.votes.down}} vote{{comment.votes.up - comment.votes.down
-              == 1 ? '' : 's' }}
-          </div>
+
     </div>
       <button md-icon-button *ngIf="isEditing" (click)="toggleEditing()" [@resetBtn] fxFlex="0 0">
       <md-icon class="yellow">replay</md-icon>
@@ -23,7 +21,30 @@
       <md-icon>edit</md-icon>
     </button>
   </div>
-  <div *ngIf="isEditing" fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="15px" [@editBtnRow]>
+    <div *ngIf="!isEditing && (showVotes || showVoteBtn || showReplies || showReplyBtn)"
+         fxLayoutAlign="space-between center"
+         class="bottom-row">
+
+        <div *ngIf="showReplyBtn" fxLayout="row" fxLayoutAlign="start center">
+            <button md-icon-button>
+                <md-icon>reply</md-icon>
+            </button>
+
+        </div>
+
+        <div *ngIf="showVoteBtn" fxLayout="row" fxLayoutAlign="start center">
+            <button md-icon-button>
+                <md-icon>expand_less</md-icon>
+            </button>
+            <div class="vote-count">{{comment.votes.up - comment.votes.down}}</div>
+            <button md-icon-button>
+                <md-icon>expand_more</md-icon>
+            </button>
+        </div>
+
+    </div>
+
+    <div *ngIf="isEditing" fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="15px" [@editBtnRow]>
     <button md-button class="red">
       <div fxLayout="row" fxLayouGap="5px" (click)="delete()" fxLayoutAlign="start center">
         <md-icon>close</md-icon>

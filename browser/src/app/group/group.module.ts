@@ -8,17 +8,13 @@ import { GroupService } from './group.service';
 import { CommentModule } from '../comment/comment.module';
 
 export const GROUP_ROUTES = [
+
     {
         path: '',
-        component: GroupPage,
-        children: [
-            {
-                path: '',
-                pathMatch: 'full',
-                component: GroupMeetingsPage
-            }
-        ]
+        pathMatch: 'full',
+        component: GroupMeetingsPage
     }
+
 ];
 
 @NgModule({

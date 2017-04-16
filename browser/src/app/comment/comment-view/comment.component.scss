@@ -5,37 +5,53 @@
 }
 
 .outer-wrapper {
-  padding: 10px;
   border-radius: 5px;
 
   &.con {
-    background-color: mat-color($mat-red, A200);
+    background-color: rgba(198, 40, 40, 0.65);
   }
 
   &.pro {
-    background-color: mat-color($mat-green, A200);
+    background-color: rgba(46, 125, 50, 0.65);
   }
 
 }
 
 .author-row {
-  font-weight: 500;
+  margin: 5px;
+  padding: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  .name {
+    font-weight: 500;
+  }
+
+  .date {
+    padding-left: 10px;
+    margin-left: 10px;
+    border-left: 1px solid mat-color($mat-grey, 800);
+    font-weight: 200;
+  }
+
   .avatar {
-    height: 30px;
-    width: 30px;
+    height: 25px;
+    width: 25px;
     border-radius: 50%;
   }
 }
 
 .text-box {
-  margin-left: 10px;
-  padding: 10px 0;
-  @include mq-gt-xs {
-    margin-left: 40px;
-  }
+  padding: 10px 20px 20px 20px;
   border-radius: 5px;
+}
 
+.bottom-row {
+  border-radius: 5px;
+  margin: 0 2px 2px 2px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
 
+.vote-count {
+  font-weight: 600;
 }
 
 md-icon, button[md-button]:not([disabled]) {
