@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
-import { Group, groupsEqual, mergeGroups } from './group';
+import { Group, groupsEqual, mergeGroups } from './group.model';
 
-export const GROUP_LOADED = '[Data] groupLoaded';
+export const GROUP_LOADED = '[Group] groupLoaded';
 
 export class GroupLoadedAction implements Action {
     public readonly type = GROUP_LOADED;

@@ -1,4 +1,4 @@
-import { Group } from '../group/group';
+import { Group } from '../group/group.model';
 import { Entity, EntityField } from './entity';
 
 export interface Place extends Entity {

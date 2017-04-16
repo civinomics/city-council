@@ -9,17 +9,17 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {animate, keyframes, state, style, transition, trigger} from '@angular/animations';
-import {Item} from '../../models/item';
-import {MdInputDirective} from '@angular/material';
-import {Vote} from '../../models/vote';
-import {Comment} from '../../models/comment';
+import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
+import { Item } from '../item.model';
+import { MdInputDirective } from '@angular/material';
+import { Vote } from '../../models/vote';
+import { Comment } from '../../models/comment';
 
 @Component({
   selector: 'civ-item-view',
-  templateUrl: './item-view.component.html',
+  templateUrl: './item.view.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: [ './item-view.component.scss' ],
+  styleUrls: [ './item.view.scss' ],
   animations: [
     trigger('voteBtn', [
       state('rejected', style({ opacity: 0.4, 'background-color': '#999' })),

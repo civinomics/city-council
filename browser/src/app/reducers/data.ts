@@ -2,9 +2,9 @@
 
 import { Place } from '../models/place';
 import { Meeting } from '../meeting/meeting.model';
-import { Item, itemsEqual, mergeItems } from '../models/item';
+import { Item } from '../item/item.model';
 import { Action } from '@ngrx/store';
-import { Group } from '../group/group';
+import { Group } from '../group/group.model';
 import { mergeVotes, Vote, votesEqual } from '../models/vote';
 import { Comment, commentsEqual, mergeComments } from '../models/comment';
 
@@ -31,8 +31,6 @@ export type State = {
 
 export const USER_LOADED = '[Data] meetingLoaded';
 export const PLACE_LOADED = '[Data] placeLoaded';
-export const ITEM_LOADED = '[Data] itemLoaded';
-export const ITEMS_LOADED = '[Data] itemsLoaded';
 export const VOTES_LOADED = '[Data] votesLoaded';
 export const COMMENTS_LOADED = '[Data] commentsLoaded';
 
@@ -44,20 +42,6 @@ export class PlaceLoadedAction implements Action {
   }
 }
 
-export class ItemLoadedAction implements Action {
-  public readonly type = ITEM_LOADED;
-
-  constructor(public readonly payload: Item) {
-  }
-}
-
-
-export class ItemsLoadedAction implements Action {
-  public readonly type = ITEMS_LOADED;
-
-  constructor(public readonly payload: Item[]) {
-  }
-}
 
 
 
@@ -105,76 +89,6 @@ export function reducer(state: State = initialState, action: Action): State {
 
   switch (action.type) {
 
-    case ITEM_LOADED:
-      let itemIds, items;
-      if (state.ids.items.indexOf(action.payload.id) >= 0) {
-        //and there's nothing new about the data
-        if (itemsEqual(state.entities.items[action.payload.id], action.payload)) {
-          //return the same object if nothing has changed to prevent unnecessary rerenders
-          return state;
-        }
-        //or if there is something new in the data, merge it into the cached object
-        itemIds = state.ids;
-        items = {
-          ...state.entities.items,
-          [action.payload.id]: mergeItems(state.entities.items[action.payload.id], action.payload)
-        }
-      } else {
-        itemIds = [...state.ids.items, action.payload.id];
-        items = {...state.entities.items, [action.payload.id]: action.payload};
-      }
-      return {
-        ids: {
-          ...state.ids,
-          items: itemIds
-        },
-        entities: {
-          ...state.entities,
-          items: items
-        }
-      };
-
-    case ITEMS_LOADED:
-      let newItemIds = [], newItems = {};
-
-      let loadedItems = action.payload as Item[];
-
-      let changed = false;
-
-      loadedItems.forEach(item => {
-        if (state.ids.items.indexOf(item.id) >= 0) {
-          //and there's nothing new about the data
-          if (itemsEqual(state.entities.items[item.id], item)) {
-            //return the same object if nothing has changed to prevent unnecessary rerenders
-            return;
-          }
-          //or if there is something new in the data, merge it into the cached object
-          changed = true;
-          newItems[item.id] = mergeItems(state.entities.items[item.id], item);
-        } else {
-          changed = true;
-          newItemIds.push(item.id);
-          newItems[item.id] = item;
-        }
-      });
-
-      if (!changed) {
-        return state;
-      }
-
-      return {
-        ids: {
-          ...state.ids,
-          items: [...state.ids.items, ...newItemIds]
-        },
-        entities: {
-          ...state.entities,
-          items: {
-            ...state.entities.items,
-            ...newItems
-          }
-        }
-      };
 
     case VOTES_LOADED:
 
@@ -278,8 +192,6 @@ export function reducer(state: State = initialState, action: Action): State {
 
 export const getEntities = (state: State) => state.entities;
 export const getPlaceEntities = (state: State) => state.entities.places;
-export const getItemIds = (state: State) => state.ids.items;
-export const getItemEntities = (state: State) => state.entities.items;
 export const getVoteIds = (state: State) => state.ids.votes;
 export const getVoteEntities = (state: State) => state.entities.votes;
 export const getCommentIds = (state: State) => state.ids.comments;

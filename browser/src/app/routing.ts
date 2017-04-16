@@ -5,7 +5,7 @@ import { TermsComponent } from './components/corp/terms/terms.component';
 import { CareersComponent } from './components/corp/careers/careers.component';
 import { AboutComponent } from './components/corp/about/about.component';
 import { SplashComponent } from './components/splash/splash.component';
-import { ItemContainerComponent } from './components/item/item-container.component';
+import { ItemPageComponent } from './item/item.page';
 import { SignInContainerComponent } from './components/sign-in/signin-container.component';
 import { MeetingModule } from './meeting/meeting.module';
 import { GroupModule } from './group/group.module';
@@ -26,7 +26,7 @@ export const APP_ROUTES: Routes = [
     children: [
       {
         path: ':groupId/meeting/:meetingId/item/:itemId',
-        component: ItemContainerComponent
+        component: ItemPageComponent
       },
       {
         path: ':groupId/meeting',

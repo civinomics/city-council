@@ -2,13 +2,13 @@ import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Meeting } from '../../meeting/meeting.model';
-import { Item } from '../../models/item';
+import { Item } from '../../item/item.model';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AppState } from '../../reducers/index';
-import { Group } from '../../group/group';
+import { Group } from '../../group/group.model';
 import { GroupService } from '../../group/group.service';
 import { MeetingService } from '../../meeting/meeting.service';
-import { ItemService } from '../../services/item.service';
+import { ItemService } from '../../item/item.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({

@@ -1,16 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
-import {Item} from '../../models/item';
-import {Store} from '@ngrx/store';
-import {AppState} from '../../reducers/index';
-import {ActivatedRoute, Router} from '@angular/router';
-import {ItemService} from '../../services/item.service';
-import {VoteService} from '../../services/vote.service';
-import {Vote} from '../../models/vote';
-import {Comment} from '../../models/comment';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Item } from './item.model';
+import { Store } from '@ngrx/store';
+import { AppState } from '../reducers/index';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ItemService } from './item.service';
+import { VoteService } from '../services/vote.service';
+import { Vote } from '../models/vote';
+import { Comment } from '../models/comment';
 
-import {CommentService} from '../../services/comment.service';
-import {AppFocusService} from '../../services/app-focus.service';
+import { CommentService } from '../services/comment.service';
+import { AppFocusService } from '../services/app-focus.service';
 
 @Component({
   selector: 'civ-item-container',
@@ -22,7 +22,7 @@ import {AppFocusService} from '../../services/app-focus.service';
   `,
   styles: []
 })
-export class ItemContainerComponent implements OnInit {
+export class ItemPageComponent implements OnInit {
   item$: Observable<Item>;
   userVote$: Observable<Vote | null>;
   userComment$: Observable<Comment | null>;

@@ -3,7 +3,7 @@ import * as fromData from './data';
 import * as fromAuth from './auth';
 import * as fromMeetings from './../meeting/meeting.reducer';
 import * as fromGroups from './../group/group.reducer';
-
+import * as fromItems from './../item/item.reducer';
 import { Comment, Group, Item, Meeting, SessionUser, User, Vote } from './../models';
 import { ActionReducer, combineReducers } from '@ngrx/store';
 import { compose } from '@ngrx/core';
@@ -16,7 +16,8 @@ export interface AppState {
   focus: fromFocus.State,
   data: fromData.State,
   meetings: fromMeetings.State
-  groups: fromGroups.State
+  groups: fromGroups.State,
+  items: fromItems.State
 }
 
 const reducers = {
@@ -24,7 +25,8 @@ const reducers = {
   focus: fromFocus.reducer,
   data: fromData.reducer,
   meetings: fromMeetings.reducer,
-  groups: fromGroups.reducer
+  groups: fromGroups.reducer,
+  items: fromItems.reducer
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(combineReducers)(reducers);
@@ -82,15 +84,18 @@ export const getGroupsState = (state: AppState) => state.groups;
 export const getGroups = createSelector(getGroupsState, fromGroups.getEntities);
 export const getLoadedGroupIds = createSelector(getGroupsState, fromGroups.getIds);
 
+export const getItemsState = (state: AppState) => state.items;
+export const getItems = createSelector(getItemsState, fromItems.getEntities);
+export const getLoadedItemIds = createSelector(getItemsState, fromItems.getIds);
+
+
 
 
 
 export const getEntities = createSelector(getDataState, fromData.getEntities);
-export const getItems = createSelector(getDataState, fromData.getItemEntities);
 export const getVotes = createSelector(getDataState, fromData.getVoteEntities);
 export const getComments = createSelector(getDataState, fromData.getCommentEntities);
 
-export const getLoadedItemIds = createSelector(getDataState, fromData.getItemIds);
 export const getLoadedVoteIds = createSelector(getDataState, fromData.getVoteIds);
 export const getLoadedCommentIds = createSelector(getDataState, fromData.getCommentIds);
 

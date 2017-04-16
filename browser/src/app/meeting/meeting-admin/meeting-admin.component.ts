@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Meeting } from '../meeting.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AgendaInfo, Item } from '../../models/item';
+import { AgendaInfo, Item } from '../../item/item.model';
 
 @Component({
     selector: 'civ-meeting-admin-view',

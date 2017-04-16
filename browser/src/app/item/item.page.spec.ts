@@ -1,20 +1,20 @@
 // import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 //
-// import {ItemContainerComponent} from './item-container.component';
+// import {ItemPageComponent} from './item-container.component';
 //
-// describe('ItemContainerComponent', () => {
-//   let component: ItemContainerComponent;
-//   let fixture: ComponentFixture<ItemContainerComponent>;
+// describe('ItemPageComponent', () => {
+//   let component: ItemPageComponent;
+//   let fixture: ComponentFixture<ItemPageComponent>;
 //
 //   beforeEach(async(() => {
 //     TestBed.configureTestingModule({
-//       declarations: [ ItemContainerComponent ]
+//       declarations: [ ItemPageComponent ]
 //     })
 //       .compileComponents();
 //   }));
 //
 //   beforeEach(() => {
-//     fixture = TestBed.createComponent(ItemContainerComponent);
+//     fixture = TestBed.createComponent(ItemPageComponent);
 //     component = fixture.componentInstance;
 //     fixture.detectChanges();
 //   });

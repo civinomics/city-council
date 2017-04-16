@@ -21,12 +21,13 @@ import { AuthModalComponent } from './components/auth/auth-modal/auth-modal.comp
 import { VerifyModalComponent } from './components/auth/verify-modal/verify-modal.component';
 import { MeetingService } from './meeting/meeting.service';
 import { GroupService } from './group/group.service';
-import { ItemService } from './services/item.service';
+import { ItemService } from './item/item.service';
 import { VoteService } from './services/vote.service';
 import { CommentService } from './services/comment.service';
 import { SharedModule } from './shared/shared.module';
 import { MeetingModule } from './meeting/meeting.module';
 import { GroupModule } from './group/group.module';
+import { ItemModule } from './item/item.module';
 
 @NgModule({
 
@@ -44,6 +45,7 @@ import { GroupModule } from './group/group.module';
 
     MeetingModule,
     GroupModule,
+    ItemModule,
 
     AngularFireModule.initializeApp(environment.firebase),
     StoreModule.provideStore(rootReducer),

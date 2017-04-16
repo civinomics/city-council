@@ -3,8 +3,8 @@ import { MeetingService } from '../meeting.service';
 import { GroupService } from '../../group/group.service';
 import { Observable } from 'rxjs/Observable';
 import { Meeting } from '../meeting.model';
-import { Item } from '../../models/item';
-import { ItemService } from '../../services/item.service';
+import { Item } from '../../item/item.model';
+import { ItemService } from '../../item/item.service';
 
 @Component({
     selector: 'civ-meeting-admin',

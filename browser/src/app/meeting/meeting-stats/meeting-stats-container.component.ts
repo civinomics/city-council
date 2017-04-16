@@ -4,8 +4,8 @@ import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { MeetingService } from '../meeting.service';
-import { Group } from '../../group/group';
-import { Item } from '../../models/item';
+import { Group } from '../../group/group.model';
+import { Item } from '../../item/item.model';
 import { Meeting, MeetingStats } from '../meeting.model';
 import { GroupService } from '../../group/group.service';
 

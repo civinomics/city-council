@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2';
 import { Observable } from 'rxjs';
-import { Item, ItemStatsAdt, parseItem } from '../models/item';
+import { Item, ItemStatsAdt, parseItem } from './item.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { AppState, getFocusedItem, getLoadedItemIds, getMeetings } from '../reducers/index';
 import { Store } from '@ngrx/store';
-import { ItemLoadedAction, ItemsLoadedAction } from '../reducers/data';
 import { SELECT_ITEM, SELECT_MEETING } from '../reducers/focus';
+import { ItemLoadedAction, ItemsLoadedAction } from './item.reducer';
 
 
 const LOAD_SINGLE_ITEM = '[ItemSvcInternal] loadSingleItem';

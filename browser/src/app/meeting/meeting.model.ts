@@ -1,8 +1,8 @@
 import { Entity, EntityField, parseEntity, RawEntity } from '../models/entity';
 import * as moment from 'moment';
 import { keys } from 'lodash';
-import { ItemStatsAdt } from '../models/item';
-import { Group, RawGroup } from '../group/group';
+import { ItemStatsAdt } from '../item/item.model';
+import { Group, RawGroup } from '../group/group.model';
 import { CommentWithAuthor, RawCommentWithAuthor } from '../models/comment';
 import Moment = moment.Moment;
 

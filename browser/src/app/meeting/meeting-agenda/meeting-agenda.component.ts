@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Meeting, MeetingStats } from '../meeting.model';
 
-import { Item } from '../../models/item';
-import { Group } from '../../group/group';
+import { Item } from '../../item/item.model';
+import { Group } from '../../group/group.model';
 import { Observable } from 'rxjs/Observable';
 
 @Component({

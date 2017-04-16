@@ -3,11 +3,11 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Meeting, MeetingStats } from '../meeting.model';
-import { Item } from '../../models/item';
+import { Item } from '../../item/item.model';
 import { MeetingService } from '../meeting.service';
-import { ItemService } from '../../services/item.service';
+import { ItemService } from '../../item/item.service';
 import { AppFocusService } from '../../services/app-focus.service';
-import { Group } from '../../group/group';
+import { Group } from '../../group/group.model';
 import { GroupService } from '../../group/group.service';
 
 @Component({

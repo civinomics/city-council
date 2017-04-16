@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Group } from './group';
+import { Group } from './group.model';
 import { GroupService } from './group.service';
 import { MeetingService } from '../meeting/meeting.service';
 import { AppFocusService } from '../services/app-focus.service';

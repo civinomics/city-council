@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Office } from '../../models/office';
+import { Office } from '../../group/office.model';
 
 @Component({
     selector: 'civ-district-input-table',
