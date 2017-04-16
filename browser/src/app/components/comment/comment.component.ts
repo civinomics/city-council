@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MdInputDirective} from '@angular/material';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {User, Comment} from '../../models';
 
 @Component({
   selector: 'civ-comment',
@@ -31,6 +32,20 @@ export class CommentComponent implements OnInit {
 
   @Input() canEdit: boolean;
 
+  /**
+   * the ID of the
+   */
+  @Input() activeContext: string = 'id_acc';
+
+  _showAuthor: boolean = true;
+
+  @Input() set showAuthor(val: boolean){
+    this._showAuthor = val;
+  }
+
+  get showAuthor(){ return this._showAuthor}
+
+
   @Output() edit: EventEmitter<{ text?: string, role?: string }> = new EventEmitter();
 
   @ViewChild('editInput', {read: MdInputDirective}) input: MdInputDirective;
@@ -59,6 +74,10 @@ export class CommentComponent implements OnInit {
   saveEdit() {
     this.edit.emit({text: this.newText});
     this.isEditing = false;
+  }
+
+  get authorDistrict(){
+    return this.comment.author.districts[this.activeContext];
   }
 
 }

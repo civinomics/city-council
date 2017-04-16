@@ -29,11 +29,11 @@ export type MockInput = {
   before?: Moment,
   after?: Moment,
   owner?: string,
-  userDistrict?: string
+  userDistrict?: {id: string, name: string}
 };
 
 export type MockUserInput = MockInput & {
-  accDistrict?: string
+  accDistrict?: {id: string, name: string}
 }
 export type MockVoteInput = MockInput & { value?: 1 | -1 };
 
@@ -245,7 +245,10 @@ export function schema(input?: MockSchemaInput): any {
   const districtIds = Object.keys(acc.districts);
 
 
-  const users = range(0, NUM_USERS).map(() => mockUser({accDistrict: random(0, 8) == 6 ? null : districtIds[random(0, districtIds.length - 1)]}));
+  const users = range(0, NUM_USERS).map(() => {
+    let accDistrict = random(0, 8) == 6 ? null : acc.districts[districtIds[random(0, districtIds.length - 1)]];
+    return mockUser({accDistrict});
+  });
   const meetings = [];
 
   const items: Item[] = [];

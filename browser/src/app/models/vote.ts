@@ -5,7 +5,7 @@ import Moment = moment.Moment;
 export interface Vote extends Entity {
   value: number;
   posted: Moment;
-  userDistrict: string | null,
+  userDistrict: null | {id: string, name: string};
 }
 
 export type RawVote = RawEntity & {[P in 'value' | 'userDistrict']: Vote[P]} & { posted: string };

@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import {Entity, parseEntity, RawEntity} from './entity';
-import {User} from './user';
+import {parseUser, RawUser, User} from './user';
 import Moment = moment.Moment;
 export type CommentRole = 'pro' | 'con' | 'neutral';
 
@@ -8,10 +8,11 @@ export interface Comment extends Entity {
     text: string;
     role: CommentRole;
     posted: Moment;
-    userDistrict: string | null,
+    userDistrict: null | {id: string, name: string}
 
     votes?: { up?: number, down?: number },
-    replies?: [Comment | string]
+    replies?: string[];
+    author?: User
     //
 
 }
@@ -21,9 +22,10 @@ export type RawComment = RawEntity & {
     } &
     {
         votes?: { up?: number, down?: number },
-        replies?: [Comment | string]
+        replies?: string[]
     } &
     {
+        author?: RawUser|User,
         posted: string
     }
 
@@ -31,12 +33,16 @@ export type CommentWithAuthor = Comment & {
     author: User
 }
 
+export type RawCommentWithAuthor = RawComment & {
+    author: RawUser
+}
+
 export type NewCommentData = {
     text: string,
     role: string;
 }
 
-export const parseComment: (data: RawComment) => Comment = (data) => {
+export const parseComment: (data: RawComment|Comment|RawCommentWithAuthor|CommentWithAuthor) => Comment = (data) => {
     return {
         ...parseEntity(data),
         text: data.text,
@@ -44,7 +50,8 @@ export const parseComment: (data: RawComment) => Comment = (data) => {
         posted: moment(data.posted),
         userDistrict: data.userDistrict || null,
         votes: data.votes,
-        replies: data.replies
+        replies: data.replies,
+        author: !!data.author ? parseUser(data.author) : null
     }
 };
 

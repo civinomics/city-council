@@ -7,14 +7,7 @@
 .outer-wrapper {
   padding: 10px;
   border-radius: 5px;
-  background-color: mat-color($mat-grey, 200);
-  border: 1px solid mat-color($mat-grey, 500);
 
-}
-
-.text-box {
-  padding: 5px;
-  border-radius: 5px;
   &.con {
     background-color: mat-color($mat-red, A100);
   }
@@ -22,6 +15,20 @@
   &.pro {
     background-color: mat-color($mat-green, A100);
   }
+
+}
+
+.author-row {
+  .avatar {
+    height: 20px;
+    border-radius: 50%;
+  }
+}
+
+.text-box {
+  padding: 5px;
+  border-radius: 5px;
+
 
 }
 

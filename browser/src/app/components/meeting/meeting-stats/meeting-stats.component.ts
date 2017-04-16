@@ -8,10 +8,9 @@ import {
     Output,
     SimpleChanges
 } from '@angular/core';
-import {Meeting, MeetingStats} from '../../../models/meeting';
+import {Meeting, MeetingStats, Office, Item, User, RawUser, CommentWithAuthor, RawCommentWithAuthor} from '../../../models';
+let x: User|RawUser|CommentWithAuthor|RawCommentWithAuthor;
 import {MeetingService} from '../../../services/meeting.service';
-import {Office} from '../../../models/office';
-import {Item} from '../../../models/item';
 
 import {schemeCategory10} from 'd3-scale';
 
@@ -26,7 +25,17 @@ export class MeetingStatsComponent implements OnChanges {
 
   @Input() meeting: Meeting;
 
-  @Input() districts: Office[];
+  _districts: Office[];
+  _districtMap: {[id:string]: Office};
+
+  @Input() set districts(val: Office[]){
+      if (!!val){
+          this._districts = val;
+          this._districtMap = val.reduce((result, next) => ({...result, [next.id]: next}), {});
+      }
+  }
+
+  get districts() { return this._districts};
 
   @Input() stats: MeetingStats;
 

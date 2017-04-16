@@ -71,10 +71,8 @@
       </div>
 
       <div class="details">
-
-        <civ-district-input-table [data]="districtTableData(item)" *ngIf="!showingSingleDistrict">
-
-        </civ-district-input-table>
+        <civ-comment [comment]="topPro(item)"></civ-comment>
+        <civ-district-input-table [data]="districtTableData(item)" *ngIf="!showingSingleDistrict"></civ-district-input-table>
       </div>
 
     </div>

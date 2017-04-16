@@ -1,4 +1,9 @@
-<div class="outer-wrapper">
+<div class="outer-wrapper {{comment.role}}">
+  <div *ngIf="showAuthor" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" class="author-row">
+    <img class="avatar" [src]="comment.author.icon">
+    <div class="name">{{comment.author.firstName}} {{comment.author.lastName}}, {{authorDistrict.name}}</div>
+
+  </div>
   <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="space-between center">
     <div *ngIf="!isEditing" class="text-box">
       {{comment.text}}
@@ -10,7 +15,7 @@
       <input type="text" mdInput #editInput [(ngModel)]="newText">
     </md-input-container>
 
-    <button md-icon-button *ngIf="!isEditing" (click)="toggleEditing()" [@editBtn]>
+    <button md-icon-button *ngIf="canEdit && !isEditing" (click)="toggleEditing()" [@editBtn]>
       <md-icon>edit</md-icon>
     </button>
 

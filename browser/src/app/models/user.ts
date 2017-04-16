@@ -1,4 +1,4 @@
-import {Entity, RawEntity} from './entity';
+import {Entity, parseEntity, RawEntity} from './entity';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -10,7 +10,7 @@ export interface User extends Entity {
   lastOn: Moment;
 
   //map of group IDs to the ID of the district they're a constituent of
-  districts: { [id: string]: string }
+  districts: { [id: string]: {id: string, name: string} }
 }
 
 export type UserAddress = {
@@ -48,14 +48,27 @@ export type EmailSignupData = {
   password: string;
 }
 
+export function parseUser(data: RawUser|any): User {
+  return {
+      ...parseEntity(data),
+    firstName: data.firstName,
+    lastName: data.lastName,
+    joined: moment(data.joined),
+    lastOn: moment(data.lastOn),
+    icon: data.icon,
+    districts: data.districts,
+
+  }
+}
+
 export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) => {
   return {
-    ...data,
+    ...parseUser(data),
     id: data.$key,
-    joined: moment(data.joined),
+    email: data.email,
+    address: data.address,
     isVerified: data.isVerified,
-    lastOn: moment(data.lastOn),
-    districts: data.districts || {},
+    following: data.following,
     votes: data.votes || {},
     comments: data.comments || {}
   }
