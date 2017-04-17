@@ -1,18 +1,34 @@
-<div class="section-title">Upcoming</div>
-<div *ngFor="let meeting of upcomingMeetings"
-     class="meeting-row"
-     fxLayout="row"
-     fxLayoutAlign="space-between center"
-     (click)="showMeeting.emit(meeting.id)"
->
-    <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
-    <div class="title">{{meeting.title}}</div>
-    <div class="status">{{meeting.status}}</div>
+<div class="section">
+    <div class="section-title">Upcoming</div>
+    <div *ngFor="let meeting of upcomingMeetings"
+         class="meeting-row"
+         fxLayout="row"
+         fxLayoutAlign="space-between center"
+         (click)="showMeeting.emit(meeting.id)">
+        <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
+        <div class="title">{{meeting.title}}</div>
+        <div class="status">{{meeting.status}}</div>
+    </div>
 </div>
-<div class="section-title recent">Recent</div>
-<div *ngFor="let meeting of recentMeetings" class="meeting-row" fxLayout="row" fxLayoutAlign="space-between center"
-     (click)="showMeeting.emit(meeting.id)">
-    <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
-    <div class="title">{{meeting.title}}</div>
-    <div class="status">{{meeting.status}}</div>
+<div class="section">
+    <div class="section-title recent">Recent</div>
+    <div *ngFor="let meeting of recentMeetings" class="meeting-row" fxLayout="row" fxLayoutAlign="space-between center"
+         (click)="showMeeting.emit(meeting.id)">
+        <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
+        <div class="title">{{meeting.title}}</div>
+        <div class="status">{{meeting.status}}</div>
+    </div>
+</div>
+<div class="section drafts" *ngIf="isAdmin">
+    <div class="section-title">Drafts</div>
+    <div *ngFor="let meeting of draftMeetings" class="meeting-row" fxLayout="row" fxLayoutAlign="space-between center"
+         (click)="showMeeting.emit(meeting.id)">
+        <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
+        <div class="title">{{meeting.title}}</div>
+        <div class="status">{{meeting.status}}</div>
+    </div>
+    <div *ngIf="draftMeetings.length == 0" class="empty-section">
+        NONE
+    </div>
+
 </div>

@@ -6,9 +6,36 @@
   padding: 20px;
   max-width: 1000px;
   margin: 0 auto;
+}
 
-  & > * {
-    margin-bottom: 20px;
+.section {
+  margin-bottom: 30px;
+
+  .section-title {
+    font-size: 1.25em;
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .meeting-row {
+    margin-bottom: 15px;
+  }
+
+  &.drafts {
+    background-color: mat-color($mat-orange, A100);
+    padding: 10px;
+
+    .meeting-row {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+  }
+
+  .empty-section {
+    padding: 20px;
+    text-align: center;
+    font-style: italic;
   }
 
 }
@@ -18,17 +45,7 @@
 }
 
 .main-tabs {
-  .section-title {
-    font-size: 1.25em;
-    font-weight: 500;
-    margin: 10px;
-    text-transform: uppercase;
 
-    &.recent {
-      margin-top: 40px;
-    }
-
-  }
 }
 
 .meeting-row {

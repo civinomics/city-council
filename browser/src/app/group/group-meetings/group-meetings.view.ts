@@ -11,6 +11,7 @@ import Moment = moment.Moment;
 export class GroupMeetingsView implements OnInit {
 
     @Input() meetings: Meeting[];
+    @Input() isAdmin: boolean;
     @Output() showMeeting = new EventEmitter();
 
     private readonly now: Moment;
@@ -22,11 +23,15 @@ export class GroupMeetingsView implements OnInit {
 
 
     get upcomingMeetings() {
-        return this.meetings.filter(meeting => meeting.published&&meeting.startTime.isAfter(this.now));
+        return this.meetings.filter(meeting => meeting.published && meeting.startTime.isAfter(this.now));
     }
 
     get recentMeetings() {
-        return this.meetings.filter(meeting => meeting.published&&meeting.startTime.isBefore(this.now));
+        return this.meetings.filter(meeting => meeting.published && meeting.startTime.isBefore(this.now));
+    }
+
+    get draftMeetings() {
+        return this.meetings.filter(meeting => !meeting.published);
     }
 
 
