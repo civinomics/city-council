@@ -17,7 +17,7 @@ import {
   RawCommentWithAuthor,
   RawUser,
   User
-} from '../../models/entity';
+} from '../../core/models';
 import { MeetingService } from '../meeting.service';
 
 import { schemeCategory10 } from 'd3-scale';

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Meeting } from '../../meeting/meeting.model';
 import { Item } from '../../item/item.model';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { AppState } from '../../reducers/index';
+import { AppState } from '../../state';
 import { Group } from '../../group/group.model';
 import { GroupService } from '../../group/group.service';
 import { MeetingService } from '../../meeting/meeting.service';

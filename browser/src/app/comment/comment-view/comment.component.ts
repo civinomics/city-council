@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MdInputDirective } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Comment } from '../../models/entity';
+import { Comment } from '../../core/models';
 import { CommentService } from '../comment.service';
 
 @Component({

@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
 import { Comment, parseComment } from './comment.model';
 import { SessionUser } from '../user/user.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
-import { AppState, getCommentsForSelectedItem, getSessionUser, getUserCommentForSelectedItem } from '../reducers/index';
-import { SELECT_ITEM } from '../reducers/focus';
+import { AppState, getCommentsForSelectedItem, getSessionUser, getUserCommentForSelectedItem } from '../state';
+import { SELECT_ITEM } from '../core/focus.reducer';
 import { Store } from '@ngrx/store';
 import { CommentsLoadedAction } from './comment.reducer';
 

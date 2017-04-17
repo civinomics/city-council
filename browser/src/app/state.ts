@@ -1,15 +1,15 @@
-import * as fromFocus from './focus';
-import * as fromAuth from '../user/auth.reducer';
-import * as fromMeetings from './../meeting/meeting.reducer';
-import * as fromGroups from './../group/group.reducer';
-import * as fromItems from './../item/item.reducer';
-import * as fromComments from './../comment/comment.reducer';
-import * as fromVotes from './../vote/vote.reducer';
+import * as fromFocus from './core/focus.reducer';
+import * as fromAuth from './user/auth.reducer';
+import * as fromMeetings from './meeting/meeting.reducer';
+import * as fromGroups from './group/group.reducer';
+import * as fromItems from './item/item.reducer';
+import * as fromComments from './comment/comment.reducer';
+import * as fromVotes from './vote/vote.reducer';
 
-import { Comment, Group, Item, Meeting, SessionUser, User, Vote } from '../models/entity';
+import { Comment, Group, Item, Meeting, SessionUser, User, Vote } from './core/models';
 import { ActionReducer, combineReducers } from '@ngrx/store';
 import { compose } from '@ngrx/core';
-import { environment } from '../../environments/environment';
+import { environment } from '../environments/environment';
 import { createSelector } from 'reselect';
 let _ignore: Vote | Group | Item | Comment | Meeting | User | SessionUser; //so IDEA won't remove above import, which is needed for tsc to compile with declarations
 

@@ -6,7 +6,7 @@ import { Meeting, MeetingStats } from '../meeting.model';
 import { Item } from '../../item/item.model';
 import { MeetingService } from '../meeting.service';
 import { ItemService } from '../../item/item.service';
-import { AppFocusService } from '../../services/app-focus.service';
+import { AppFocusService } from '../../core/focus.service';
 import { Group } from '../../group/group.model';
 import { GroupService } from '../../group/group.service';
 

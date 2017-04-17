@@ -6,7 +6,6 @@ import { Vote } from '../src/app/vote/vote.model';
 import { Comment } from '../src/app/comment/comment.model';
 import { Item } from '../src/app/item/item.model';
 import { SessionUser, User } from '../src/app/user/user.model';
-import { Place } from '../src/app/models/place';
 import * as fs from 'fs';
 import { Meeting } from '../src/app/meeting/meeting.model';
 import Moment = moment.Moment;
@@ -180,7 +179,7 @@ export function mockMeeting(input?: MockMeetingInput): Meeting {
   }
 }
 
-export function mockAustin(): Place {
+export function mockAustin() {
   return {
     name: 'Austin',
     longName: 'City of Austin',

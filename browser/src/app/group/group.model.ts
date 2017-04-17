@@ -1,4 +1,4 @@
-import { Entity, RawEntity } from '../models/entity';
+import { Entity, RawEntity } from '../core/models';
 import { Office, RawOffice } from './office.model';
 
 export interface Group extends Entity {

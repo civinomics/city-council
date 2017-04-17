@@ -1,4 +1,4 @@
-import { Entity, RawEntity } from '../models/entity';
+import { Entity, RawEntity } from '../core/models';
 import * as moment from 'moment';
 import { Vote } from '../vote/vote.model';
 import { Comment } from '../comment/comment.model';

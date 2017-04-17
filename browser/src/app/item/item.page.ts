@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Item } from './item.model';
 import { Store } from '@ngrx/store';
-import { AppState } from '../reducers/index';
+import { AppState } from '../state';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ItemService } from './item.service';
 import { VoteService } from '../vote/vote.service';
@@ -10,7 +10,7 @@ import { Vote } from '../vote/vote.model';
 import { Comment } from '../comment/comment.model';
 
 import { CommentService } from '../comment/comment.service';
-import { AppFocusService } from '../services/app-focus.service';
+import { AppFocusService } from '../core/focus.service';
 
 @Component({
   selector: 'civ-item-container',

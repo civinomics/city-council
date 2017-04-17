@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { SessionUser } from '../user.model';
 import { AuthService } from '../auth.service';
-import { AppState, getSessionUser } from '../../reducers/index';
+import { AppState, getSessionUser } from '../../state';
 
 @Component({
   selector: 'civ-auth-widget',

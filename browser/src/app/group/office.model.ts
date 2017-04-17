@@ -1,4 +1,4 @@
-import { Entity, RawEntity } from '../models/entity';
+import { Entity, RawEntity } from '../core/models';
 
 export interface Office extends Entity {
   name: string;

@@ -3,9 +3,9 @@ import { AngularFireDatabase } from 'angularfire2';
 import { Observable } from 'rxjs';
 import { Item, ItemStatsAdt, parseItem } from './item.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
-import { AppState, getFocusedItem, getLoadedItemIds, getMeetings } from '../reducers/index';
+import { AppState, getFocusedItem, getLoadedItemIds, getMeetings } from '../state';
 import { Store } from '@ngrx/store';
-import { SELECT_ITEM, SELECT_MEETING } from '../reducers/focus';
+import { SELECT_ITEM, SELECT_MEETING } from '../core/focus.reducer';
 import { ItemLoadedAction, ItemsLoadedAction } from './item.reducer';
 
 

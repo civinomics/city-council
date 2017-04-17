@@ -8,8 +8,8 @@ import { parseVote, Vote } from './vote.model';
 import { SessionUser } from '../user/user.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelectedItem } from '../reducers/index';
-import { SELECT_ITEM } from '../reducers/focus';
+import { AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelectedItem } from '../state';
+import { SELECT_ITEM } from '../core/focus.reducer';
 import { VotesLoadedAction } from './vote.reducer';
 
 @Injectable()

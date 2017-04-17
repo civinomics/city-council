@@ -1,6 +1,6 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {BrowseContainerComponent} from './browse-container.component';
+import { BrowseContainerComponent } from './browse-container.component';
 
 describe('BrowseContainerComponent', () => {
   let component: BrowseContainerComponent;

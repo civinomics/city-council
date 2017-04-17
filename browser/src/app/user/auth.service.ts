@@ -12,7 +12,7 @@ import {
   SessionUserLoadedAction
 } from './auth.reducer';
 import { Store } from '@ngrx/store';
-import { AppState, getSessionUser, getSessionUserId } from '../reducers/index';
+import { AppState, getSessionUser, getSessionUserId } from '../state';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 
 import AuthProvider = firebase.auth.AuthProvider;

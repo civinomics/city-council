@@ -5,15 +5,9 @@ import { AngularFireDatabase } from 'angularfire2';
 import { Item } from '../item/item.model';
 import { ItemService } from '../item/item.service';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
-import { SELECT_GROUP, SELECT_MEETING } from '../reducers/focus';
+import { SELECT_GROUP, SELECT_MEETING } from '../core/focus.reducer';
 import { Store } from '@ngrx/store';
-import {
-    AppState,
-    getFocusedMeeting,
-    getGroups,
-    getItemsOnSelectedMeetingAgenda,
-    getLoadedMeetingIds
-} from '../reducers/index';
+import { AppState, getFocusedMeeting, getGroups, getItemsOnSelectedMeetingAgenda, getLoadedMeetingIds } from '../state';
 import { Http } from '@angular/http';
 import { parseComment } from '../comment/comment.model';
 import { MeetingLoadedAction } from './meeting.reducer';

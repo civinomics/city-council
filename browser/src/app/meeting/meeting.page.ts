@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { Meeting } from './meeting.model';
 import { MeetingService } from './meeting.service';
 import { ItemService } from '../item/item.service';
-import { AppFocusService } from '../services/app-focus.service';
+import { AppFocusService } from '../core/focus.service';
 import { GroupService } from '../group/group.service';
 import { AuthService } from '../user/auth.service';
 

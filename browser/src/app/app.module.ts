@@ -3,17 +3,14 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { AppContainerComponent } from './components/app/app-container.component';
+import { AppRootComponent } from './core/app-root/app-root.page';
 import { AppRoutingModule } from './routing';
 import { StoreModule } from '@ngrx/store';
-import { rootReducer } from './reducers/index';
-import { CONTAINER_COMPONENTS, VIEW_COMPONENTS } from './components/index';
-
+import { rootReducer } from './state';
 import 'hammerjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from 'angularfire2';
 import { environment } from '../environments/environment';
-import { APP_PROVIDERS } from './services/index';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthService } from './user/auth.service';
@@ -30,6 +27,9 @@ import { CommentModule } from './comment/comment.module';
 import { UserServicesModule } from './user/user.services.module';
 import { UserComponentsModule } from './user/user.components.module';
 import { VoteModule } from './vote/vote.module';
+import { CorpModule } from './corp/corp.module';
+import { BrowseContainerComponent } from './core/browse/browse-container.component';
+import { AppFocusService } from './core/focus.service';
 
 @NgModule({
 
@@ -58,7 +58,7 @@ import { VoteModule } from './vote/vote.module';
     UserServicesModule,
     UserComponentsModule,
     VoteModule,
-
+    CorpModule,
     EffectsModule,
 
     EffectsModule.run(AuthService),
@@ -69,11 +69,16 @@ import { VoteModule } from './vote/vote.module';
     EffectsModule.run(CommentService)
 
   ],
+
   declarations: [
-    ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS
+    BrowseContainerComponent, AppRootComponent
   ],
-  providers: [ ...APP_PROVIDERS ],
-  bootstrap: [AppContainerComponent],
+
+  providers: [
+    AppFocusService
+  ],
+
+  bootstrap: [ AppRootComponent ],
 })
 export class AppModule {
 

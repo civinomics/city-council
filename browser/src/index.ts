@@ -1,1 +1,1 @@
-export * from './app/models/entity';
+export * from './app/core/models';

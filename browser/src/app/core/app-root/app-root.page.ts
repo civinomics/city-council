@@ -18,9 +18,9 @@ import { VerifyModalComponent } from '../../user/verify-modal/verify-modal.compo
     </div>
 
   `,
-  styleUrls: [ './app-container.component.scss' ]
+  styleUrls: [ './app-root.page.scss' ]
 })
-export class AppContainerComponent implements OnInit {
+export class AppRootComponent implements OnInit {
 
   constructor(private authService: AuthService, private dialog: MdDialog) {
 

@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {AppState} from '../reducers/index';
-import {Observable} from 'rxjs';
-import * as focus from '../reducers/focus';
+import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { AppState } from '../state';
+import { Observable } from 'rxjs';
+import * as focus from './focus.reducer';
 
 @Injectable()
 export class AppFocusService {

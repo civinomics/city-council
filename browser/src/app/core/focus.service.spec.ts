@@ -1,6 +1,6 @@
-import {inject, TestBed} from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 
-import {AppFocusService} from './app-focus.service';
+import { AppFocusService } from './focus.service';
 
 describe('AppFocusService', () => {
   beforeEach(() => {

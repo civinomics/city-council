@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BrowseContainerComponent } from './components/browse/browse-container.component';
-import { TermsComponent } from './components/corp/terms/terms.component';
-import { CareersComponent } from './components/corp/careers/careers.component';
-import { AboutComponent } from './components/corp/about/about.component';
-import { SplashComponent } from './components/splash/splash.component';
+import { BrowseContainerComponent } from './core/browse/browse-container.component';
+import { TermsComponent } from './corp/terms/terms.component';
+import { CareersComponent } from './corp/careers/careers.component';
+import { AboutComponent } from './corp/about/about.component';
+import { SplashComponent } from './corp/splash/splash.component';
 import { ItemPageComponent } from './item/item.page';
 import { SignInContainerComponent } from './user/sign-in/signin.page';
 import { MeetingModule } from './meeting/meeting.module';
