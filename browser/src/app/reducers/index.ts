@@ -1,11 +1,12 @@
 import * as fromFocus from './focus';
-import * as fromData from './data';
 import * as fromAuth from '../user/auth.reducer';
 import * as fromMeetings from './../meeting/meeting.reducer';
 import * as fromGroups from './../group/group.reducer';
 import * as fromItems from './../item/item.reducer';
 import * as fromComments from './../comment/comment.reducer';
-import { Comment, Group, Item, Meeting, SessionUser, User, Vote } from './../models';
+import * as fromVotes from './../vote/vote.reducer';
+
+import { Comment, Group, Item, Meeting, SessionUser, User, Vote } from '../models/entity';
 import { ActionReducer, combineReducers } from '@ngrx/store';
 import { compose } from '@ngrx/core';
 import { environment } from '../../environments/environment';
@@ -15,21 +16,21 @@ let _ignore: Vote | Group | Item | Comment | Meeting | User | SessionUser; //so 
 export interface AppState {
   auth: fromAuth.State,
   focus: fromFocus.State,
-  data: fromData.State,
   meetings: fromMeetings.State
   groups: fromGroups.State,
   items: fromItems.State,
   comments: fromComments.State
+  votes: fromVotes.State
 }
 
 const reducers = {
   auth: fromAuth.reducer,
   focus: fromFocus.reducer,
-  data: fromData.reducer,
   meetings: fromMeetings.reducer,
   groups: fromGroups.reducer,
   items: fromItems.reducer,
-  comments: fromComments.reducer
+  comments: fromComments.reducer,
+  votes: fromVotes.reducer
 };
 
 const developmentReducer: ActionReducer<AppState> = compose(combineReducers)(reducers);
@@ -42,31 +43,6 @@ export function rootReducer(state: any, action: any) {
     return developmentReducer(state, action);
   }
 }
-
-export const getDataState = (state: AppState) => state.data;
-
-export const getGroupData = createSelector(getDataState, (state) => {
-  return {
-    ids: state.ids.groups,
-    entities: state.entities.groups
-  }
-});
-
-
-export const getMeetingData = createSelector(getDataState, (state) => {
-  return {
-    ids: state.ids.meetings,
-    entities: state.entities.meetings
-  }
-});
-
-export const getItemData = createSelector(getDataState, (state) => {
-  return {
-    ids: state.ids.items,
-    entities: state.entities.items
-  }
-});
-
 
 
 export const getAuthState = (state: AppState) => state.auth;
@@ -96,11 +72,9 @@ export const getCommentsState = (state: AppState) => state.comments;
 export const getComments = createSelector(getCommentsState, fromComments.getEntities);
 export const getLoadedCommentIds = createSelector(getCommentsState, fromComments.getIds);
 
-
-export const getVotes = createSelector(getDataState, fromData.getVoteEntities);
-
-export const getLoadedVoteIds = createSelector(getDataState, fromData.getVoteIds);
-
+export const getVotesState = (state: AppState) => state.votes;
+export const getVotes = createSelector(getVotesState, fromVotes.getEntities);
+export const getLoadedVoteIds = createSelector(getVotesState, fromVotes.getIds);
 
 
 export const getFocusedGroup = createSelector(getFocusedGroupId, getGroups, (groupId, groups) => {

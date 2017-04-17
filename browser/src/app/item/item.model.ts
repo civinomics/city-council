@@ -1,6 +1,6 @@
 import { Entity, RawEntity } from '../models/entity';
 import * as moment from 'moment';
-import { Vote } from '../models/vote';
+import { Vote } from '../vote/vote.model';
 import { Comment } from '../comment/comment.model';
 import Moment = moment.Moment;
 

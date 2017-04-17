@@ -24,3 +24,12 @@ export const parseEntity = (it: RawEntity | any) => {
     editors: it.editors || [it.owner]
   }
 };
+
+
+export * from '../comment/comment.model';
+export * from '../group/group.model';
+export * from '../item/item.model';
+export * from '../meeting/meeting.model';
+export * from '../group/office.model';
+export * from '../user/user.model';
+export * from '../vote/vote.model';

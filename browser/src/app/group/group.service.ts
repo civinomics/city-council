@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Group, Meeting, parseGroup, RawGroup } from '../models';
+import { Group, Meeting, parseGroup, RawGroup } from '../models/entity';
 import { AngularFireDatabase } from 'angularfire2';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { Store } from '@ngrx/store';

@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import {Entity, parseEntity, RawEntity} from './entity';
+import { Entity, parseEntity, RawEntity } from '../models/entity';
 import Moment = moment.Moment;
 
 export interface Vote extends Entity {

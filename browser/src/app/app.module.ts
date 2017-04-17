@@ -20,7 +20,7 @@ import { AuthService } from './user/auth.service';
 import { MeetingService } from './meeting/meeting.service';
 import { GroupService } from './group/group.service';
 import { ItemService } from './item/item.service';
-import { VoteService } from './services/vote.service';
+import { VoteService } from './vote/vote.service';
 import { CommentService } from './comment/comment.service';
 import { SharedModule } from './shared/shared.module';
 import { MeetingModule } from './meeting/meeting.module';
@@ -29,6 +29,7 @@ import { ItemModule } from './item/item.module';
 import { CommentModule } from './comment/comment.module';
 import { UserServicesModule } from './user/user.services.module';
 import { UserComponentsModule } from './user/user.components.module';
+import { VoteModule } from './vote/vote.module';
 
 @NgModule({
 
@@ -56,6 +57,7 @@ import { UserComponentsModule } from './user/user.components.module';
     CommentModule,
     UserServicesModule,
     UserComponentsModule,
+    VoteModule,
 
     EffectsModule,
 

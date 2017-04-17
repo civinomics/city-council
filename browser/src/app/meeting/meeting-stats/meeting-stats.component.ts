@@ -1,23 +1,23 @@
 import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges
 } from '@angular/core';
 import {
-    CommentWithAuthor,
-    Item,
-    Meeting,
-    MeetingStats,
-    Office,
-    RawCommentWithAuthor,
-    RawUser,
-    User
-} from '../../models';
+  CommentWithAuthor,
+  Item,
+  Meeting,
+  MeetingStats,
+  Office,
+  RawCommentWithAuthor,
+  RawUser,
+  User
+} from '../../models/entity';
 import { MeetingService } from '../meeting.service';
 
 import { schemeCategory10 } from 'd3-scale';

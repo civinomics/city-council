@@ -5,8 +5,8 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../reducers/index';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ItemService } from './item.service';
-import { VoteService } from '../services/vote.service';
-import { Vote } from '../models/vote';
+import { VoteService } from '../vote/vote.service';
+import { Vote } from '../vote/vote.model';
 import { Comment } from '../comment/comment.model';
 
 import { CommentService } from '../comment/comment.service';

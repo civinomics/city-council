@@ -4,13 +4,13 @@ import { values } from 'lodash';
 import { AuthService } from '../user/auth.service';
 import { AngularFireDatabase } from 'angularfire2';
 import { Observable } from 'rxjs';
-import { parseVote, Vote } from '../models/vote';
+import { parseVote, Vote } from './vote.model';
 import { SessionUser } from '../user/user.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelectedItem } from '../reducers/index';
 import { SELECT_ITEM } from '../reducers/focus';
-import { VotesLoadedAction } from '../reducers/data';
+import { VotesLoadedAction } from './vote.reducer';
 
 @Injectable()
 export class VoteService {

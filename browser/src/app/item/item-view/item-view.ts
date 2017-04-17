@@ -12,7 +12,7 @@ import {
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 import { Item } from '../item.model';
 import { MdInputDirective } from '@angular/material';
-import { Vote } from '../../models/vote';
+import { Vote } from '../../vote/vote.model';
 import { Comment } from '../../comment/comment.model';
 
 @Component({
