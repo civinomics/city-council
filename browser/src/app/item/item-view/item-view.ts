@@ -110,6 +110,13 @@ export class ItemViewComponent implements OnInit, OnChanges {
     return this.item.onAgendas[this.activeMeeting].itemNumber;
   }
 
+  get isClosedSession() {
+    if (!this.item || !this.activeMeeting || !this.item.onAgendas[ this.activeMeeting ]) {
+      return false;
+    }
+    return this.item.onAgendas[ this.activeMeeting ].closedSession;
+  }
+
   castVote(value: number) {
     this.vote.emit({itemId: this.item.id, value});
   }

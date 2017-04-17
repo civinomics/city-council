@@ -6,7 +6,7 @@
 </div>
 
 <div class="actions-table" fxLayout="column">
-  <div class="row vote" fxLayout="row" fxLayoutAlign="start center">
+  <div class="row vote" fxLayout="row" fxLayoutAlign="start center" *ngIf="!isClosedSession">
     <div class="key row-label" [class.focused]="!userVote">vote</div>
     <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
       <div class="vote-count">{{voteStats?.no}}</div>
@@ -28,7 +28,7 @@
       <div class="vote-count">{{voteStats?.yes}}</div>
     </div>
   </div>
-  <div class="row explain" fxLayout="row">
+  <div class="row explain" fxLayout="row" *ngIf="!isClosedSession">
     <div class="key row-label" [class.focused]="!userComment && !!userVote">explain</div>
 
 
@@ -50,6 +50,10 @@
     <civ-comment *ngIf="!!userComment" [comment]="userComment" (edit)="editComment($event)"
                  [canEdit]="true"></civ-comment>
 
+  </div>
+
+  <div *ngIf="isClosedSession" class="closed-session-note">
+    This item is closed session and is not open to public feedback.
   </div>
 
   <div class="row share" fxLayout="row" fxLayoutAlign="start center" [class.highlighted]="!!userVote && !!userComment">
