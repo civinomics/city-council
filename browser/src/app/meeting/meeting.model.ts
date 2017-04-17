@@ -21,6 +21,8 @@ export interface Meeting extends Entity {
   groupId: string;
 }
 
+export type PartialMeeting = {[P in keyof Meeting]?: Meeting[P]};
+
 
 export type RawMeeting = RawEntity & {
     [P in 'title' | 'groupId' | 'published']: Meeting[P];

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MeetingService } from '../meeting.service';
 import { GroupService } from '../../group/group.service';
 import { Observable } from 'rxjs/Observable';
-import { Meeting } from '../meeting.model';
+import { Meeting, PartialMeeting } from '../meeting.model';
 import { Item } from '../../item/item.model';
 import { ItemService } from '../../item/item.service';
 
@@ -12,6 +12,7 @@ import { ItemService } from '../../item/item.service';
         <civ-meeting-admin-view [meeting]="meeting$ | async" [items]="items$ | async"
                                 (setFeedbackStatus)="setFeedbackStatus($event)"
                                 (setPublished)="setPublished($event)"
+                                (updateInfo)="updateInfo($event)"
         ></civ-meeting-admin-view>
     `,
     styles: []
@@ -34,5 +35,9 @@ export class MeetingAdminPage {
     setPublished(it: { meetingId: string, value: boolean }) {
         this.meetingSvc.setPublished(it.meetingId, it.value);
     }
+
+  updateInfo(it: { meetingId: string, updates: PartialMeeting }) {
+    this.meetingSvc.update(it.meetingId, it.updates);
+  }
 
 }

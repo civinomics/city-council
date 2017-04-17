@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Meeting, MeetingStats, parseMeeting, RawMeeting } from './meeting.model';
+import { Meeting, MeetingStats, parseMeeting, PartialMeeting, RawMeeting } from './meeting.model';
 import { AngularFireDatabase } from 'angularfire2';
 import { Item } from '../item/item.model';
 import { ItemService } from '../item/item.service';
@@ -66,6 +66,25 @@ export class MeetingService {
     public setPublished(meetingId: string, value: boolean) {
         this.db.object(`/meeting/${meetingId}`).update({ published: value });
     }
+
+  public update(mtgId: string, data: PartialMeeting) {
+
+    let push = { ...data } as any;
+    if (data.feedbackDeadline) {
+      push.feedbackDeadline = data.feedbackDeadline.toISOString();
+    }
+    if (data.startTime) {
+      push.startTime = data.startTime.toISOString();
+    }
+
+    this.db.object(`/meeting/${mtgId}`).update(push).then(res => {
+
+    }).catch(err => {
+      debugger;
+      throw new Error(err.message);
+    });
+
+  }
 
 
     private parseMeetingStats(rawStats) {
