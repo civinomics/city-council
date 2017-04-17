@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import { Entity, parseEntity, RawEntity } from '../models/entity';
-import { parseUser, RawUser, User } from '../models/user';
+import { parseUser, RawUser, User } from '../user/user.model';
 import Moment = moment.Moment;
 export type CommentRole = 'pro' | 'con' | 'neutral';
 

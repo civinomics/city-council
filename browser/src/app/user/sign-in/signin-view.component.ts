@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { SocialAuthProvider } from '../../services/auth.service';
+import { SocialAuthProvider } from '../auth.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EmailSignupData, UserAddress } from '../../models/user';
+import { EmailSignupData, UserAddress } from '../user.model';
 
 @Component({
   selector: 'civ-sign-in-view',

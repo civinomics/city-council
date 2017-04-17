@@ -1,6 +1,6 @@
 import * as fromFocus from './focus';
 import * as fromData from './data';
-import * as fromAuth from './auth';
+import * as fromAuth from '../user/auth.reducer';
 import * as fromMeetings from './../meeting/meeting.reducer';
 import * as fromGroups from './../group/group.reducer';
 import * as fromItems from './../item/item.reducer';

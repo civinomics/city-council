@@ -6,7 +6,7 @@ import { CareersComponent } from './components/corp/careers/careers.component';
 import { AboutComponent } from './components/corp/about/about.component';
 import { SplashComponent } from './components/splash/splash.component';
 import { ItemPageComponent } from './item/item.page';
-import { SignInContainerComponent } from './components/sign-in/signin-container.component';
+import { SignInContainerComponent } from './user/sign-in/signin.page';
 import { MeetingModule } from './meeting/meeting.module';
 import { GroupModule } from './group/group.module';
 import { GroupPage } from './group/group.page';

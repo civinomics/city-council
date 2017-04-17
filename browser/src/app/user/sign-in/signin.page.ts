@@ -1,26 +1,22 @@
-import {Component, OnInit} from '@angular/core';
-import {AuthService, SocialAuthProvider} from '../../../services/auth.service';
-import {Router} from '@angular/router';
-import {MdDialogRef} from '@angular/material';
-import {EmailSignupData, UserAddress} from '../../../models/user';
-import {BehaviorSubject, Subject} from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { AuthService, SocialAuthProvider } from '../auth.service';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { EmailSignupData, UserAddress } from '../user.model';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'civ-auth-modal',
+  selector: 'civ-sign-in',
   template: `
-    <md-dialog-content style="max-height:90vh">
-      <civ-sign-in-view
-        (startSocial)="initSocialSignin($event)"
-        (completeSocial)="completeSocial($event)"
-        (emailSignup)="emailSignup($event)"
-        [firstName]="(values$ | async).firstName"
-        [lastName]="(values$ | async).lastName"
-        [email]="(values$ | async).email"></civ-sign-in-view>
-    </md-dialog-content>
-  `
+    <civ-sign-in-view (startSocial)="initSocialSignin($event)"
+                      (completeSocial)="completeSocial($event)"
+                      (emailSignup)="emailSignup($event)"
+                      [firstName]="(values$ | async).firstName"
+                      [lastName]="(values$ | async).lastName"
+                      [email]="(values$ | async).email"></civ-sign-in-view>
+  `,
+  styles: []
 })
-export class AuthModalComponent implements OnInit {
-  private _socialAccountInitiated: boolean = false;
+export class SignInContainerComponent implements OnInit {
 
   values$: Subject<{ firstName: string, lastName: string, email: string }> = new BehaviorSubject({
     firstName: '',
@@ -28,8 +24,9 @@ export class AuthModalComponent implements OnInit {
     email: ''
   });
 
+  private _socialAccountInitiated: boolean = false;
 
-  constructor(private authSvc: AuthService, private router: Router, private dialogRef: MdDialogRef<AuthModalComponent>) {
+  constructor(private authSvc: AuthService, private router: Router) {
 
   }
 
@@ -38,13 +35,13 @@ export class AuthModalComponent implements OnInit {
 
   emailSignup(data: EmailSignupData) {
     this.authSvc.emailSignin(data).subscribe(user => {
-      this.dialogRef.close('signed-up');
+      this.router.navigate(['group', 'id_acc'])
     })
   }
 
   completeSocial(data: UserAddress) {
     this.authSvc.completeSocialSignin(data).subscribe(user => {
-      this.dialogRef.close('signed-up');
+      this.router.navigate(['group', 'id_acc'])
     })
   }
 
@@ -55,7 +52,7 @@ export class AuthModalComponent implements OnInit {
 
       if (result.success == true) {
         if (result.extantAccount) {
-          this.dialogRef.close(result);
+          this.router.navigate(['group', 'id_acc'])
         } else {
           let authInfo = result.resultantState.auth;
           let firstName, lastName, email;

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../user/auth.service';
 import { AngularFireDatabase } from 'angularfire2';
 import { Observable } from 'rxjs';
 import { Comment, parseComment } from './comment.model';
-import { SessionUser } from '../models/user';
+import { SessionUser } from '../user/user.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { AppState, getCommentsForSelectedItem, getSessionUser, getUserCommentForSelectedItem } from '../reducers/index';
 import { SELECT_ITEM } from '../reducers/focus';

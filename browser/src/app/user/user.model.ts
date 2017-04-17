@@ -1,4 +1,4 @@
-import { Entity, parseEntity, RawEntity } from './entity';
+import { Entity, parseEntity, RawEntity } from '../models/entity';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -63,12 +63,13 @@ export function parseUser(data: RawUser|any): User {
 }
 
 export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) => {
+
   return {
     ...parseUser(data),
     id: data.$key,
     email: data.email,
     address: data.address,
-    superuser: data.superuser||false,
+    superuser: data.superuser || false,
     isVerified: data.isVerified,
     following: data.following,
     votes: data.votes || {},

@@ -5,7 +5,7 @@ import { keys, random, range } from 'lodash';
 import { Vote } from '../src/app/models/vote';
 import { Comment } from '../src/app/comment/comment.model';
 import { Item } from '../src/app/item/item.model';
-import { SessionUser, User } from '../src/app/models/user';
+import { SessionUser, User } from '../src/app/user/user.model';
 import { Place } from '../src/app/models/place';
 import * as fs from 'fs';
 import { Meeting } from '../src/app/meeting/meeting.model';

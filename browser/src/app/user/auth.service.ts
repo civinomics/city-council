@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {AngularFireAuth, AngularFireDatabase, AuthMethods, AuthProviders, FirebaseAuthState} from 'angularfire2';
-import {BehaviorSubject, Observable, Observer, Subject} from 'rxjs';
-import {EmailSignupData, parseSessionUser, SessionUser, UserAddress} from '../models/user';
-import {FirebaseError} from 'firebase/app';
+import { Injectable } from '@angular/core';
+import { AngularFireAuth, AngularFireDatabase, AuthMethods, AuthProviders, FirebaseAuthState } from 'angularfire2';
+import { BehaviorSubject, Observable, Observer, Subject } from 'rxjs';
+import { EmailSignupData, parseSessionUser, SessionUser, UserAddress } from './user.model';
+import { FirebaseError } from 'firebase/app';
 import * as firebase from 'firebase';
 
 import {
@@ -10,10 +10,10 @@ import {
   AuthStateChangedAction,
   SESSION_USER_LOADED,
   SessionUserLoadedAction
-} from '../reducers/auth';
-import {Store} from '@ngrx/store';
-import {AppState, getSessionUser, getSessionUserId} from '../reducers/index';
-import {Actions, Effect, toPayload} from '@ngrx/effects';
+} from './auth.reducer';
+import { Store } from '@ngrx/store';
+import { AppState, getSessionUser, getSessionUserId } from '../reducers/index';
+import { Actions, Effect, toPayload } from '@ngrx/effects';
 
 import AuthProvider = firebase.auth.AuthProvider;
 

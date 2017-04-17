@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {AuthService} from '../../services/auth.service';
-import {MdDialog} from '@angular/material';
-import {AuthModalComponent} from '../auth/auth-modal/auth-modal.component';
-import {VerifyModalComponent} from '../auth/verify-modal/verify-modal.component';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../user/auth.service';
+import { MdDialog } from '@angular/material';
+import { AuthModalComponent } from '../../user/auth-modal/auth-modal.component';
+import { VerifyModalComponent } from '../../user/verify-modal/verify-modal.component';
 
 @Component({
   selector: 'civ-root',

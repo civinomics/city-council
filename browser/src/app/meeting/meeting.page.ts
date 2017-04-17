@@ -7,7 +7,7 @@ import { MeetingService } from './meeting.service';
 import { ItemService } from '../item/item.service';
 import { AppFocusService } from '../services/app-focus.service';
 import { GroupService } from '../group/group.service';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../user/auth.service';
 
 @Component({
     selector: 'civ-meeting-container',
@@ -84,8 +84,7 @@ export class MeetingPage implements OnInit {
 
         this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
 
-        this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.meeting$, (user, meeting) => user.superuser||meeting.owner == user.id);
-
+        this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.meeting$, (user, meeting) => user.superuser || meeting.owner == user.id);
 
 
     }

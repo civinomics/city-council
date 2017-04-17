@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Meeting } from '../../meeting/meeting.model';
 import { GroupService } from '../group.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../user/auth.service';
 import { Group } from '../group.model';
 
 @Component({

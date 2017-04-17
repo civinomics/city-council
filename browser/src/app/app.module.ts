@@ -16,9 +16,7 @@ import { environment } from '../environments/environment';
 import { APP_PROVIDERS } from './services/index';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
-import { AuthService } from './services/auth.service';
-import { AuthModalComponent } from './components/auth/auth-modal/auth-modal.component';
-import { VerifyModalComponent } from './components/auth/verify-modal/verify-modal.component';
+import { AuthService } from './user/auth.service';
 import { MeetingService } from './meeting/meeting.service';
 import { GroupService } from './group/group.service';
 import { ItemService } from './item/item.service';
@@ -29,6 +27,8 @@ import { MeetingModule } from './meeting/meeting.module';
 import { GroupModule } from './group/group.module';
 import { ItemModule } from './item/item.module';
 import { CommentModule } from './comment/comment.module';
+import { UserServicesModule } from './user/user.services.module';
+import { UserComponentsModule } from './user/user.components.module';
 
 @NgModule({
 
@@ -41,6 +41,12 @@ import { CommentModule } from './comment/comment.module';
 
     AppRoutingModule,
 
+
+    AngularFireModule.initializeApp(environment.firebase),
+    StoreModule.provideStore(rootReducer),
+    StoreDevtoolsModule.instrumentOnlyWithExtension(),
+
+
     BrowserAnimationsModule,
     SharedModule,
 
@@ -48,10 +54,8 @@ import { CommentModule } from './comment/comment.module';
     GroupModule,
     ItemModule,
     CommentModule,
-
-    AngularFireModule.initializeApp(environment.firebase),
-    StoreModule.provideStore(rootReducer),
-    StoreDevtoolsModule.instrumentOnlyWithExtension(),
+    UserServicesModule,
+    UserComponentsModule,
 
     EffectsModule,
 
@@ -67,7 +71,6 @@ import { CommentModule } from './comment/comment.module';
     ...CONTAINER_COMPONENTS, ...VIEW_COMPONENTS
   ],
   providers: [ ...APP_PROVIDERS ],
-  entryComponents: [AuthModalComponent, VerifyModalComponent],
   bootstrap: [AppContainerComponent],
 })
 export class AppModule {

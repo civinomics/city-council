@@ -6,7 +6,7 @@ import { Group } from './group.model';
 import { GroupService } from './group.service';
 import { MeetingService } from '../meeting/meeting.service';
 import { AppFocusService } from '../services/app-focus.service';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../user/auth.service';
 
 @Component({
   selector: 'civ-group',

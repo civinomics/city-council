@@ -18,7 +18,15 @@ export type AgendaInfo = {
   groupId: string;
   meetingId: string;
   itemNumber: number;
+  feedbackDeadline: Moment;
   closedSession: boolean;
+  outcome?: ItemOutcome
+}
+
+export type RawAgendaInfo = {
+    [P in 'groupId' | 'meetingId' | 'itemNumber' | 'closedSession']: AgendaInfo[P]
+    } & {
+  feedbackDeadline: string
   outcome?: ItemOutcome
 }
 
@@ -43,15 +51,15 @@ export interface Item extends Entity {
   }
 }
 
-//export const ItemSchema
-
 export type RawItem = RawEntity & {
-  [P in 'text' | 'sireLink' | 'onAgendas']: Item[P];
+    [P in 'text' | 'sireLink']: Item[P];
   } & {
   activity?: ItemStatsAdt;
 } & {
-  [P in 'posted' | 'feedbackDeadline']: string
-  } & {
+  posted: string;
+  onAgendas: {
+    [id: string]: RawAgendaInfo;
+  }
 }
 
 export type ItemWithComments = Item & {

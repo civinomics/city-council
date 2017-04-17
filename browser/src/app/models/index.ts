@@ -5,5 +5,5 @@ export * from '../item/item.model';
 export * from '../meeting/meeting.model';
 export * from '../group/office.model';
 export * from './place';
-export * from './user';
+export * from '../user/user.model';
 export * from './vote';

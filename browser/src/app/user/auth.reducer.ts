@@ -1,6 +1,6 @@
-import {Action} from '@ngrx/store';
-import {FirebaseAuthState} from 'angularfire2';
-import {SessionUser} from '../models/user';
+import { Action } from '@ngrx/store';
+import { FirebaseAuthState } from 'angularfire2';
+import { SessionUser } from './user.model';
 
 export type AuthError = {
   code: string;

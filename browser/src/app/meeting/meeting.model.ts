@@ -1,4 +1,4 @@
-import { Entity, EntityField, parseEntity, RawEntity } from '../models/entity';
+import { Entity, parseEntity, RawEntity } from '../models/entity';
 import * as moment from 'moment';
 import { keys } from 'lodash';
 import { ItemStatsAdt } from '../item/item.model';
@@ -15,7 +15,7 @@ export interface Meeting extends Entity {
   startTime: Moment;
   endTime: Moment;
   feedbackDeadline: Moment;
-  status: MeetingStatus;
+  status: MeetingStatus; //DEPRECATED
   published: boolean;
   agendaIds: string[];
   groupId: string;
@@ -23,13 +23,14 @@ export interface Meeting extends Entity {
 
 
 export type RawMeeting = RawEntity & {
-    [P in EntityField | 'title' | 'groupId' | 'published']: Meeting[P];
+    [P in 'title' | 'groupId' | 'published']: Meeting[P];
   } & {
   [P in 'startTime' | 'endTime' | 'feedbackDeadline']: string;
   } & {
   agenda: string[];
-  published: boolean;
 }
+
+export const MeetingFields = [ 'title', 'startTime', 'endTime', 'feedbackDeadline', 'published', 'agenda', 'groupId' ];
 
 
 export type MeetingStats = {

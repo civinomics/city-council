@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { MeetingAgendaContainerComponent } from './meeting-agenda/meeting-agenda-container.component';
-import { MeetingAdminPage } from 'app/meeting/meeting-admin/meeting-admin.page';
+import { MeetingAdminPage } from './meeting-admin/meeting-admin.page';
 import { MeetingAdminComponent } from './meeting-admin/meeting-admin.component';
 import { MeetingAgendaViewComponent } from './meeting-agenda/meeting-agenda.component';
 import { DistrictInputTableComponent } from './district-input-table/district-input-table.component';

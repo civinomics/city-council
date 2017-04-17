@@ -1,16 +1,16 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as moment from 'moment';
-import {values} from 'lodash';
-import {AuthService} from './auth.service';
-import {AngularFireDatabase} from 'angularfire2';
-import {Observable} from 'rxjs';
-import {parseVote, Vote} from '../models/vote';
-import {SessionUser} from '../models/user';
-import {Actions, Effect, toPayload} from '@ngrx/effects';
-import {Store} from '@ngrx/store';
-import {AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelectedItem} from '../reducers/index';
-import {SELECT_ITEM} from '../reducers/focus';
-import {VotesLoadedAction} from '../reducers/data';
+import { values } from 'lodash';
+import { AuthService } from '../user/auth.service';
+import { AngularFireDatabase } from 'angularfire2';
+import { Observable } from 'rxjs';
+import { parseVote, Vote } from '../models/vote';
+import { SessionUser } from '../user/user.model';
+import { Actions, Effect, toPayload } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelectedItem } from '../reducers/index';
+import { SELECT_ITEM } from '../reducers/focus';
+import { VotesLoadedAction } from '../reducers/data';
 
 @Injectable()
 export class VoteService {

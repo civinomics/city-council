@@ -1,6 +1,6 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {VerifyModalComponent} from './verify-modal.component';
+import { VerifyModalComponent } from './verify-modal.component';
 
 describe('VerifyModalComponent', () => {
   let component: VerifyModalComponent;
