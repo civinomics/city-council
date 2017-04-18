@@ -68,7 +68,7 @@ root:
       endTime: required string
       title: required string
       published: boolean
-      status: string
+      feedbackDeadline: required string
 
       agenda:
         $itemId:

@@ -38,7 +38,7 @@ export class ItemService {
   @Effect() loadItemsOnSelectedMeetingAgendaEffect =
     Observable.combineLatest(this.store.select(getMeetings), this.actions.ofType(SELECT_MEETING).map(toPayload).filter(it => !!it))
       .filter(([meetings, selectedMeetingId]) => !!meetings[selectedMeetingId])
-      .map(([meetings, selectedMeetingId]) => meetings[selectedMeetingId].agendaIds)
+      .map(([meetings, selectedMeetingId]) => meetings[selectedMeetingId].agenda)
       .map(itemIds => ({type: LOAD_ALL_ITEMS, payload: itemIds}));
 
 

@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions';
-import {uniqBy} from 'lodash';
-import {initializeAdminApp} from './_internal';
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import {merge} from 'rxjs/observable/merge';
+import { uniqBy } from 'lodash';
+import { initializeAdminApp } from './_internal';
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
+import { merge } from 'rxjs/observable/merge';
 import * as moment from 'moment';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/reduce';
@@ -13,7 +13,7 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/mergeMap';
 import * as fs from 'fs';
 
-import {Comment, Group, Meeting, MeetingStats, parseGroup, parseMeeting, Vote, parseComment, User, RawUser, RawComment} from '@civ/city-council';
+import { Group, Meeting, MeetingStats, parseGroup, parseMeeting, RawComment, RawUser, Vote } from '@civ/city-council';
 
 
 const cors = require('cors')({origin: true});
@@ -34,13 +34,15 @@ export function computeMeetingStats(meetingId: string): Observable<MeetingStats>
 
     return getMeeting(meetingId)
         .mergeMap(meeting => {
+          meeting = parseMeeting(meeting);
+
             console.log(meeting);
 
             let group = getGroup(meeting.groupId);
 
             let priorMtgActivity = getPriorMeetingActivity(meetingId);
 
-            let itemVotes$ = merge(...meeting.agendaIds.map(id => getVotesForItem(id).take(1).map(votes => ({
+          let itemVotes$ = merge(...meeting.agenda.map(id => getVotesForItem(id).take(1).map(votes => ({
                 itemId: id,
                 votes
             }))))
@@ -50,7 +52,7 @@ export function computeMeetingStats(meetingId: string): Observable<MeetingStats>
                 }), {});
 
 
-            let itemComments$ = merge(...meeting.agendaIds.map(id => getCommentsForItem(id).take(1).map(comments => ({
+          let itemComments$ = merge(...meeting.agenda.map(id => getCommentsForItem(id).take(1).map(comments => ({
                 itemId: id,
                 comments
             }))))
@@ -116,7 +118,7 @@ function prepareReport(meeting: Meeting,
         byDistrict: districtTotals
     };
 
-    let byItem = meeting.agendaIds.reduce((itemsResult, itemId) => {
+  let byItem = meeting.agenda.reduce((itemsResult, itemId) => {
         let itemVotes = votes[itemId],
             itemComments = comments[itemId];
 

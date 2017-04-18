@@ -156,13 +156,12 @@ export function mockItem(input?: MockItemInput): Item {
 }
 
 export function mockMeeting(input?: MockMeetingInput): Meeting {
-  let start, end, deadline, status;
+  let start, end, deadline;
   let past = input && input.past || false;
 
   start = input && input.startTime ? input.startTime : past ? moment().subtract(2, 'months') : moment().add(2, 'days');
   end = moment(start).add(2, 'hours');
   deadline = moment(start).subtract('24', 'hours');
-  status = past ? 'closed' : 'upcoming';
 
 
   return {
@@ -171,10 +170,9 @@ export function mockMeeting(input?: MockMeetingInput): Meeting {
     endTime: end,
     feedbackDeadline: deadline,
     published: input&&input.published||true,
-    status,
     id: randId('meeting'),
     owner: input && input.owner || 'id_doug',
-    agendaIds: [],
+    agenda: [],
     groupId: 'id_acc'
   }
 }
@@ -280,7 +278,7 @@ export function schema(input?: MockSchemaInput): any {
 
     let meeting = mockMeeting({ startTime: mtgDate, owner: adminId, published: m < NUM_MEETINGS - 1 });
 
-    let agenda: { [id: string]: number } = {};
+    let agenda = [];
 
     for (let i = 0; i < ITEMS_PER_MEETING; i++) {
       let item = mockItem({
@@ -288,7 +286,7 @@ export function schema(input?: MockSchemaInput): any {
         agendas: [{itemNumber: i + 1, meetingId: meeting.id, groupId: 'id_acc'}],
         deadline: feedbackEnd
       });
-      agenda[item.id] = i + 1;
+      agenda.push(item);
 
       let numVotes = random(MIN_VOTES_PER, MAX_VOTES_PER),
         numComms = random(MIN_COMMS_PER, MAX_COMMS_PER);
@@ -336,12 +334,12 @@ export function schema(input?: MockSchemaInput): any {
       totItems++;
 
     }
-    meetings.push({...meeting, agenda});
+    meetings.push({...meeting, agenda: agenda.reduce((result, item) => ({...result, [item.id]: true}), {})});
   }
 
   console.log(`top level votes | comments: ${totVotes} | ${totComms}`);
 
-  acc.meetings = meetings.map(it => it.id);
+  acc.meetings = meetings.reduce((result, next) => ({...result, [next.id]:true}), {});
 
   const itemIds = items.map(it => it.id);
 

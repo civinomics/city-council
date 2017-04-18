@@ -15,9 +15,8 @@ export interface Meeting extends Entity {
   startTime: Moment;
   endTime: Moment;
   feedbackDeadline: Moment;
-  status: MeetingStatus; //DEPRECATED
   published: boolean;
-  agendaIds: string[];
+  agenda: string[];
   groupId: string;
 }
 
@@ -29,7 +28,7 @@ export type RawMeeting = RawEntity & {
   } & {
   [P in 'startTime' | 'endTime' | 'feedbackDeadline']: string;
   } & {
-  agenda: string[];
+  agenda: {[id:string]: true} | string[];
 }
 
 export const MeetingFields = [ 'title', 'startTime', 'endTime', 'feedbackDeadline', 'published', 'agenda', 'groupId' ];
@@ -72,6 +71,8 @@ export type MeetingReportAdt = {
 
 export const parseMeeting: (data: RawMeeting | Meeting | any) => Meeting = (data: RawMeeting) => {
 
+  let agenda: string[] = data.agenda instanceof Array ? data.agenda : Object.keys(data.agenda);
+
   return {
     ...parseEntity(data),
     id: data.$key || data.id,
@@ -82,15 +83,15 @@ export const parseMeeting: (data: RawMeeting | Meeting | any) => Meeting = (data
     startTime: moment(data.startTime),
     endTime: moment(data.endTime),
     feedbackDeadline: moment(data.feedbackDeadline),
-    agendaIds: keys(data.agenda)
+    agenda
   }
 };
 
 export const meetingsEqual: (x: Meeting, y: Meeting) => boolean = (x, y) => {
-  if (x.id != y.id || x.title != y.title || x.status != y.status) {
+  if (x.id != y.id || x.title != y.title) {
     return false;
   }
-  if (x.agendaIds.join('_') != y.agendaIds.join('_')) {
+  if (x.agenda.join('_') != y.agenda.join('_')) {
     return false;
   }
   return true;

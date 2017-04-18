@@ -1,3 +1,4 @@
+import {keys} from 'lodash';
 import { Entity, RawEntity } from '../core/models';
 import { Office, RawOffice } from './office.model';
 
@@ -11,7 +12,7 @@ export interface Group extends Entity {
 export type RawGroup = RawEntity & {
   [P in 'name' | 'icon']: Group[P]
   } & {
-  meetings: string[],
+  meetings: {[key:string]:true}
   districts: RawOffice[]
 }
 
@@ -22,7 +23,7 @@ export function parseGroup(data: RawGroup | Group | any): Group {
     editors: data.editors || [data.owner],
     name: data.name,
     icon: data.icon,
-    meetingIds: data.meetings,
+    meetingIds: keys(data.meetings),
     districts: Object.keys(data.districts).map(id => ({...data.districts[id], id}))
   }
 }

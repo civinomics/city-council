@@ -189,7 +189,7 @@ export class MeetingStatsComponent implements OnChanges {
 
       let totalSrc = this.activeDistrict.id == null ? this.stats.total : this.stats.total.byDistrict[ this.activeDistrict.id ];
 
-    let numItems = this.meeting.agendaIds.length;
+    let numItems = this.meeting.agenda.length;
 
       let participationByDistrict = this.activeDistrict.id == null ? this.districts.map(district => ({
       name: district.name,

@@ -6,7 +6,7 @@ import {Observer} from 'rxjs/Observer';
 import * as gcloud from 'gcloud';
 
 const adminCreds = require('./admin-creds.json');
-
+const SOCRATA_ENV_VAR_KEY = 'civcc.socrata-key';
 
 export function initializeAdminApp(): admin.app.App {
   if (admin.apps.length > 0) {
