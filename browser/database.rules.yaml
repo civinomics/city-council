@@ -22,7 +22,7 @@ root:
       .read/write: auth != null && auth.uid == $id
       isVerified: boolean
       email: string
-      superuser: boolean
+      superuser: isSuperuser()
       address:
         line1: string
         line2: string
