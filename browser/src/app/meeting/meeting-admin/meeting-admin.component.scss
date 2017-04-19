@@ -39,6 +39,18 @@
 
 .feedback {
 
+  .status-note {
+    margin-bottom:10px;
+    text-align: center;
+    &.open {
+      color: mat-color($mat-green, 600);
+    }
+
+    &.closed {
+      color: mat-color($mat-red, 600);
+    }
+  }
+
   .expl {
     font-size: 0.85em;
   }

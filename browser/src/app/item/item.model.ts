@@ -72,6 +72,7 @@ export type ItemWithVotes = Item & {
 
 
 export const parseItem: (it: RawItem | any) => Item = (it) => {
+
   return {
     ...it,
     id: it.$key || it.id,
@@ -80,13 +81,52 @@ export const parseItem: (it: RawItem | any) => Item = (it) => {
     activity: it.activity
   }
 }
+const equalityChecks = [
+  (x: Item, y: Item) => x.id == y.id,
+  (x: Item, y: Item) => x.text == y.text,
+  (x: Item, y: Item) => {
+    let xAgendas = Object.keys(x.onAgendas), yAgendas = Object.keys(y.onAgendas);
+    if (xAgendas.join('_') != yAgendas.join('_')){
+      return false;
+    }
+    for (let i = 0; i < xAgendas.length; i++){
+      if (x.onAgendas[xAgendas[i]].closedSession != y.onAgendas[xAgendas[i]].closedSession){
+        return false;
+      }
+      if (!x.onAgendas[xAgendas[i]].feedbackDeadline.isSame(y.onAgendas[xAgendas[i]].feedbackDeadline)){
+        return false;
+      }
+    };
+    return true;
+  },
+  (x: Item, y: Item) => {
+    if (!(x.activity || y.activity)){
+      return true; //if neither have it, consider equal
+    } if (!(x.activity && y.activity)){
+      return false; //if one has it but the other doesn't, consider unequal
+    } else {
+      //if both have it
+      if (
+        x.activity.comments.pro != y.activity.comments.pro ||
+        x.activity.comments.con != y.activity.comments.con ||
+        x.activity.comments.neutral != y.activity.comments.neutral ||
+        x.activity.votes.yes != y.activity.votes.yes ||
+        x.activity.votes.no != y.activity.votes.no
+      ) {
+        return false;
+      }
+      return true;
+    }
+  },
+
+  (x: Item, y: Item) => x.sireLink == y.sireLink
+];
 
 export const itemsEqual: (x: Item, y: Item) => boolean = (x, y) => {
-  if (x.id != y.id || x.text != y.text || x.sireLink != y.sireLink) {
-    return false;
-  }
-  if (x.activity != y.activity) {
-    return false;
+  for (let i = 0, check = equalityChecks[i]; i < equalityChecks.length; i++){
+    if (!check(x, y)){
+      return false;
+    }
   }
   return true;
 };

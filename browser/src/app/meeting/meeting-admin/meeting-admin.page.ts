@@ -13,6 +13,7 @@ import { ItemService } from '../../item/item.service';
                                 (setFeedbackStatus)="setFeedbackStatus($event)"
                                 (setPublished)="setPublished($event)"
                                 (updateInfo)="updateInfo($event)"
+                                *ngIf="!!(meeting$ | async)"
         ></civ-meeting-admin-view>
     `,
     styles: []

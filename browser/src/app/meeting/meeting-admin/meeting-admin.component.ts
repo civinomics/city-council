@@ -44,6 +44,15 @@ export class MeetingAdminComponent implements OnInit, OnChanges {
     ngOnInit() {
     }
 
+    get status(){
+      if (!this.meeting){
+        return ''
+      }
+      return this.meeting.feedbackDeadline.isBefore(moment()) ? 'closed' : 'open';
+    }
+
+
+
     ngOnChanges(changes: SimpleChanges): void {
         if (changes[ 'meeting' ]&& !!changes[ 'meeting' ].currentValue) {
             this.basicForm.controls[ 'date' ].setValue(this.meeting.startTime.format('YYYY-MM-DD').toString());
@@ -106,6 +115,7 @@ export class MeetingAdminComponent implements OnInit, OnChanges {
     if (changes.date) {
       push.startTime = moment(changes.date);
     }
+    console.log(`emitting`); console.log(push);
     this.updateInfo.emit({ meetingId: this.meeting.id, updates: push });
   }
 
@@ -126,6 +136,10 @@ export class MeetingAdminComponent implements OnInit, OnChanges {
 
     togglePublished() {
         this.setPublished.emit({ meetingId: this.meeting.id, value: !this.meeting.published });
+    }
+
+    itemEquality(index, item: Item){
+      return item.id;
     }
 
 }

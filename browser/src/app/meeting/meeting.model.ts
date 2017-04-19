@@ -8,7 +8,7 @@ import Moment = moment.Moment;
 
 export type MeetingStatus = 'open' | 'closed' | 'draft'
 
-export type MeetingField = 'title' | 'startTime' | 'endTime' | 'feedbackDeadline' | 'status' | 'agendaIds'
+export type MeetingField = 'title' | 'startTime' | 'endTime' | 'feedbackDeadline' | 'status' | 'agenda'
 
 export interface Meeting extends Entity {
   title: string;
@@ -71,6 +71,7 @@ export type MeetingReportAdt = {
 
 export const parseMeeting: (data: RawMeeting | Meeting | any) => Meeting = (data: RawMeeting) => {
 
+
   let agenda: string[] = data.agenda instanceof Array ? data.agenda : Object.keys(data.agenda);
 
   return {
@@ -79,7 +80,6 @@ export const parseMeeting: (data: RawMeeting | Meeting | any) => Meeting = (data
     title: data.title,
     groupId: data.groupId,
     published: data.published,
-    status: data.published == false ? 'draft' : moment(data.feedbackDeadline).isAfter(moment()) ? 'open' : 'closed',
     startTime: moment(data.startTime),
     endTime: moment(data.endTime),
     feedbackDeadline: moment(data.feedbackDeadline),
@@ -87,12 +87,22 @@ export const parseMeeting: (data: RawMeeting | Meeting | any) => Meeting = (data
   }
 };
 
+const equalityChecks = [
+  (x: Meeting, y: Meeting) => x.id == y.id,
+  (x: Meeting, y: Meeting) => x.title == y.title,
+  (x: Meeting, y: Meeting) => x.feedbackDeadline.isSame(y.feedbackDeadline),
+  (x: Meeting, y: Meeting) => x.startTime.isSame(y.startTime),
+  (x: Meeting, y: Meeting) => x.endTime.isSame(y.endTime),
+  (x: Meeting, y: Meeting) => x.published == y.published,
+  (x: Meeting, y: Meeting) => x.agenda.join('_') != y.agenda.join('_')
+];
+
 export const meetingsEqual: (x: Meeting, y: Meeting) => boolean = (x, y) => {
-  if (x.id != y.id || x.title != y.title) {
-    return false;
-  }
-  if (x.agenda.join('_') != y.agenda.join('_')) {
-    return false;
+
+  for (let i = 0, check = equalityChecks[i]; i < equalityChecks.length; i++){
+    if (!check(x, y)){
+      return false;
+    }
   }
   return true;
 };
