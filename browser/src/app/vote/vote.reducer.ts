@@ -71,5 +71,5 @@ export function reducer(state: State = initialState, action: Action): State {
       return state;
   }
 }
-export const getIds = (state: State) => state.ids.votes;
-export const getEntities = (state: State) => state.entities.votes;
+export const getIds = (state: State) => state.ids;
+export const getEntities = (state: State) => state.entities;
