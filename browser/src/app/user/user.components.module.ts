@@ -5,10 +5,11 @@ import { SignInViewComponent } from './sign-in/signin-view.component';
 import { AuthWidgetComponent } from './auth-widget/auth-widget.component';
 import { VerifyModalComponent } from './verify-modal/verify-modal.component';
 import { AuthModalComponent } from './auth-modal/auth-modal.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
     imports: [
-        SharedModule
+        SharedModule, RouterModule.forChild([{path:'sign-in', component: SignInContainerComponent}])
     ],
     providers: [],
     declarations: [

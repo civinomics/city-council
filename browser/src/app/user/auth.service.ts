@@ -236,14 +236,18 @@ export class AuthService {
       };
 
       this.authBackend.login(arg).then((resultantState: FirebaseAuthState) => {
-        this.db.object(`/user_private/${resultantState.uid}`).take(1).subscribe(val => {
-          if (val.$exists) {
-            observer.next({success: true, extantAccount: true, resultantState});
-          } else {
-            observer.next({success: true, extantAccount: false, resultantState});
-          }
-          observer.complete();
-        })
+        setTimeout(()=>{
+          this.db.object(`/user_private/${resultantState.uid}/address`).take(1).subscribe(val => {
+            if (val.$exists()) {
+              console.log(`val exists`); console.log(val);
+              observer.next({success: true, extantAccount: true, resultantState});
+            } else {
+              console.log(`val NOT exists`); console.log(val);
+              observer.next({success: true, extantAccount: false, resultantState});
+            }
+            observer.complete();
+          })
+        }, 250);
       }).catch((error: FirebaseError) => {
         observer.next({success: false, error, resultantState: null});
         observer.complete();

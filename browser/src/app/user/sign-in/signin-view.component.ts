@@ -29,9 +29,11 @@ export class SignInViewComponent implements OnChanges {
     line2: new FormControl(''),
     city: new FormControl('', [Validators.required]),
     state: new FormControl('', [Validators.required]),
-    zip: new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(5)]),
+    zip: new FormControl('', [Validators.required, Validators.pattern(ZIP_REGEX)]),
     email: new FormControl('', [Validators.required, Validators.pattern(EMAIL_REGEX)]),
-    password: new FormControl('', [])
+    password: new FormControl('', [Validators.required]),
+    confirmAddress: new FormControl(false, [Validators.requiredTrue]),
+    checkTos: new FormControl(false, [Validators.requiredTrue])
   });
 
   addressTooltip = 'Civinomics sends your comments and votes to your elected representatives. We need your legal name and your address to find your representatives and prove to them that you\'re a voter. ';
@@ -93,3 +95,4 @@ export class SignInViewComponent implements OnChanges {
 }
 
 export const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+export const ZIP_REGEX = /\d{5}/;

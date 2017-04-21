@@ -16,18 +16,31 @@
     <md-input-container>
       <md-placeholder>First Name</md-placeholder>
       <input mdInput type="text" formControlName="firstName">
+      <md-hint align="end" ngxErrors="firstName">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+      </md-hint>
     </md-input-container>
     <md-input-container>
       <md-placeholder>Last Name</md-placeholder>
       <input mdInput type="text" formControlName="lastName">
+      <md-hint align="end" ngxErrors="lastName">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+      </md-hint>
     </md-input-container>
     <md-input-container>
       <md-placeholder>Email Address</md-placeholder>
       <input mdInput type="email" formControlName="email">
+      <md-hint align="end" ngxErrors="email">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        <div ngxError="pattern">Not a valid email address</div>
+      </md-hint>
     </md-input-container>
     <md-input-container>
       <md-placeholder>Password</md-placeholder>
       <input mdInput type="password" formControlName="password">
+      <md-hint align="end" ngxErrors="password">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+      </md-hint>
     </md-input-container>
     <div class="your-address" fxFlexAlign="center" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
       <div>Your address</div>
@@ -35,6 +48,9 @@
     <md-input-container>
       <md-placeholder>Address Line 1</md-placeholder>
       <input mdInput type="text" formControlName="line1">
+      <md-hint align="end" ngxErrors="line1">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+      </md-hint>
     </md-input-container>
     <md-input-container>
       <md-placeholder>Address Line 2</md-placeholder>
@@ -43,23 +59,46 @@
     <md-input-container>
       <md-placeholder>City</md-placeholder>
       <input mdInput type="text" formControlName="city">
+      <md-hint align="end" ngxErrors="city">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+      </md-hint>
     </md-input-container>
-    <md-select placeholder="State" formControlName="state" fxLayoutAlign="start">
-      <md-option *ngFor="let state of states" [value]="state">{{state}}</md-option>
-    </md-select>
+    <div>
+      <md-select placeholder="State" formControlName="state" fxLayoutAlign="start">
+        <md-option *ngFor="let state of states" [value]="state">{{state}}</md-option>
+      </md-select>
+
+      <div class="hint" ngxErrors="state">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+      </div>
+    </div>
     <md-input-container fxLayoutAlign="start">
       <md-placeholder>Zip</md-placeholder>
       <input mdInput type="text" formControlName="zip" maxlength="5">
+      <md-hint align="end" ngxErrors="zip">
+        <div ngxError="required" >*</div>
+        <div ngxError="pattern" ngxWhen="touched">Not a valid ZIP code. </div>
+      </md-hint>
     </md-input-container>
 
     <div class="checkboxes">
-      <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
-        <md-checkbox></md-checkbox>
-        <div>I am registered to vote at this address.</div>
+      <div>
+        <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
+          <md-checkbox formControlName="confirmAddress"></md-checkbox>
+          <div>I am registered to vote at this address.</div>
+        </div>
+        <div class="hint" ngxErrors="confirmAddress">
+          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        </div>
       </div>
-      <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
-        <md-checkbox></md-checkbox>
-        <div>I agree to the Civinomics <a href="/terms" target="_blank">Terms and Conditions</a>.</div>
+      <div>
+        <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center">
+          <md-checkbox formControlName="checkTos"></md-checkbox>
+          <div>I agree to the Civinomics <a href="/terms" target="_blank">Terms and Conditions</a>.</div>
+        </div>
+        <div class="hint" ngxErrors="checkTos">
+          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        </div>
       </div>
     </div>
 

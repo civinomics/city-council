@@ -1,23 +1,24 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-    MdAutocompleteModule,
-    MdButtonModule,
-    MdCheckboxModule,
-    MdDialogModule,
-    MdIconModule,
-    MdInputModule,
-    MdMenuModule,
-    MdSelectModule,
-    MdTabsModule,
-    MdToolbarModule,
-    MdTooltipModule
+  MdAutocompleteModule,
+  MdButtonModule,
+  MdCheckboxModule,
+  MdDialogModule,
+  MdIconModule,
+  MdInputModule,
+  MdMenuModule,
+  MdSelectModule,
+  MdTabsModule,
+  MdToolbarModule,
+  MdTooltipModule
 } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MomentModule } from 'angular2-moment';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxErrorsModule } from '@ultimate/ngxerrors';
 import { LimitPipe } from './pipes/limit.pipe';
 
 const VIEW_PROVIDERS = [
@@ -38,7 +39,8 @@ const VIEW_PROVIDERS = [
     FlexLayoutModule,
     MomentModule,
     NgxChartsModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    NgxErrorsModule
 ];
 
 @NgModule({
