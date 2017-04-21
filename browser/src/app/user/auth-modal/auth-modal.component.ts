@@ -37,7 +37,7 @@ export class AuthModalComponent implements OnInit {
   }
 
   emailSignup(data: EmailSignupData) {
-    this.authSvc.emailSignin(data).subscribe(user => {
+    this.authSvc.emailSignup(data).subscribe(user => {
       this.dialogRef.close('signed-up');
     })
   }

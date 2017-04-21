@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { SocialAuthProvider } from '../auth.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EmailSignupData, UserAddress } from '../user.model';
+import { AuthError } from '../auth.reducer';
 
 @Component({
   selector: 'civ-sign-in-view',
@@ -17,6 +18,7 @@ export class SignInViewComponent implements OnChanges {
   @Input() firstName: string;
   @Input() lastName: string;
   @Input() email: string;
+  @Input() error: AuthError|null;
 
   states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY',
     'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR',
@@ -58,6 +60,18 @@ export class SignInViewComponent implements OnChanges {
       this.signupForm.controls['password'].disable();
     }
 
+    if (changes['error'] && !!changes['error'].currentValue){
+      console.log('ERROR!');
+      console.log(this.error);
+      debugger;
+    }
+  }
+
+  get invalidEmailError(): string|null {
+    if (!!this.error && this.error.name == 'email-in-use/invalid-pw'){
+      return `An account has already been created for this email address, but the password you provided is incorrect.`
+    }
+    return null;
   }
 
   getNameAndEmailValues(): { firstName: string, lastName: string, email: string } {

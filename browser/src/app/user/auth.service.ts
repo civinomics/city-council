@@ -46,7 +46,10 @@ export class AuthService {
           .map(toPayload)
           .filter(it => !it || !it.uid)
         )
-        .map(([publicData, privateData]) => parseSessionUser({...publicData, ...privateData, $key: publicData.$key}))
+        .map(([ publicData, privateData ]) => parseSessionUser({
+          ...publicData, ...privateData,
+          $key: publicData.$key
+        }))
     ).map(user => new SessionUserLoadedAction(user));
 
 
@@ -82,13 +85,13 @@ export class AuthService {
     const SIGN_OUT = 'SIGN_OUT';
 
     const authRequests$ = Observable.merge(
-      this.socialSigninRequest$.skip(1).map(provider => ({type: SOCIAL_SIGNIN, provider})),
+      this.socialSigninRequest$.skip(1).map(provider => ({ type: SOCIAL_SIGNIN, provider })),
       this.emailSigninRequest$.skip(1).map(creds => ({
         type: EMAIL_SIGNIN,
         email: creds.email,
         password: creds.password
       })),
-      this.logoutRequest$.skip(1).map(() => ({type: SIGN_OUT}))
+      this.logoutRequest$.skip(1).map(() => ({ type: SIGN_OUT }))
     );
 
     authRequests$.withLatestFrom(this.authBackend);
@@ -98,11 +101,11 @@ export class AuthService {
     this.authBackend
       .filter(it => !!it && !!it.auth)
       .distinctUntilChanged()
-      .flatMap(authState => this.db.object(`/user_private/${authState.uid}`).map(userData => ({authState, userData})))
+      .flatMap(authState => this.db.object(`/user_private/${authState.uid}`).map(userData => ({ authState, userData })))
       .subscribe(it => {
         if (it.authState.auth.emailVerified && !it.userData.isVerified) {
           console.log(`User ${it.authState.uid} has verified their email, updating record accordingly`);
-          this.db.object(`/user_private/${it.authState.uid}`).update({isVerified: true}).then(res => {
+          this.db.object(`/user_private/${it.authState.uid}`).update({ isVerified: true }).then(res => {
             console.info(`successfully updated isVerified for user ${it.authState.uid}`);
           });
         }
@@ -115,70 +118,133 @@ export class AuthService {
   }
 
   public requestAuthModal(message?: string, callback?: (outcome: AuthResult) => any) {
-    this.authModalReq$.next({message, callback});
+    this.authModalReq$.next({ message, callback });
   }
 
   public logout() {
     this.authBackend.logout();
   }
 
-  public emailSignin(data: EmailSignupData): Observable<SessionUser> {
-
-    this.authBackend.createUser({email: data.email, password: data.password})
-      .then((state: FirebaseAuthState) => {
-      let id = state.uid;
-      console.info(`created ${id}`);
-      //can't push undefined values
-      let addr: UserAddress = {
-        line1: data.address.line1,
-        city: data.address.city,
-        state: data.address.state,
-        zip: data.address.zip
-      };
-
-      if (!!data.address.line2) {
-        addr.line2 = data.address.line2;
-      }
-
-      this.db.object(`/user/${id}`).update({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        icon: DEFAULT_ICON
-      }).then(() => {
-        console.info(`successfully created user/${id}`);
-      }).catch((err) => {
-        console.info(`error creating user/${id}`);
-        console.info(err);
-      });
-
-      this.db.object(`/user_private/${id}`).update({
-        email: data.email,
-        address: addr,
-        isVerified: false,
-      }).then(res => {
-        console.info(`successfully created user_private/${id}`)
-      }).catch((err) => {
-        console.info(`error creating user_private/${id}`);
-        console.info(err);
-      });
-
-        state.auth.sendEmailVerification().then((res) => {
-          console.debug(`sent email`);
-          console.debug(res);
+  public emailLogin(email: string, password: string): Observable<AuthResult> {
+    return Observable.create((observer: Observer<AuthResult>) => {
+      this.authBackend.login({ email, password }, { method: AuthMethods.Password })
+        .then((state: FirebaseAuthState) => {
+          observer.next({
+            success: true,
+            extantAccount: true,
+            resultantState: state
+          });
+          observer.complete();
         })
+        .catch((error: FirebaseError) => {
+          observer.next({
+            success: false,
+            error,
+            resultantState: null
+          });
+          observer.complete();
+        })
+    });
+  }
+
+  public emailSignup(data: EmailSignupData): Observable<AuthResult> {
+    return Observable.create((observer: Observer<AuthResult>) => {
+
+      this.authBackend.createUser({ email: data.email, password: data.password })
+        .then((state: FirebaseAuthState) => {
+          let id = state.uid;
+          console.info(`created ${id}`);
+          //can't push undefined values
+          let addr: UserAddress = {
+            line1: data.address.line1,
+            city: data.address.city,
+            state: data.address.state,
+            zip: data.address.zip
+          };
+
+          if (!!data.address.line2) {
+            addr.line2 = data.address.line2;
+          }
+
+          this.db.object(`/user/${id}`).update({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            icon: DEFAULT_ICON
+          }).then(() => {
+            this.db.object(`/user_private/${id}`).update({
+              email: data.email,
+              address: addr,
+              isVerified: false,
+            }).then(res => {
+              console.info(`successfully created user_private/${id}`);
+
+              observer.next({
+                success: true,
+                extantAccount: false,
+                resultantState: state
+              });
+              observer.complete();
+
+            }).catch((error: FirebaseError) => {
+              console.info(`error creating user_private/${id}`);
+              console.info(error);
+              observer.next({
+                success: false,
+                error,
+                resultantState: state
+              });
+              observer.complete();
+            });
+          }).catch((error: FirebaseError) => {
+            console.info(`error creating user/${id}`);
+            console.info(error);
+            observer.next({
+              success: false,
+              error,
+              resultantState: state
+            });
+            observer.complete();
+          });
+
+          state.auth.sendEmailVerification().then((res) => {
+            console.debug(`sent email`);
+            console.debug(res);
+          })
+
+        }).catch((err: FirebaseError) => {
+        console.error(`error creating user: ${err.message}`);
+        if (err.code == 'auth/email-already-in-use') {
+          //if an extant user submits the signup form instead of login
+          console.info(`email already in use - attempting to sign in to extant account with given creds`);
+          this.emailLogin(data.email, data.password).take(1).subscribe(result => {
+            if (result.success){
+              observer.next({
+                success: true,
+                extantAccount: true,
+                resultantState: result.resultantState
+              });
+            } else {
+              observer.next({
+                success: false,
+                error: {
+                  ...err,
+                  name: 'email-in-use/invalid-pw',
+                  message: 'This email address is already in use, but the password you submitted is incorrect.'
+                },
+                resultantState: null
+              });
+            }
+            observer.complete();
+
+          }, err => {
+            observer.error(err);
+          })
+        }
+      });
 
 
-      }).catch((err: FirebaseError) => {
-      console.error(`error creating user: ${err.message}`);
-      if (err.code == 'auth/email-already-in-use') {
-        console.info(`email already in use - attempting to sign in to extant account with given creds`);
-        this.authBackend.login({password: data.password, email: data.email})
-      }
     });
 
-    return this.actions.ofType(SESSION_USER_LOADED)
-      .take(1)
-      .map(toPayload);
   }
 
   public socialSignIn(provider: SocialAuthProvider): Observable<AuthResult> {
@@ -227,29 +293,31 @@ export class AuthService {
     return Observable.create((observer: Observer<AuthResult>) => {
 
       let arg = provider == 'facebook' ? {
-        provider: providerMap[provider],
+        provider: providerMap[ provider ],
         method: AuthMethods.Popup,
-        scope: ['email']
+        scope: [ 'email' ]
       } : {
-        provider: providerMap[provider],
+        provider: providerMap[ provider ],
         method: AuthMethods.Popup,
       };
 
       this.authBackend.login(arg).then((resultantState: FirebaseAuthState) => {
-        setTimeout(()=>{
+        setTimeout(() => {
           this.db.object(`/user_private/${resultantState.uid}/address`).take(1).subscribe(val => {
             if (val.$exists()) {
-              console.log(`val exists`); console.log(val);
-              observer.next({success: true, extantAccount: true, resultantState});
+              console.log(`val exists`);
+              console.log(val);
+              observer.next({ success: true, extantAccount: true, resultantState });
             } else {
-              console.log(`val NOT exists`); console.log(val);
-              observer.next({success: true, extantAccount: false, resultantState});
+              console.log(`val NOT exists`);
+              console.log(val);
+              observer.next({ success: true, extantAccount: false, resultantState });
             }
             observer.complete();
           })
         }, 250);
       }).catch((error: FirebaseError) => {
-        observer.next({success: false, error, resultantState: null});
+        observer.next({ success: false, error, resultantState: null });
         observer.complete();
       });
 

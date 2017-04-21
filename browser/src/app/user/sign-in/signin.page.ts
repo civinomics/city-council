@@ -3,6 +3,7 @@ import { AuthService, SocialAuthProvider } from '../auth.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { EmailSignupData, UserAddress } from '../user.model';
 import { Router } from '@angular/router';
+import { AuthError } from '../auth.reducer';
 
 @Component({
   selector: 'civ-sign-in',
@@ -10,6 +11,7 @@ import { Router } from '@angular/router';
     <civ-sign-in-view (startSocial)="initSocialSignin($event)"
                       (completeSocial)="completeSocial($event)"
                       (emailSignup)="emailSignup($event)"
+                      [error]="error$ | async"
                       [firstName]="(values$ | async).firstName"
                       [lastName]="(values$ | async).lastName"
                       [email]="(values$ | async).email"></civ-sign-in-view>
@@ -17,7 +19,7 @@ import { Router } from '@angular/router';
   styles: []
 })
 export class SignInContainerComponent implements OnInit {
-
+  error$: Subject<AuthError|null> = new BehaviorSubject(null);
   values$: Subject<{ firstName: string, lastName: string, email: string }> = new BehaviorSubject({
     firstName: '',
     lastName: '',
@@ -34,8 +36,13 @@ export class SignInContainerComponent implements OnInit {
   }
 
   emailSignup(data: EmailSignupData) {
-    this.authSvc.emailSignin(data).subscribe(user => {
-      this.router.navigate(['group', 'id_acc'])
+    this.authSvc.emailSignup(data).subscribe(result => {
+      console.log(result);
+      if (result.success == true){
+        this.router.navigate(['group', 'id_acc'])
+      } else {
+        this.error$.next(result.error)
+      }
     })
   }
 
