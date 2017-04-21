@@ -56,7 +56,16 @@ $google-orange: #dd4b39;
   }
 }
 
-.signup-form {
+.mode-toggle {
+  color: #0366d6;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+
+}
+
+.signup-form, .login-form {
   // width: 80%;
   border-radius: 5px;
   padding: 10px;

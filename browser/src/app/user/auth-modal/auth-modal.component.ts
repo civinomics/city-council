@@ -1,81 +1,37 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MdDialogRef } from '@angular/material';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { EmailSignupData, UserAddress } from '../user.model';
-import { AuthService, SocialAuthProvider } from '../auth.service';
+import { AuthService } from '../auth.service';
+import { SignInContainerComponent } from '../sign-in/signin.page';
 
 @Component({
   selector: 'civ-auth-modal',
   template: `
-    <md-dialog-content style="max-height:90vh">
-      <civ-sign-in-view
-        (startSocial)="initSocialSignin($event)"
-        (completeSocial)="completeSocial($event)"
-        (emailSignup)="emailSignup($event)"
-        [firstName]="(values$ | async).firstName"
-        [lastName]="(values$ | async).lastName"
-        [email]="(values$ | async).email"></civ-sign-in-view>
-    </md-dialog-content>
-  `
+    <md-dialog-content >
+      <civ-sign-in-view [error]="error$ | async"
+                        [mode]="mode$ | async"
+                        [firstName]="(values$ | async).firstName"
+                        [lastName]="(values$ | async).lastName"
+                        [email]="(values$ | async).email"
+                        (startSocial)="initSocialSignin($event)"
+                        (completeSocial)="completeSocial($event)"
+                        (emailSignup)="emailSignup($event)"
+                        (emailLogin)="emailLogin($event)"
+                        (setMode)="setMode($event)"
+      ></civ-sign-in-view>
+    </md-dialog-content>`,
+  styles: [`
+    :host {display: block; overflow-y: hidden; max-height: 90vh}
+  `]
 })
-export class AuthModalComponent implements OnInit {
-  private _socialAccountInitiated: boolean = false;
+export class AuthModalComponent extends SignInContainerComponent {
 
-  values$: Subject<{ firstName: string, lastName: string, email: string }> = new BehaviorSubject({
-    firstName: '',
-    lastName: '',
-    email: ''
-  });
-
-
-  constructor(private authSvc: AuthService, private router: Router, private dialogRef: MdDialogRef<AuthModalComponent>) {
-
+  constructor(authSvc: AuthService, router: Router, route: ActivatedRoute, private dialogRef: MdDialogRef<AuthModalComponent>) {
+    super(authSvc, router, route);
   }
 
-  ngOnInit() {
+
+  onSuccess(result): void {
+    this.dialogRef.close(result);
   }
-
-  emailSignup(data: EmailSignupData) {
-    this.authSvc.emailSignup(data).subscribe(user => {
-      this.dialogRef.close('signed-up');
-    })
-  }
-
-  completeSocial(data: UserAddress) {
-    this.authSvc.completeSocialSignin(data).subscribe(user => {
-      this.dialogRef.close('signed-up');
-    })
-  }
-
-  initSocialSignin(provider: SocialAuthProvider) {
-    this.authSvc.socialSignIn(provider).subscribe(result => {
-      console.info('Social signin result:');
-      console.info(result);
-
-      if (result.success == true) {
-        if (result.extantAccount) {
-          this.dialogRef.close(result);
-        } else {
-          let authInfo = result.resultantState.auth;
-          let firstName, lastName, email;
-          if (!authInfo.displayName) {
-            console.error(`Account initiated but we didn't get a name`);
-            firstName = lastName = ''
-          } else {
-            firstName = authInfo.displayName.split(' ')[0];
-            lastName = authInfo.displayName.split(' ')[1];
-          }
-
-          email = authInfo.email;
-
-          this._socialAccountInitiated = true;
-
-          this.values$.next({firstName, lastName, email});
-        }
-      }
-
-    })
-  }
-
 }

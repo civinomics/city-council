@@ -1,5 +1,9 @@
 <div fxLayout="column" fxLayoutAlign="start center" class="outer">
-  <div class="title">sign up</div>
+  <div class="title">{{mode == 'sign-up' ? 'SIGN UP' : 'LOG IN'}}</div>
+  <div *ngIf="!socialConnected">
+    ({{mode == 'sign-up' ? 'already have an account?' : 'need to create an account?'}}
+    <a class="mode-toggle" (click)="setMode.emit(mode == 'sign-up' ? 'log-in' : 'sign-up')">{{mode == 'sign-up' ? 'LOG IN' : 'SIGN UP'}}</a>)
+  </div>
   <div class="socials" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
     <div><strong>CONNECT: </strong></div>
     <button md-icon-button class="social-button fb" (click)="startSocial.emit('facebook')">
@@ -12,7 +16,33 @@
       <md-icon fontSet="fa" fontIcon="fa-google"></md-icon>
     </button>
   </div>
-  <form class="signup-form" [formGroup]="signupForm" fxLayout="column" fxLayoutAlign="start stretch">
+
+  <form *ngIf="mode == 'log-in'" [formGroup]="loginForm" fxLayout="column" class="login-form" [@slide]>
+    <md-input-container>
+      <md-placeholder>Email Address</md-placeholder>
+      <input mdInput type="email" formControlName="email">
+      <md-hint align="end" ngxErrors="email">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        <div ngxError="pattern">Not a valid email address</div>
+      </md-hint>
+      <div class="hint" *ngIf="emailError">{{emailError}}</div>
+    </md-input-container>
+    <md-input-container>
+      <md-placeholder>Password</md-placeholder>
+      <input mdInput type="password" formControlName="password">
+      <md-hint align="end" ngxErrors="password">
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+      </md-hint>
+      <div class="hint" *ngIf="passwordError">{{passwordError}}</div>
+    </md-input-container>
+
+    <button md-raised-button fxFlexAlign="center" [disabled]="!loginForm.valid" class="submit-button" (click)="submitLogin()">
+      SIGN UP
+    </button>
+
+  </form>
+
+  <form class="signup-form" [formGroup]="signupForm" fxLayout="column"  *ngIf="mode == 'sign-up'" [@slide]>
     <md-input-container>
       <md-placeholder>First Name</md-placeholder>
       <input mdInput type="text" formControlName="firstName">
@@ -34,7 +64,7 @@
         <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
         <div ngxError="pattern">Not a valid email address</div>
       </md-hint>
-      <div class="hint" *ngIf="invalidEmailError">{{invalidEmailError}}</div>
+      <div class="hint" *ngIf="emailError">{{emailError}}</div>
     </md-input-container>
     <md-input-container>
       <md-placeholder>Password</md-placeholder>
@@ -103,11 +133,12 @@
       </div>
     </div>
 
+
+    <button md-raised-button fxFlexAlign="center" [disabled]="!signupForm.valid" class="submit-button" (click)="submitSignup()">
+      SIGN UP
+    </button>
+
   </form>
 
-
-  <button md-raised-button fxFlexAlign="center" [disabled]="!signupForm.valid" class="submit-button" (click)="submit()">
-    SUBMIT
-  </button>
 
 </div>

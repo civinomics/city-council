@@ -3,22 +3,37 @@ import { SocialAuthProvider } from '../auth.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EmailSignupData, UserAddress } from '../user.model';
 import { AuthError } from '../auth.reducer';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'civ-sign-in-view',
   templateUrl: './signin-view.component.html',
-  styleUrls: ['./signin-view.component.scss']
+  styleUrls: ['./signin-view.component.scss'],
+  animations: [
+    trigger('slide', [
+      transition('* => void', animate('100ms ease-in', style({transform: `translateX(150%)`}))),
+      transition('void => *', [
+        style({transform: `translateX(-150%)`}),
+        animate('150ms 125ms ease-in', style({transform:'translateX(0)'}))
+      ])
+
+    ])
+  ]
 })
 export class SignInViewComponent implements OnChanges {
-
-  @Output() startSocial: EventEmitter<SocialAuthProvider> = new EventEmitter();
-  @Output() completeSocial: EventEmitter<UserAddress> = new EventEmitter();
-  @Output() emailSignup: EventEmitter<EmailSignupData> = new EventEmitter();
 
   @Input() firstName: string;
   @Input() lastName: string;
   @Input() email: string;
   @Input() error: AuthError|null;
+  @Input() mode: 'sign-up'|'log-in' = 'sign-up';
+  @Output() setMode = new EventEmitter<'log-in'|'sign-up'>();
+
+  @Output() startSocial: EventEmitter<SocialAuthProvider> = new EventEmitter();
+  @Output() completeSocial: EventEmitter<UserAddress> = new EventEmitter();
+  @Output() emailSignup: EventEmitter<EmailSignupData> = new EventEmitter();
+  @Output() emailLogin: EventEmitter<{email: string, password: string}> = new EventEmitter();
+
 
   states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY',
     'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR',
@@ -38,14 +53,32 @@ export class SignInViewComponent implements OnChanges {
     checkTos: new FormControl(false, [Validators.requiredTrue])
   });
 
+  loginForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.pattern(EMAIL_REGEX)]),
+    password: new FormControl('', [Validators.required]),
+  });
+
   addressTooltip = 'Civinomics sends your comments and votes to your elected representatives. We need your legal name and your address to find your representatives and prove to them that you\'re a voter. ';
 
   socialConnected: boolean = false;
 
   ngOnChanges(changes: SimpleChanges): void {
+    //firstName, lastName and email changes can only be triggered when a user has initialized a social signin
+
+    if (changes['email'] && !changes['email'].firstChange) {
+      this.socialConnected = true;
+      this.signupForm.controls['email'].setValue(this.email);
+      this.signupForm.controls['email'].disable();
+      this.signupForm.controls['password'].disable();
+
+      if (this.mode == 'log-in'){
+        //this can only happen when a user has attempted to log-in via social but doesn't have an existent account,
+        // switch them to signup to get the remaining info
+        this.mode = 'sign-up';
+      }
+    }
+
     if (changes['firstName'] && !changes['firstName'].firstChange) {
-      console.log('gotem changes');
-      console.log(changes);
       this.signupForm.controls['firstName'].setValue(this.firstName);
     }
 
@@ -53,12 +86,6 @@ export class SignInViewComponent implements OnChanges {
       this.signupForm.controls['lastName'].setValue(this.lastName);
     }
 
-    if (changes['email'] && !changes['email'].firstChange) {
-      this.socialConnected = true;
-      this.signupForm.controls['email'].setValue(this.email);
-      this.signupForm.controls['email'].disable();
-      this.signupForm.controls['password'].disable();
-    }
 
     if (changes['error'] && !!changes['error'].currentValue){
       console.log('ERROR!');
@@ -67,9 +94,22 @@ export class SignInViewComponent implements OnChanges {
     }
   }
 
-  get invalidEmailError(): string|null {
-    if (!!this.error && this.error.name == 'email-in-use/invalid-pw'){
-      return `An account has already been created for this email address, but the password you provided is incorrect.`
+  get emailError(): string|null {
+    if (!!this.error){
+      if (this.error.name == 'email-in-use/invalid-pw'){
+        return `An account has already been created for this email address, but the password you provided is incorrect.`
+      } else {
+        console.error(this.error);
+      }
+    }
+    return null;
+  }
+
+  get passwordError(): string|null {
+    if (!!this.error) {
+      if (this.error.code == 'auth/wrong-password'){
+        return `This password does not match our records.`
+      }
     }
     return null;
   }
@@ -92,7 +132,15 @@ export class SignInViewComponent implements OnChanges {
     }
   }
 
-  submit() {
+  submitLogin(): void {
+    let email = this.loginForm.controls['email'].value,
+      password = this.loginForm.controls['password'].value;
+
+    this.emailLogin.emit({email, password});
+
+  };
+
+  submitSignup() {
     if (this.socialConnected) {
       this.completeSocial.emit(this.getAddressValues())
     } else {
