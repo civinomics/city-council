@@ -1,9 +1,22 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  NgZone,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { SocialAuthProvider } from '../auth.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EmailSignupData, UserAddress } from '../user.model';
 import { AuthError } from '../auth.reducer';
+import { MapsAPILoader } from '@agm/core';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { MdInputDirective } from '@angular/material';
 
 @Component({
   selector: 'civ-sign-in-view',
@@ -20,7 +33,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
     ])
   ]
 })
-export class SignInViewComponent implements OnChanges {
+export class SignInViewComponent implements OnChanges, AfterViewInit {
 
   @Input() firstName: string;
   @Input() lastName: string;
@@ -33,6 +46,9 @@ export class SignInViewComponent implements OnChanges {
   @Output() completeSocial: EventEmitter<UserAddress> = new EventEmitter();
   @Output() emailSignup: EventEmitter<EmailSignupData> = new EventEmitter();
   @Output() emailLogin: EventEmitter<{email: string, password: string}> = new EventEmitter();
+
+  @ViewChild('addressInput') rawAddressInput: ElementRef;
+  @ViewChild('addressInput', {read: MdInputDirective}) addressInput: MdInputDirective;
 
 
   states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY',
@@ -58,9 +74,46 @@ export class SignInViewComponent implements OnChanges {
     password: new FormControl('', [Validators.required]),
   });
 
+  address: UserAddress;
+
   addressTooltip = 'Civinomics sends your comments and votes to your elected representatives. We need your legal name and your address to find your representatives and prove to them that you\'re a voter. ';
 
   socialConnected: boolean = false;
+
+  constructor(private mapsAPILoader: MapsAPILoader,  private zone: NgZone){}
+
+  ngAfterViewInit(): void {
+    this.mapsAPILoader.load().then(() => {
+      let autocomplete = new google.maps.places.Autocomplete(this.rawAddressInput.nativeElement, {
+        types: ["address"]
+      });
+
+      autocomplete.addListener('place_changed', () => {
+        let place = autocomplete.getPlace();
+        if (!!place){
+          this.zone.run(()=> {
+            this.updateAddress(place);
+          })
+
+        }
+      });
+
+    })
+
+  }
+
+  private updateAddress(place: any){
+    this.address = parseAddress(place.address_components);
+
+    this.signupForm.controls['line1'].setValue(this.address.line1);
+    this.signupForm.controls['city'].setValue(this.address.city);
+    this.signupForm.controls['state'].setValue(this.address.state);
+    this.signupForm.controls['zip'].setValue(this.address.zip);
+
+    this.rawAddressInput.nativeElement.value = '';
+
+  }
+
 
   ngOnChanges(changes: SimpleChanges): void {
     //firstName, lastName and email changes can only be triggered when a user has initialized a social signin
@@ -158,3 +211,68 @@ export class SignInViewComponent implements OnChanges {
 
 export const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 export const ZIP_REGEX = /\d{5}/;
+
+export type AddressComponentType = 'street_number'|'route'|'neighborhood'|'sublocality_level_1'|'sublocality'|'administrative_area_level_2'|''
+
+
+export type AddressComponent = {
+  long_name: string,
+  short_name: string,
+  types: string[]
+}
+
+const CITY_TYPES = ['locality','sublocality_level_1', 'sublocality'];
+
+function parseAddress(cmps: AddressComponent[]): UserAddress{
+  let streetNum, streetName, city, state, zip;
+
+  let streetNumCmps = cmps.filter(cmp => cmp.types.indexOf('street_number') >= 0);
+  if (streetNumCmps.length > 1){
+    throw new Error(`Expected exactly one component of type street_number, got: ${JSON.stringify(streetNumCmps)}`)
+  } else if (streetNumCmps.length == 0){
+    throw new Error(`Expected exactly one component of type street_number, got none`);
+  }
+
+  streetNum = streetNumCmps[0].long_name;
+
+  let streetNameCmps = cmps.filter(cmp => cmp.types.indexOf('route') >= 0);
+  if (streetNameCmps.length > 1){
+    throw new Error(`Expected exactly one component of type route, got: ${JSON.stringify(streetNameCmps)}`)
+  } else if (streetNameCmps.length == 0){
+    throw new Error(`Expected exactly one component of type route, got none`);
+  }
+
+  streetName = streetNameCmps[0].long_name;
+
+  let cityCmps = cmps.filter(cmp => CITY_TYPES.filter(type => cmp.types.indexOf(type) >= 0).length > 0);
+
+  if (cityCmps.length == 0){
+    throw new Error(`Expected exactly one component of type cir, got none`);
+  }
+
+  city = cityCmps[0].long_name;
+
+  let stateCmps = cmps.filter(cmp => cmp.types.indexOf('administrative_area_level_1') >= 0);
+  if (stateCmps.length > 1){
+    throw new Error(`Expected exactly one component of type administrative_area_level_1, got: ${JSON.stringify(stateCmps)}`)
+  } else if (stateCmps.length == 0){
+    throw new Error(`Expected exactly one component of type administrative_area_level_1, got none`);
+  }
+  state = stateCmps[0].short_name;
+
+  let zipCmps = cmps.filter(cmp => cmp.types.indexOf('postal_code') >= 0);
+  if (zipCmps.length > 1){
+    throw new Error(`Expected exactly one component of type postal_code, got: ${JSON.stringify(zipCmps)}`)
+  } else if (zipCmps.length == 0){
+    throw new Error(`Expected exactly one component of type postal_code, got none`);
+  }
+
+  zip = zipCmps[0].long_name;
+
+
+  return {
+    line1: `${streetNum} ${streetName}`,
+    city, state, zip
+  }
+
+}

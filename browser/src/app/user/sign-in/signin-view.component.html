@@ -2,7 +2,8 @@
   <div class="title">{{mode == 'sign-up' ? 'SIGN UP' : 'LOG IN'}}</div>
   <div *ngIf="!socialConnected">
     ({{mode == 'sign-up' ? 'already have an account?' : 'need to create an account?'}}
-    <a class="mode-toggle" (click)="setMode.emit(mode == 'sign-up' ? 'log-in' : 'sign-up')">{{mode == 'sign-up' ? 'LOG IN' : 'SIGN UP'}}</a>)
+    <a class="mode-toggle" (click)="setMode.emit(mode == 'sign-up' ? 'log-in' : 'sign-up')">{{mode == 'sign-up' ? 'LOG
+      IN' : 'SIGN UP'}}</a>)
   </div>
   <div class="socials" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
     <div><strong>CONNECT: </strong></div>
@@ -22,7 +23,7 @@
       <md-placeholder>Email Address</md-placeholder>
       <input mdInput type="email" formControlName="email">
       <md-hint align="end" ngxErrors="email">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
         <div ngxError="pattern">Not a valid email address</div>
       </md-hint>
       <div class="hint" *ngIf="emailError">{{emailError}}</div>
@@ -31,37 +32,41 @@
       <md-placeholder>Password</md-placeholder>
       <input mdInput type="password" formControlName="password">
       <md-hint align="end" ngxErrors="password">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
       </md-hint>
       <div class="hint" *ngIf="passwordError">{{passwordError}}</div>
     </md-input-container>
 
-    <button md-raised-button fxFlexAlign="center" [disabled]="!loginForm.valid" class="submit-button" (click)="submitLogin()">
-      SIGN UP
+    <button md-raised-button
+            fxFlexAlign="center"
+            [disabled]="!loginForm.valid"
+            class="submit-button"
+            (click)="submitLogin()">
+      LOG IN
     </button>
 
   </form>
 
-  <form class="signup-form" [formGroup]="signupForm" fxLayout="column"  *ngIf="mode == 'sign-up'" [@slide]>
+  <form class="signup-form" [formGroup]="signupForm" fxLayout="column" *ngIf="mode == 'sign-up'" [@slide]>
     <md-input-container>
       <md-placeholder>First Name</md-placeholder>
       <input mdInput type="text" formControlName="firstName">
       <md-hint align="end" ngxErrors="firstName">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
       </md-hint>
     </md-input-container>
     <md-input-container>
       <md-placeholder>Last Name</md-placeholder>
       <input mdInput type="text" formControlName="lastName">
       <md-hint align="end" ngxErrors="lastName">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
       </md-hint>
     </md-input-container>
     <md-input-container>
       <md-placeholder>Email Address</md-placeholder>
       <input mdInput type="email" formControlName="email">
       <md-hint align="end" ngxErrors="email">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
         <div ngxError="pattern">Not a valid email address</div>
       </md-hint>
       <div class="hint" *ngIf="emailError">{{emailError}}</div>
@@ -70,47 +75,53 @@
       <md-placeholder>Password</md-placeholder>
       <input mdInput type="password" formControlName="password">
       <md-hint align="end" ngxErrors="password">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
       </md-hint>
     </md-input-container>
     <div class="your-address" fxFlexAlign="center" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
       <div>Your address</div>
       <i class="fa fa-question-circle-o" [mdTooltip]="addressTooltip" mdTooltipPosition="right"></i></div>
-    <md-input-container>
-      <md-placeholder>Address Line 1</md-placeholder>
-      <input mdInput type="text" formControlName="line1">
-      <md-hint align="end" ngxErrors="line1">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
-      </md-hint>
+    <md-input-container floatPlaceholder="never">
+      <input type="text" mdInput #addressInput placeholder="Start typing...">
     </md-input-container>
-    <md-input-container>
-      <md-placeholder>Address Line 2</md-placeholder>
-      <input mdInput type="text" formControlName="line2">
-    </md-input-container>
-    <md-input-container>
-      <md-placeholder>City</md-placeholder>
-      <input mdInput type="text" formControlName="city">
-      <md-hint align="end" ngxErrors="city">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
-      </md-hint>
-    </md-input-container>
-    <div>
-      <md-select placeholder="State" formControlName="state" fxLayoutAlign="start">
-        <md-option *ngFor="let state of states" [value]="state">{{state}}</md-option>
-      </md-select>
 
-      <div class="hint" ngxErrors="state">
-        <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+    <div *ngIf="!!address" fxLayout="column" fxLayoutGap="15px" class="address-components">
+      <md-input-container>
+        <md-placeholder>Address Line 1</md-placeholder>
+        <input mdInput type="text" formControlName="line1">
+        <md-hint align="end" ngxErrors="line1">
+          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
+        </md-hint>
+      </md-input-container>
+      <md-input-container>
+        <md-placeholder>Address Line 2</md-placeholder>
+        <input mdInput type="text" formControlName="line2">
+      </md-input-container>
+      <md-input-container>
+        <md-placeholder>City</md-placeholder>
+        <input mdInput type="text" formControlName="city">
+        <md-hint align="end" ngxErrors="city">
+          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
+        </md-hint>
+      </md-input-container>
+      <div>
+        <md-select placeholder="State" formControlName="state" fxLayoutAlign="start">
+          <md-option *ngFor="let state of states" [value]="state">{{state}}</md-option>
+        </md-select>
+
+        <div class="hint" ngxErrors="state">
+          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
+        </div>
       </div>
+      <md-input-container fxLayoutAlign="start">
+        <md-placeholder>Zip</md-placeholder>
+        <input mdInput type="text" formControlName="zip" maxlength="5">
+        <md-hint align="end" ngxErrors="zip">
+          <div ngxError="required">*</div>
+          <div ngxError="pattern" ngxWhen="touched">Not a valid ZIP code.</div>
+        </md-hint>
+      </md-input-container>
     </div>
-    <md-input-container fxLayoutAlign="start">
-      <md-placeholder>Zip</md-placeholder>
-      <input mdInput type="text" formControlName="zip" maxlength="5">
-      <md-hint align="end" ngxErrors="zip">
-        <div ngxError="required" >*</div>
-        <div ngxError="pattern" ngxWhen="touched">Not a valid ZIP code. </div>
-      </md-hint>
-    </md-input-container>
 
     <div class="checkboxes">
       <div>
@@ -119,7 +130,7 @@
           <div>I am registered to vote at this address.</div>
         </div>
         <div class="hint" ngxErrors="confirmAddress">
-          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
         </div>
       </div>
       <div>
@@ -128,13 +139,16 @@
           <div>I agree to the Civinomics <a href="/terms" target="_blank">Terms and Conditions</a>.</div>
         </div>
         <div class="hint" ngxErrors="checkTos">
-          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span> </div>
+          <div ngxError="required">* <span ngxError="required" when="touched">This field is required.</span></div>
         </div>
       </div>
     </div>
 
-
-    <button md-raised-button fxFlexAlign="center" [disabled]="!signupForm.valid" class="submit-button" (click)="submitSignup()">
+    <button md-raised-button
+            fxFlexAlign="center"
+            [disabled]="!signupForm.valid"
+            class="submit-button"
+            (click)="submitSignup()">
       SIGN UP
     </button>
 

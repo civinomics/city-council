@@ -90,6 +90,14 @@ $google-orange: #dd4b39;
     }
   }
 
+  .address-components {
+    padding: 5px 10px;
+    background-color: mat-color($mat-grey, 300);
+    @include mq-gt-sm {
+      padding: 5px 20px;
+    }
+  }
+
   md-hint, .hint {
     color: #ff5722;
   }

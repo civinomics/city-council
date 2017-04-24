@@ -6,10 +6,19 @@ import { AuthWidgetComponent } from './auth-widget/auth-widget.component';
 import { VerifyModalComponent } from './verify-modal/verify-modal.component';
 import { AuthModalComponent } from './auth-modal/auth-modal.component';
 import { RouterModule } from '@angular/router';
+import { AgmCoreModule } from '@agm/core';
+import { environment } from '../../environments/environment';
 
 @NgModule({
     imports: [
-        SharedModule, RouterModule.forChild([{path:'sign-in', component: SignInContainerComponent}])
+        SharedModule,
+        RouterModule.forChild([{path:'sign-in', component: SignInContainerComponent}]),
+
+
+      AgmCoreModule.forRoot({
+        apiKey: environment.google.apiKey,
+        libraries: ['places']
+      })
     ],
     providers: [],
     declarations: [

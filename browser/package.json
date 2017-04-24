@@ -23,6 +23,7 @@
     "deploy": "fireplan database.rules.yaml && ng build --prod --aot && firebase deploy"
   },
   "dependencies": {
+    "@agm/core": "^1.0.0-beta.0",
     "@angular/animations": "^4.0.1",
     "@angular/common": "^4.0.1",
     "@angular/compiler": "^4.0.1",

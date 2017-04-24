@@ -11,5 +11,8 @@ export const environment = {
     databaseURL: 'https://civ-cc.firebaseio.com',
     storageBucket: 'civ-cc.appspot.com',
     messagingSenderId: '950386376197'
+  },
+  google: {
+    apiKey: "AIzaSyAXuMc0xYdOErceFEztUqneoO78G9tToww"
   }
 };
