@@ -120,7 +120,13 @@ export class CommentService {
   }
 
   private loadCommentsForItem(itemId: string): Observable<Comment[]> {
-    return this.db.list(`/comment/${itemId}`).map(arr => arr.map(comment => parseComment(comment)));
+    return this.db.list(`/comment/${itemId}`)/*
+     .flatMap(comments => {
+
+     })*/
+      .map(arr => arr.map(comment => parseComment(comment)));
+
+
   }
 
   private loadSingleComment(itemId: string, commentId: string): Observable<Comment> {

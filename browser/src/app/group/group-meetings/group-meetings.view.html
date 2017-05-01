@@ -7,7 +7,7 @@
          (click)="showMeeting.emit(meeting.id)">
         <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
         <div class="title">{{meeting.title}}</div>
-        <div class="status">{{meeting.status}}</div>
+      <div class="status">{{status(meeting)}}</div>
     </div>
 </div>
 <div class="section">
@@ -16,7 +16,7 @@
          (click)="showMeeting.emit(meeting.id)">
         <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
         <div class="title">{{meeting.title}}</div>
-        <div class="status">{{meeting.status}}</div>
+      <div class="status">{{status(meeting)}}</div>
     </div>
 </div>
 <div class="section drafts" *ngIf="isAdmin">
@@ -25,7 +25,7 @@
          (click)="showMeeting.emit(meeting.id)">
         <div class="date">{{meeting.startTime | amDateFormat: 'MM/DD/YY'}}</div>
         <div class="title">{{meeting.title}}</div>
-        <div class="status">{{meeting.status}}</div>
+      <div class="status">{{status(meeting)}}</div>
     </div>
     <div *ngIf="draftMeetings.length == 0" class="empty-section">
         NONE

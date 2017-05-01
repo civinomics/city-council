@@ -34,5 +34,14 @@ export class GroupMeetingsView implements OnInit {
         return this.meetings.filter(meeting => !meeting.published);
     }
 
+  status(meeting: Meeting) {
+    if (!meeting.published) {
+      return 'draft';
+    }
+    if (meeting.feedbackDeadline.isAfter(this.now)) {
+      return 'open'
+    }
+    return 'closed';
+  }
 
 }

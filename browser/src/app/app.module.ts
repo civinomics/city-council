@@ -30,6 +30,7 @@ import { VoteModule } from './vote/vote.module';
 import { CorpModule } from './corp/corp.module';
 import { BrowseContainerComponent } from './core/browse/browse-container.component';
 import { AppFocusService } from './core/focus.service';
+import { FollowService } from './shared/services/follow.service';
 
 @NgModule({
 
@@ -60,7 +61,6 @@ import { AppFocusService } from './core/focus.service';
     VoteModule,
     CorpModule,
     EffectsModule,
-
     EffectsModule.run(AuthService),
     EffectsModule.run(MeetingService),
     EffectsModule.run(GroupService),
@@ -75,7 +75,8 @@ import { AppFocusService } from './core/focus.service';
   ],
 
   providers: [
-    AppFocusService
+    AppFocusService,
+    FollowService
   ],
 
   bootstrap: [ AppRootComponent ],

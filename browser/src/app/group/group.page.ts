@@ -7,6 +7,7 @@ import { GroupService } from './group.service';
 import { MeetingService } from '../meeting/meeting.service';
 import { AppFocusService } from '../core/focus.service';
 import { AuthService } from '../user/auth.service';
+import { FollowService } from '../shared/services/follow.service';
 
 @Component({
   selector: 'civ-group',
@@ -22,8 +23,19 @@ import { AuthService } from '../user/auth.service';
                        fxLayout.xs="column"
                        fxLayoutGap="40px"
                        fxLayoutGap.xs="10px">
-                      <div class="num-followers"><strong>332</strong> followers</div>
-                      <button md-raised-button color="accent" class="follow-button">follow</button>
+                    <div class="num-followers"><strong>{{numFollows$ | async}}</strong> followers</div>
+                    <button md-raised-button
+                            color="accent"
+                            class="follow-button"
+                            (click)="addFollow()"
+                            *ngIf="(isFollowing$ | async) === false">FOLLOW
+                    </button>
+                    <button md-raised-button
+                            color="primary"
+                            class="follow-button"
+                            (click)="unfollow()"
+                            *ngIf="isFollowing$ | async">UNFOLLOW
+                    </button>
                   </div>
               </div>
           </div>
@@ -36,7 +48,7 @@ import { AuthService } from '../user/auth.service';
                  [routerLinkActiveOptions]="{exact: true}"
                  routerLinkActive #rlaMeetings="routerLinkActive"
                  [active]="rlaMeetings.isActive"
-              >AGENDA</a>
+              >MEETINGS</a>
               <a md-tab-link
                  routerLink="feed"
                  routerLinkActive #rlaFeed="routerLinkActive"
@@ -74,15 +86,17 @@ import { AuthService } from '../user/auth.service';
 export class GroupPage implements OnInit {
   group$: Observable<Group>;
   isAdmin: Observable<boolean>;
-
+  numFollows$: Observable<number>;
+  isFollowing$: Observable<boolean>;
   baseUrl: Observable<string[]>;
 
-  constructor(private groupSvc: GroupService, private meetingSvc: MeetingService, private router: Router, private route: ActivatedRoute, private focusSvc: AppFocusService, private authSvc: AuthService) {
+  constructor(private groupSvc: GroupService, private followSvc: FollowService, private meetingSvc: MeetingService, private router: Router, private route: ActivatedRoute, private focusSvc: AppFocusService, private authSvc: AuthService) {
 
 
     this.baseUrl = this.route.params.take(1).map(params =>
         [ '/group', params[ 'groupId' ] ]
     );
+
 
 
     const groupId$ = this.route.params.map(params => params['groupId']);
@@ -94,7 +108,11 @@ export class GroupPage implements OnInit {
     this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
 
 
-    this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.group$, (user, group) => !!user && user.superuser || group.owner == user.id);
+    this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.group$, (user, group) => !!user && ((user.superuser || group.owner == user.id)));
+
+    this.numFollows$ = groupId$.flatMap(id => this.followSvc.getFollowCount('group', id));
+
+    this.isFollowing$ = groupId$.flatMap(id => this.followSvc.isFollowing('group', id));
 
 
   }
@@ -102,5 +120,22 @@ export class GroupPage implements OnInit {
   ngOnInit() {
   }
 
+  addFollow() {
+    this.group$.take(1).subscribe(group => {
+      this.followSvc.follow('group', group.id).subscribe(result => {
+        console.log('follow result"');
+        console.log(result);
+      })
+    })
+  }
+
+  unfollow() {
+    this.group$.take(1).subscribe(group => {
+      this.followSvc.unfollow('group', group.id).subscribe(result => {
+        console.log('unfollow result"');
+        console.log(result);
+      })
+    })
+  }
 
 }

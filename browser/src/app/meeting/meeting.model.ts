@@ -94,13 +94,12 @@ const equalityChecks = [
   (x: Meeting, y: Meeting) => x.startTime.isSame(y.startTime),
   (x: Meeting, y: Meeting) => x.endTime.isSame(y.endTime),
   (x: Meeting, y: Meeting) => x.published == y.published,
-  (x: Meeting, y: Meeting) => x.agenda.join('_') != y.agenda.join('_')
+  (x: Meeting, y: Meeting) => x.agenda.join('_') == y.agenda.join('_')
 ];
 
 export const meetingsEqual: (x: Meeting, y: Meeting) => boolean = (x, y) => {
-
-  for (let i = 0, check = equalityChecks[i]; i < equalityChecks.length; i++){
-    if (!check(x, y)){
+  for (let i = 0; i < equalityChecks.length; i++) {
+    if (equalityChecks[ i ](x, y) == false) {
       return false;
     }
   }

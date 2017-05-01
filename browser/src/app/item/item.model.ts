@@ -73,14 +73,23 @@ export type ItemWithVotes = Item & {
 
 export const parseItem: (it: RawItem | any) => Item = (it) => {
 
+  let onAgendas = Object.keys(it.onAgendas || {}).reduce((result, id) => ({
+    ...result,
+    [id]: {
+      ...it.onAgendas[ id ],
+      feedbackDeadline: moment(it.onAgendas[ id ].feedbackDeadline)
+    }
+  }), {});
+
   return {
     ...it,
     id: it.$key || it.id,
     feedbackDeadline: moment(it.feedbackDeadline),
-    onAgendas: it.onAgendas,
+    onAgendas,
     activity: it.activity
   }
-}
+};
+
 const equalityChecks = [
   (x: Item, y: Item) => x.id == y.id,
   (x: Item, y: Item) => x.text == y.text,
@@ -123,8 +132,8 @@ const equalityChecks = [
 ];
 
 export const itemsEqual: (x: Item, y: Item) => boolean = (x, y) => {
-  for (let i = 0, check = equalityChecks[i]; i < equalityChecks.length; i++){
-    if (!check(x, y)){
+  for (let i = 0; i < equalityChecks.length; i++) {
+    if (equalityChecks[ i ](x, y) == false) {
       return false;
     }
   }

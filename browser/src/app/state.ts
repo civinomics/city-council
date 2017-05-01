@@ -112,7 +112,7 @@ export const getVotesForSelectedItem = createSelector(getFocusedItemId, getVotes
 });
 
 export const getUserVoteForSelectedItem = createSelector(getSessionUser, getFocusedItemId, getVotes, (user, itemId, votes) => {
-  if (!user || !itemId || !user.votes[itemId] || !votes[itemId]) {
+  if (!user || !votes || !itemId || !user.votes[ itemId ] || !votes[ itemId ]) {
     return null;
   }
 

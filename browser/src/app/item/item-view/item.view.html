@@ -47,7 +47,11 @@
 
     </div>
 
-    <civ-comment *ngIf="!!userComment" [comment]="userComment" (edit)="editComment($event)"
+    <civ-comment *ngIf="!!userComment"
+                 [comment]="userComment"
+                 (edit)="editComment($event)"
+                 [showAuthor]="false"
+                 [textOnly]="true"
                  [canEdit]="true"></civ-comment>
 
   </div>

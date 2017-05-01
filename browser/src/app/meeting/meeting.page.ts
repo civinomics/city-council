@@ -8,38 +8,61 @@ import { ItemService } from '../item/item.service';
 import { AppFocusService } from '../core/focus.service';
 import { GroupService } from '../group/group.service';
 import { AuthService } from '../user/auth.service';
+import { FollowService } from '../shared/services/follow.service';
 
 @Component({
     selector: 'civ-meeting-container',
     template: `
+      <div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="15px">
         <div class="focus-title">{{(meeting$ | async)?.title}}:
-            {{(meeting$ | async)?.startTime | amDateFormat: 'M/DD/YY'}}
+          {{(meeting$ | async)?.startTime | amDateFormat: 'M/DD/YY'}}
         </div>
+        <div class="follow-row"
+             fxLayout="row"
+             fxLayoutAlign="start center"
+             fxLayout.xs="column"
+             fxLayoutGap="20px"
+             fxLayoutGap.xs="10px">
+          <div class="num-followers"><strong>{{numFollows$ | async}}</strong> followers</div>
+          <button md-raised-button
+                  color="accent"
+                  class="follow-button"
+                  (click)="addFollow()"
+                  *ngIf="(isFollowing$ | async) === false">FOLLOW
+          </button>
+          <button md-raised-button
+                  color="primary"
+                  class="follow-button"
+                  (click)="unfollow()"
+                  *ngIf="isFollowing$ | async">UNFOLLOW
+          </button>
+        </div>
+      </div>
 
-        <div class="content-wrapper">
-            <nav md-tab-nav-bar>
-                <a md-tab-link
-                   [routerLink]="baseUrl | async"
-                   [routerLinkActiveOptions]="{exact: true}"
-                   routerLinkActive #rlaHome="routerLinkActive"
-                   [active]="rlaHome.isActive"
-                >AGENDA</a>
-                <a md-tab-link
-                   routerLink="stats"
-                   routerLinkActive #rlaStats="routerLinkActive"
-                   [routerLinkActiveOptions]="{exact: true}"
-                   [active]="rlaStats.isActive"
-                >STATS</a>
-                <a md-tab-link
-                   *ngIf="isAdmin | async"
-                   routerLink="admin"
-                   [routerLinkActiveOptions]="{exact: true}"
-                   routerLinkActive #rlaAdmin="routerLinkActive"
-                   [active]="rlaAdmin.isActive"
-                >ADMIN</a>
-            </nav>
-            <router-outlet></router-outlet>
-        </div>
+      <div class="content-wrapper">
+        <nav md-tab-nav-bar>
+          <a md-tab-link
+             [routerLink]="baseUrl | async"
+             [routerLinkActiveOptions]="{exact: true}"
+             routerLinkActive #rlaHome="routerLinkActive"
+             [active]="rlaHome.isActive"
+          >AGENDA</a>
+          <a md-tab-link
+             routerLink="stats"
+             routerLinkActive #rlaStats="routerLinkActive"
+             [routerLinkActiveOptions]="{exact: true}"
+             [active]="rlaStats.isActive"
+          >STATS</a>
+          <a md-tab-link
+             *ngIf="isAdmin$ | async"
+             routerLink="admin"
+             [routerLinkActiveOptions]="{exact: true}"
+             routerLinkActive #rlaAdmin="routerLinkActive"
+             [active]="rlaAdmin.isActive"
+          >ADMIN</a>
+        </nav>
+        <router-outlet></router-outlet>
+      </div>
     `,
     styleUrls: [ './../shared/pages.scss' ],
     host: { '[@host]': '' },
@@ -61,7 +84,10 @@ export class MeetingPage implements OnInit {
 
     baseUrl: Observable<string[]>;
 
-    isAdmin: Observable<boolean>;
+  isAdmin$: Observable<boolean>;
+
+  numFollows$: Observable<number>;
+  isFollowing$: Observable<boolean>;
 
     constructor(private meetingSvc: MeetingService,
                 private groupSvc: GroupService,
@@ -69,7 +95,8 @@ export class MeetingPage implements OnInit {
                 private router: Router,
                 private route: ActivatedRoute,
                 private focusSvc: AppFocusService,
-                private authSvc: AuthService) {
+                private authSvc: AuthService,
+                private followSvc: FollowService) {
         const id$ = this.route.params.map(params => params[ 'meetingId' ]).distinctUntilChanged();
 
         this.route.params.subscribe(params => {
@@ -82,12 +109,41 @@ export class MeetingPage implements OnInit {
             [ '/group', params[ 'groupId' ], 'meeting', params[ 'meetingId' ] ]
         );
 
-        this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
+      this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
 
-      this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.meeting$, (user, meeting) => !!user && ((user.superuser || meeting.owner == user.id)));
+      this.isAdmin$ = this.authSvc.sessionUser$.withLatestFrom(this.meeting$, (user, meeting) => !!user && ((user.superuser || meeting.owner == user.id)));
+
+      Observable.forkJoin(this.meeting$.take(1), this.isAdmin$.take(1)).subscribe(([ meeting, isAdmin ]) => {
+        if (isAdmin && !meeting.published) {
+          this.router.navigate([ 'admin' ], { relativeTo: this.route });
+        }
+      });
+
+      this.numFollows$ = id$.flatMap(id => this.followSvc.getFollowCount('meeting', id));
+
+      this.isFollowing$ = id$.flatMap(id => this.followSvc.isFollowing('meeting', id));
 
 
     }
+
+
+  addFollow() {
+    this.meeting$.take(1).subscribe(mtg => {
+      this.followSvc.follow('meeting', mtg.id).subscribe(result => {
+        console.log('follow result"');
+        console.log(result);
+      })
+    })
+  }
+
+  unfollow() {
+    this.meeting$.take(1).subscribe(mtg => {
+      this.followSvc.unfollow('meeting', mtg.id).subscribe(result => {
+        console.log('unfollow result"');
+        console.log(result);
+      })
+    })
+  }
 
     showItem(id: string) {
         this.router.navigate([ 'item', id ], { relativeTo: this.route });

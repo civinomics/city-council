@@ -38,7 +38,6 @@ export class CommentComponent implements OnInit {
      */
     @Input() activeContext: string = 'id_acc';
 
-
     _showAuthor: boolean = true;
     _showVotes: boolean = true;
     _showReplies: boolean = true;
@@ -46,6 +45,15 @@ export class CommentComponent implements OnInit {
     _showReplyBtn: boolean = true;
 
     @Input() set showAuthor(val: boolean) { this._showAuthor = val; }
+
+  @Input() set textOnly(val: any) {
+    this._showAuthor = false;
+    this._showVotes = false;
+    this._showReplies = false;
+    this._showVoteBtn = false;
+    this._showReplyBtn = false;
+  }
+
 
     get showAuthor() { return this._showAuthor}
 

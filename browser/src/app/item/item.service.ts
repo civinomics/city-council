@@ -87,7 +87,7 @@ export class ItemService {
     return Observable.combineLatest(
       this.db.object(`/item/${id}`),
       this.getItemActivity(id).take(1), (item, activity) =>
-        parseItem({...item, activity})
+        parseItem({ id, ...item, activity })
     );
   }
 

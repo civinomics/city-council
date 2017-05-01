@@ -14,7 +14,7 @@
   "repository": "https://github.com/civinomics/city-council",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node_modules/.bin/ng serve",
     "build": "rimraf dist && ng build --prod --aot --output-hashing none && npm run build:lib && ",
     "build:lib": "rimraf dist/src && ngc -p tsconfig.lib.json",
     "test": "ng test",
@@ -25,6 +25,7 @@
   "dependencies": {
     "@agm/core": "^1.0.0-beta.0",
     "@angular/animations": "^4.0.1",
+    "@angular/cli": "^1.0.1",
     "@angular/common": "^4.0.1",
     "@angular/compiler": "^4.0.1",
     "@angular/core": "^4.0.1",
@@ -54,7 +55,7 @@
     "zone.js": "^0.8.5"
   },
   "devDependencies": {
-    "@angular/cli": "^1.0.0",
+    "@angular/cli": "1.0.0",
     "@angular/compiler-cli": "^4.0.1",
     "@angular/language-service": "^4.0.1",
     "@types/d3": "^4.7.0",
