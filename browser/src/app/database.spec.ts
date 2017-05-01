@@ -64,10 +64,18 @@ describe('database rules', () => {
     const newId = 'fooId';
 
     expect({uid: newId}).canWrite(`/user_private/${newId}`, privateData);
-
-
   });
 
+  it('should allow user foo to write to following/x/y/foo', ()=> {
+    const userId = 'foo';
+    expect({uid:userId}).canWrite(`/following/meeting/id_meeting_1/${userId}`, true);
+  });
+
+  it('should only allow user foo to write to following/x/y/foo ', ()=>{
+    const userId = 'foo';
+    expect(null).cannotWrite(`/following/meeting/id_meeting_1/${userId}`,true);
+    expect({uid:userId}).cannotWrite(`/following/meeting/id_meeting_1/bar`,true);
+  })
 
 });
 
@@ -114,6 +122,18 @@ const data = {
         city: 'Austin',
         zip: '78751'
       }
+    }
+  },
+
+  meeting: {
+    id_meeting_1:{
+
+    }
+  },
+
+  following: {
+    meeting: {
+      id_meeting_1: {}
     }
   },
 
