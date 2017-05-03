@@ -34,7 +34,12 @@
 
     <div *ngIf="!userComment" fxLayout="column" class="value">
       <md-input-container>
-        <input type="text" mdInput [placeholder]="addCommentPlaceholder" #addComment [(ngModel)]="newComment">
+        <textarea type="text"
+                  rows="4"
+                  mdInput
+                  [placeholder]="addCommentPlaceholder"
+                  #addComment
+                  [(ngModel)]="newComment"></textarea>
       </md-input-container>
       <button md-raised-button
               *ngIf="!!addComment.value"

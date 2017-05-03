@@ -18,11 +18,6 @@ import { CommentService } from '../comment.service';
             state('void', style({ transform: 'translateX(50px)', width: 0, opacity: 0 })),
             state('*', style({ transform: 'translateX(0)', width: '*', opacity: 1 })),
             transition('void <=> *', animate(150))
-        ]),
-        trigger('resetBtn', [
-            state('void', style({ transform: 'translateX(-50px)', width: 0, opacity: 0 })),
-            state('*', style({ transform: 'translateX(0)', width: '*', opacity: 1 })),
-            transition('void <=> *', animate(150))
         ])
 
     ]
