@@ -18,9 +18,21 @@ import { AppFocusService } from '../core/focus.service';
     <civ-item-view [item]="item$ | async" [userVote]="userVote$ | async" [userComment]="userComment$ | async"
                    [votes]="votes$ | async"
                    [activeMeeting]="activeMeeting$ | async"
-                   (vote)="castVote($event)" (comment)="postComment($event)"></civ-item-view>
+                   (vote)="castVote($event)" (comment)="postComment($event)" (back)="backToAgenda()"></civ-item-view>
   `,
-  styles: []
+  /*  host: { '[@host]': '' },
+   animations: [
+   trigger('host', [
+   transition('void => *', [
+   style({ opacity: 0, transform: 'translateX(100%)' }),
+   animate('200ms 200ms ease-in', style({ opacity: 1,  transform: 'translateX(0)'  }))
+   ]),
+   transition('* => void', [
+   animate('200ms ease-in', style({transform:'translateX(100%)', opacity: 0}))
+   ])
+   ])
+   ],*/
+  styleUrls: [ './../shared/pages.scss' ],
 })
 export class ItemPageComponent implements OnInit {
   item$: Observable<Item>;
@@ -74,6 +86,10 @@ export class ItemPageComponent implements OnInit {
 
   postComment(it: { itemId: string, text: string, role: string }) {
     this.commentSvc.postComment(it.itemId, it.text, it.role);
+  }
+
+  backToAgenda() {
+    this.router.navigate([ '../../' ], { relativeTo: this.route })
   }
 
 
