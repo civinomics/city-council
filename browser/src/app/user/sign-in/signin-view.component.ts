@@ -13,7 +13,6 @@ import {
 import { SocialAuthProvider } from '../auth.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EmailSignupData, UserAddress } from '../user.model';
-import { AuthError } from '../auth.reducer';
 import { MapsAPILoader } from '@agm/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MdInputDirective } from '@angular/material';
@@ -38,7 +37,7 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
   @Input() firstName: string;
   @Input() lastName: string;
   @Input() email: string;
-  @Input() error: AuthError|null;
+  @Input() error: any;
   @Input() mode: 'sign-up'|'log-in' = 'sign-up';
   @Output() setMode = new EventEmitter<'log-in'|'sign-up'>();
 
@@ -209,7 +208,7 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
 
 }
 
-export const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+export const EMAIL_REGEX = /^[\w\d_.-~]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 export const ZIP_REGEX = /\d{5}/;
 
 export type AddressComponentType = 'street_number'|'route'|'neighborhood'|'sublocality_level_1'|'sublocality'|'administrative_area_level_2'|''
