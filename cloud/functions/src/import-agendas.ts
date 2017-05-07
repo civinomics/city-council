@@ -1,10 +1,5 @@
-import * as functions from 'firebase-functions';
-
-import * as admin from 'firebase-admin';
 import { initializeAdminApp } from './_internal';
 import * as moment from 'moment';
-import Moment = moment.Moment;
-import { testPayload } from './test-agenda-input';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs';
 import { RawItem, RawMeeting } from '@civ/city-council';
@@ -14,6 +9,8 @@ import 'rxjs/add/operator/do';
 
 import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/map';
+import * as https from 'https';
+import Moment = moment.Moment;
 
 export type SocrataItem = {
   completeagenda: string,
@@ -38,7 +35,11 @@ const instanceData = { //this will ultimately be persisted and loaded for the re
   groupId: 'id_acc',
   adminId: 'id_doug',
   canEditIds: [ 'id_doug' ],
-  restEndpoint: '',
+  restEndpoint: {
+    host: 'data.austintexas.gov',
+    path: '/resource/es7e-878h.json',
+    method: 'GET'
+  },
   pullMeetingTypes: [ 'Austin City Council' ],
   meetingTypeDisplayNames: {
     'Austin City Council': 'Regular Meeting of the Austin City Council'
@@ -49,6 +50,43 @@ const instanceData = { //this will ultimately be persisted and loaded for the re
 };
 
 
+function doImport(groupId) {
+  getApiData(instanceData.restEndpoint).then(data => {
+    processPayload(data);
+  });
+}
+
+function getApiData(reqOpts): Promise<any> {
+
+  return new Promise((resolve, reject) => {
+
+    const req = https.request(reqOpts, (response) => {
+      let received = '';
+      response.on('data', (data) => {
+        received += data.toString();
+      });
+
+      response.on('end', () => {
+        try {
+          resolve(JSON.parse(received));
+        } catch (err) {
+          reject(new Error(`Error parsing response as JSON: ${err.toString()}`));
+        }
+      })
+    });
+
+    req.on('error', (err) => {
+      reject(err);
+    });
+
+    req.end();
+
+  });
+
+
+}
+
+
 /**
  *
  * @param payload
@@ -57,6 +95,7 @@ const instanceData = { //this will ultimately be persisted and loaded for the re
 function processPayload(payload: SocrataItem[])/*: string[]*/ {
 
   const app = initializeAdminApp();
+  const now = moment().subtract(5, 'days');
   const db = app.database();
 
   let uniqueDates = payload
@@ -65,7 +104,7 @@ function processPayload(payload: SocrataItem[])/*: string[]*/ {
 
   getExtantMeetingDates().subscribe(extantDates => {
     console.log(`extant dates: ${JSON.stringify(extantDates)}`);
-    let newDates = uniqueDates.filter(date => extantDates.indexOf(date) < 0);
+    let newDates = uniqueDates.filter(date => extantDates.indexOf(date) < 0).filter(date => moment(date).isAfter(now));
     console.log(`new dates: ${JSON.stringify(newDates)}`);
 
     if (newDates.length == 0) {
@@ -172,10 +211,10 @@ function processPayload(payload: SocrataItem[])/*: string[]*/ {
   }
 
 
-  function updateMeetingAgenda(mtgId: string, agendaIds: string[]): Observable<void> {
+  function updateMeetingAgenda(mtgId: string, agenda: string[]): Observable<void> {
     return Observable.create((observer: Observer<string>) => {
 
-      db.ref(`/meeting/${mtgId}`).update({ agendaIds }).then(val => {
+      db.ref(`/meeting/${mtgId}`).update({ agenda }).then(val => {
         observer.next(null);
         observer.complete();
       }).catch(err => {
@@ -232,8 +271,6 @@ function appendTimeZoneIfMissing(date: string, offset: string): string {
 /*** TEST */
 
 
-
-processPayload(testPayload);
-
+doImport('id_acc');
 
 /* ****/
