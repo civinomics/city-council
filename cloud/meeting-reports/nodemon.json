@@ -1,0 +1,6 @@
+{
+  "restartable": "rs",
+  "watch": [
+    "./dist/"
+  ]
+}

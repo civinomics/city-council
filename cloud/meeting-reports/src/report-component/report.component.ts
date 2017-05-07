@@ -1,6 +1,7 @@
-import {Component, Inject} from '@angular/core';
-import {REPORT_DATA} from '../tokens';
-import {Group, Meeting, MeetingReportAdt, MeetingStats, Office, parseGroup, parseMeeting} from '@civ/city-council';
+import { Component, Inject } from '@angular/core';
+import { REPORT_DATA } from '../tokens';
+import { Group, Meeting, MeetingReportAdt, MeetingStats, Office, parseGroup, parseMeeting } from '@civ/city-council';
+
 
 @Component({
   selector: 'civ-report-root',
