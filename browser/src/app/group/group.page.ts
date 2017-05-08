@@ -23,7 +23,9 @@ import { FollowService } from '../shared/services/follow.service';
                        fxLayout.xs="column"
                        fxLayoutGap="40px"
                        fxLayoutGap.xs="10px">
-                    <div class="num-followers"><strong>{{numFollows$ | async}}</strong> followers</div>
+                    <div class="num-followers" *ngIf="numFollows$ | async as numFollows"><strong>{{numFollows}}</strong>
+                      followers
+                    </div>
                     <button md-raised-button
                             color="accent"
                             class="follow-button"
