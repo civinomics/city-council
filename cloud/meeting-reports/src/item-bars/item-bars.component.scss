@@ -1,0 +1,31 @@
+
+:host {
+  display: block;
+  width: 800px;
+  margin: auto;
+}
+
+.item {
+  margin-bottom: 10px;
+  height: 40px;
+  position: relative;
+
+  .bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #999;
+    z-index: 0;
+  }
+
+  .text {
+    font-weight: 500;
+    z-index: 1;
+    padding-top: 10px;
+    overflow: visible;
+    white-space: nowrap;
+  }
+
+}
+

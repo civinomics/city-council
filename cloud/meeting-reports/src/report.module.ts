@@ -1,8 +1,9 @@
-import {NgModule} from '@angular/core';
-import {ServerModule} from '@angular/platform-server';
-import {MeetingReportComponent} from './report-component/report.component';
-import {BrowserModule} from '@angular/platform-browser';
-import {ParticipationPieComponent} from './participation-pie/participation-pie.component';
+import { NgModule } from '@angular/core';
+import { ServerModule } from '@angular/platform-server';
+import { MeetingReportComponent } from './report-component/report.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { ParticipationPieComponent } from './participation-pie/participation-pie.component';
+import { ItemBarsComponent } from './item-bars/item-bars.component';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import {ParticipationPieComponent} from './participation-pie/participation-pie.c
   ],
   declarations: [
     MeetingReportComponent,
-    ParticipationPieComponent
+    ParticipationPieComponent,
+    ItemBarsComponent
   ],
   bootstrap: [
     MeetingReportComponent
