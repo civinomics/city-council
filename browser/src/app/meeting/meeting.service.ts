@@ -13,7 +13,7 @@ import { parseComment } from '../comment/comment.model';
 import { MeetingLoadedAction } from './meeting.reducer';
 
 const LOAD_MEETING = '[MeetingSvcInternal] loadMeeting';
-
+const REPORT_GENERATOR_URL = 'https://us-central1-civ-cc.cloudfunctions.net/report';
 
 @Injectable()
 export class MeetingService {
@@ -86,6 +86,15 @@ export class MeetingService {
 
   }
 
+  public getPDFReport(meetingId: string, forDistrict?: string): Observable<{ success: boolean, url: string, error?: string, fromCache: boolean }> {
+    let url = `${REPORT_GENERATOR_URL}?meetingId:${meetingId}`;
+    if (!!forDistrict) {
+      url += `&forDistrict=${forDistrict}`
+    }
+    return this.http.get(url)
+      .map(response => response.json());
+  }
+
 
     private parseMeetingStats(rawStats) {
         return {
@@ -127,16 +136,16 @@ export class MeetingService {
 }
 
 const devStats = {
-  'priors': [ { 'date': '2017-03-08T23:52:51.968Z', 'value': 0 }, {
-    'date': '2017-04-05T22:52:51.673Z',
+  'priors': [ { 'date': '2016-01-27T18:00:00.000Z', 'value': 0 }, {
+    'date': '2017-03-08T23:52:51.968Z',
     'value': 0
-  }, { 'date': '2017-03-22T22:52:51.818Z', 'value': 0 } ],
+  }, { 'date': '2017-04-12T07:00:00.000Z', 'value': 0 }, { 'date': '2017-03-22T22:52:51.818Z', 'value': 0 } ],
   'total': {
-    'votes': 2599,
-    'comments': 1191,
-    'participants': 400,
+    'votes': 2614,
+    'comments': 1200,
+    'participants': 407,
     'byDistrict': {
-      'NO_DISTRICT': { 'votes': 2599, 'comments': 88, 'participants': 29 },
+      'NO_DISTRICT': { 'votes': 2614, 'comments': 97, 'participants': 36 },
       'id_district_101': { 'votes': 256, 'comments': 133, 'participants': 40 },
       'id_district_102': { 'votes': 248, 'comments': 110, 'participants': 35 },
       'id_district_103': { 'votes': 230, 'comments': 95, 'participants': 33 },
@@ -151,10 +160,9 @@ const devStats = {
   },
   'byItem': {
     'id_item_1039': {
-      'total': {
-        'votes': { 'yes': 42, 'no': 42 },
-        'comments': { 'pro': 4, 'con': 5, 'neutral': 6 }
-      },
+      'text': 'Aliquam quia sit placeat ad deserunt. Vero repellat et. Architecto vero nihil. Quo beatae dolores.',
+      'itemNumber': 11,
+      'total': { 'votes': { 'yes': 42, 'no': 42 }, 'comments': { 'pro': 4, 'con': 5, 'neutral': 6 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 6, 'no': 2 },
@@ -381,7 +389,9 @@ const devStats = {
       }
     },
     'id_item_1139': {
-      'total': { 'votes': { 'yes': 17, 'no': 16 }, 'comments': { 'pro': 9, 'con': 8, 'neutral': 10 } },
+      'text': 'Similique est minima non quia rerum ut consequuntur quia temporibus. Enim voluptate omnis rem ea optio asperiores. Beatae dignissimos et assumenda labore voluptas est ut in quod. Tenetur id dolorum beatae molestiae iste voluptas molestias excepturi corporis.',
+      'itemNumber': 12,
+      'total': { 'votes': { 'yes': 17, 'no': 17 }, 'comments': { 'pro': 9, 'con': 8, 'neutral': 10 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 1, 'no': 4 },
@@ -696,7 +706,9 @@ const devStats = {
       }
     },
     'id_item_1200': {
-      'total': { 'votes': { 'yes': 5, 'no': 5 }, 'comments': { 'pro': 11, 'con': 12, 'neutral': 11 } },
+      'text': 'Voluptatum ipsum sed vel qui eaque officiis eius ullam. Ab id ipsam et deserunt consequatur in molestiae quas. Sit commodi possimus ea aut. Eum quod quidem corporis. Consequatur voluptatem mollitia quis recusandae minima rerum quaerat dolores.',
+      'itemNumber': 13,
+      'total': { 'votes': { 'yes': 6, 'no': 5 }, 'comments': { 'pro': 11, 'con': 12, 'neutral': 11 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 0, 'no': 0 },
@@ -1058,6 +1070,8 @@ const devStats = {
       }
     },
     'id_item_1245': {
+      'text': 'Porro consequatur iusto aut eum nam. Iste minus voluptatem nulla totam dolores qui culpa similique dolores. Blanditiis ut ipsam aut.',
+      'itemNumber': 14,
       'total': { 'votes': { 'yes': 4, 'no': 6 }, 'comments': { 'pro': 8, 'con': 6, 'neutral': 4 } },
       'byDistrict': {
         'id_district_101': {
@@ -1374,7 +1388,9 @@ const devStats = {
       }
     },
     'id_item_1274': {
-      'total': { 'votes': { 'yes': 30, 'no': 36 }, 'comments': { 'pro': 14, 'con': 7, 'neutral': 8 } },
+      'text': 'Quia nam et et dolore eum tempore est. Et doloribus fugit. In dolor minima dignissimos voluptas quisquam libero et. Vero modi veniam dolores quaerat totam explicabo temporibus. Aut nemo quae non nobis ut molestias. Rem dolore omnis voluptatem temporibus praesentium sed est omnis.',
+      'itemNumber': 15,
+      'total': { 'votes': { 'yes': 31, 'no': 36 }, 'comments': { 'pro': 15, 'con': 7, 'neutral': 8 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 1, 'no': 3 },
@@ -1392,19 +1408,17 @@ const devStats = {
       },
       'topComments': {
         'pro': {
-          'owner': 'id_user_484',
-          'posted': '2017-04-12T03:37:18.639Z',
+          'owner': 'id_user_430',
+          'posted': '2017-04-18T12:14:04.614Z',
           'role': 'pro',
-          'text': 'Nam incidunt soluta qui et facere autem temporibus.',
-          'userDistrict': { 'id': 'id_district_101', 'name': 'District 1', 'owner': 'id_doug' },
-          'id': 'id_comment_1357',
+          'text': 'Ut quae occaecati molestiae omnis.',
+          'id': 'id_comment_1341',
           'votes': { 'up': 0, 'down': 0 },
           'author': {
-            'districts': { 'id_acc': { 'id': 'id_district_101', 'name': 'District 1', 'owner': 'id_doug' } },
-            'firstName': 'Rogers',
-            'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/algunsanabria/128.jpg',
-            'lastName': 'Christiansen',
-            'id': 'id_user_484'
+            'firstName': 'Virgie',
+            'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/irae/128.jpg',
+            'lastName': 'Hand',
+            'id': 'id_user_430'
           }
         },
         'con': {
@@ -1472,12 +1486,12 @@ const devStats = {
           },
           'id_district_102': {
             'pro': {
-              'owner': 'id_user_451',
-              'posted': '2017-04-10T05:23:40.661Z',
+              'owner': 'id_user_179',
+              'posted': '2017-04-14T01:49:08.761Z',
               'role': 'pro',
-              'text': 'Sint aut asperiores dolore tempora est.',
+              'text': 'A voluptate fugit voluptas excepturi hic voluptatem.',
               'userDistrict': { 'id': 'id_district_102', 'name': 'District 2', 'owner': 'id_doug' },
-              'id': 'id_comment_1343',
+              'id': 'id_comment_1342',
               'votes': { 'up': 0, 'down': 0 },
               'author': {
                 'districts': {
@@ -1487,10 +1501,10 @@ const devStats = {
                     'owner': 'id_doug'
                   }
                 },
-                'firstName': 'Beryl',
-                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/BryanHorsey/128.jpg',
-                'lastName': 'Conn',
-                'id': 'id_user_451'
+                'firstName': 'Delmer',
+                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/alexivanichkin/128.jpg',
+                'lastName': 'Strosin',
+                'id': 'id_user_179'
               }
             }, 'con': null
           },
@@ -1669,6 +1683,8 @@ const devStats = {
       }
     },
     'id_item_1370': {
+      'text': 'Esse ex consectetur quae ipsa. Saepe delectus fugiat culpa. Tempora et harum distinctio sapiente voluptatem earum natus qui.',
+      'itemNumber': 16,
       'total': { 'votes': { 'yes': 23, 'no': 26 }, 'comments': { 'pro': 5, 'con': 4, 'neutral': 9 } },
       'byDistrict': {
         'id_district_101': {
@@ -1914,10 +1930,9 @@ const devStats = {
       }
     },
     'id_item_1438': {
-      'total': {
-        'votes': { 'yes': 39, 'no': 21 },
-        'comments': { 'pro': 16, 'con': 19, 'neutral': 14 }
-      },
+      'text': 'Nihil saepe mollitia eum voluptas quo minima molestiae harum. Quia voluptatibus vero atque iusto nesciunt eligendi eum cupiditate. Totam qui expedita ex adipisci aut explicabo quia. Nostrum dicta deleniti eius aliquid fugit nostrum. Eius necessitatibus aut rem ea. Eveniet ut rerum.',
+      'itemNumber': 17,
+      'total': { 'votes': { 'yes': 39, 'no': 21 }, 'comments': { 'pro': 16, 'con': 19, 'neutral': 14 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 4, 'no': 1 },
@@ -2343,6 +2358,8 @@ const devStats = {
       }
     },
     'id_item_1548': {
+      'text': 'Facere corrupti optio dolores delectus eos distinctio molestias. Odit possimus libero voluptas. Esse debitis nobis magnam quas dicta aperiam quia aut. Ipsa animi et quaerat quaerat doloremque quos.',
+      'itemNumber': 18,
       'total': { 'votes': { 'yes': 9, 'no': 5 }, 'comments': { 'pro': 7, 'con': 16, 'neutral': 8 } },
       'byDistrict': {
         'id_district_101': {
@@ -2640,6 +2657,8 @@ const devStats = {
       }
     },
     'id_item_1594': {
+      'text': 'Voluptatem placeat nihil rem voluptas dolorem velit debitis quam. Laudantium eos totam qui quia. Omnis ut quisquam. Totam numquam veritatis accusantium harum dicta. Quaerat sed ipsum fugit quibusdam at ea ut et. Ea sunt quibusdam ipsam vitae ea molestiae doloremque aperiam debitis.',
+      'itemNumber': 19,
       'total': { 'votes': { 'yes': 7, 'no': 7 }, 'comments': { 'pro': 7, 'con': 5, 'neutral': 2 } },
       'byDistrict': {
         'id_district_101': {
@@ -2866,10 +2885,9 @@ const devStats = {
       }
     },
     'id_item_1623': {
-      'total': {
-        'votes': { 'yes': 22, 'no': 16 },
-        'comments': { 'pro': 10, 'con': 10, 'neutral': 11 }
-      },
+      'text': 'Voluptatibus ea ex rem enim ad quia culpa. Maxime ut ut et vitae rerum sed sapiente ut. Eaque sequi in velit rerum nesciunt aliquid culpa sint. Dolores qui tempore quibusdam temporibus aut dolores eos incidunt quam. Consequatur sed totam mollitia libero et voluptatem ea.',
+      'itemNumber': 20,
+      'total': { 'votes': { 'yes': 22, 'no': 16 }, 'comments': { 'pro': 10, 'con': 10, 'neutral': 11 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 0, 'no': 1 },
@@ -3185,6 +3203,8 @@ const devStats = {
       }
     },
     'id_item_1693': {
+      'text': 'Non vel corrupti blanditiis recusandae ducimus necessitatibus occaecati animi est. Velit quam cupiditate provident cumque aut id. Molestiae sit qui beatae.',
+      'itemNumber': 21,
       'total': { 'votes': { 'yes': 19, 'no': 20 }, 'comments': { 'pro': 2, 'con': 3, 'neutral': 1 } },
       'byDistrict': {
         'id_district_101': {
@@ -3363,6 +3383,8 @@ const devStats = {
       }
     },
     'id_item_1739': {
+      'text': 'Laboriosam nemo vero soluta. Voluptate adipisci et non porro eaque. Sed omnis tempora. Provident autem deleniti quia voluptas cumque nisi saepe aliquid. Beatae atque perspiciatis eum rerum.',
+      'itemNumber': 22,
       'total': { 'votes': { 'yes': 14, 'no': 18 }, 'comments': { 'pro': 17, 'con': 8, 'neutral': 13 } },
       'byDistrict': {
         'id_district_101': {
@@ -3720,10 +3742,9 @@ const devStats = {
       }
     },
     'id_item_1810': {
-      'total': {
-        'votes': { 'yes': 18, 'no': 14 },
-        'comments': { 'pro': 18, 'con': 12, 'neutral': 16 }
-      },
+      'text': 'Tempore aliquam quas nam accusamus a. Rerum dolore saepe explicabo accusantium quae. Voluptas rerum omnis.',
+      'itemNumber': 23,
+      'total': { 'votes': { 'yes': 19, 'no': 14 }, 'comments': { 'pro': 19, 'con': 12, 'neutral': 16 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 4, 'no': 0 },
@@ -3741,17 +3762,19 @@ const devStats = {
       },
       'topComments': {
         'pro': {
-          'owner': 'id_user_456',
-          'posted': '2017-04-06T20:02:02.393Z',
+          'owner': 'id_user_182',
+          'posted': '2017-04-14T19:48:07.669Z',
           'role': 'pro',
-          'text': 'Doloribus placeat officia id culpa modi voluptatum.',
-          'id': 'id_comment_1850',
+          'text': 'Laboriosam eos aut aut totam molestias consequatur pariatur iure saepe.',
+          'userDistrict': { 'id': 'id_district_101', 'name': 'District 1', 'owner': 'id_doug' },
+          'id': 'id_comment_1844',
           'votes': { 'up': 1, 'down': 0 },
           'author': {
-            'firstName': 'Loraine',
-            'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/jitachi/128.jpg',
-            'lastName': 'Streich',
-            'id': 'id_user_456'
+            'districts': { 'id_acc': { 'id': 'id_district_101', 'name': 'District 1', 'owner': 'id_doug' } },
+            'firstName': 'Florencio',
+            'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/sbtransparent/128.jpg',
+            'lastName': 'Marquardt',
+            'id': 'id_user_182'
           }
         },
         'con': {
@@ -3793,12 +3816,12 @@ const devStats = {
               }
             },
             'con': {
-              'owner': 'id_user_411',
-              'posted': '2017-04-15T21:01:46.786Z',
+              'owner': 'id_user_435',
+              'posted': '2017-04-08T15:26:13.395Z',
               'role': 'con',
-              'text': 'Consequatur sapiente sit.',
+              'text': 'Molestiae natus ut nihil.',
               'userDistrict': { 'id': 'id_district_101', 'name': 'District 1', 'owner': 'id_doug' },
-              'id': 'id_comment_1868',
+              'id': 'id_comment_1846',
               'votes': { 'up': 0, 'down': 0 },
               'author': {
                 'districts': {
@@ -3808,10 +3831,10 @@ const devStats = {
                     'owner': 'id_doug'
                   }
                 },
-                'firstName': 'Ryann',
-                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/markretzloff/128.jpg',
-                'lastName': 'Johnston',
-                'id': 'id_user_411'
+                'firstName': 'Emmanuel',
+                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/nelsonjoyce/128.jpg',
+                'lastName': 'Purdy',
+                'id': 'id_user_435'
               }
             }
           },
@@ -4078,10 +4101,9 @@ const devStats = {
       }
     },
     'id_item_1889': {
-      'total': {
-        'votes': { 'yes': 47, 'no': 40 },
-        'comments': { 'pro': 19, 'con': 13, 'neutral': 11 }
-      },
+      'text': 'Numquam voluptas cumque voluptas. Vel qui voluptatibus error voluptatem praesentium est enim quas. Dolor iste praesentium. Minus non et et aliquam iure et rerum quo.',
+      'itemNumber': 24,
+      'total': { 'votes': { 'yes': 47, 'no': 40 }, 'comments': { 'pro': 19, 'con': 13, 'neutral': 11 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 6, 'no': 2 },
@@ -4486,6 +4508,8 @@ const devStats = {
       }
     },
     'id_item_2020': {
+      'text': 'Et et et unde at veritatis eum quaerat. Nisi laudantium sint ab ea. Aut aut sapiente at nulla aut et consequatur. Recusandae pariatur nisi est consequatur nam nulla beatae animi omnis. Earum repudiandae deserunt ipsa.',
+      'itemNumber': 25,
       'total': { 'votes': { 'yes': 27, 'no': 15 }, 'comments': { 'pro': 7, 'con': 1, 'neutral': 2 } },
       'byDistrict': {
         'id_district_101': {
@@ -4687,6 +4711,8 @@ const devStats = {
       }
     },
     'id_item_2073': {
+      'text': 'Et et nisi. Eius ut nesciunt incidunt quo doloribus quo. Cum est magni odio ut molestiae iusto beatae aut. Nemo corporis libero sed.',
+      'itemNumber': 26,
       'total': { 'votes': { 'yes': 52, 'no': 43 }, 'comments': { 'pro': 10, 'con': 7, 'neutral': 11 } },
       'byDistrict': {
         'id_district_101': {
@@ -5025,6 +5051,8 @@ const devStats = {
       }
     },
     'id_item_2197': {
+      'text': 'Nesciunt esse quod aut neque nobis asperiores assumenda. Eum qui optio sit. Soluta eveniet fugiat culpa nesciunt. Praesentium harum non earum eum quis esse natus ea voluptate. A doloremque at. Distinctio ratione rerum est necessitatibus quia vel.',
+      'itemNumber': 27,
       'total': { 'votes': { 'yes': 50, 'no': 34 }, 'comments': { 'pro': 2, 'con': 6, 'neutral': 2 } },
       'byDistrict': {
         'id_district_101': {
@@ -5253,6 +5281,8 @@ const devStats = {
       }
     },
     'id_item_2292': {
+      'text': 'Omnis id veniam quisquam quis veniam. Temporibus inventore est aliquid sed. Nisi aut sint in voluptate aperiam aut. Explicabo incidunt mollitia dolorum.',
+      'itemNumber': 28,
       'total': { 'votes': { 'yes': 53, 'no': 47 }, 'comments': { 'pro': 3, 'con': 4, 'neutral': 5 } },
       'byDistrict': {
         'id_district_101': {
@@ -5454,6 +5484,8 @@ const devStats = {
       }
     },
     'id_item_2405': {
+      'text': 'Voluptatem nam cum consequuntur error deserunt quos. Illum quia quia consequatur vitae saepe reiciendis sint. Et mollitia voluptas saepe vel consectetur molestias.',
+      'itemNumber': 29,
       'total': { 'votes': { 'yes': 29, 'no': 22 }, 'comments': { 'pro': 11, 'con': 10, 'neutral': 6 } },
       'byDistrict': {
         'id_district_101': {
@@ -5774,6 +5806,8 @@ const devStats = {
       }
     },
     'id_item_2484': {
+      'text': 'Officiis animi dignissimos dolor quod ducimus. Omnis asperiores officia rerum. Cumque odio et unde magnam alias. Iure aspernatur natus.',
+      'itemNumber': 30,
       'total': { 'votes': { 'yes': 30, 'no': 27 }, 'comments': { 'pro': 1, 'con': 1, 'neutral': 0 } },
       'byDistrict': {
         'id_district_101': {
@@ -5885,6 +5919,8 @@ const devStats = {
       }
     },
     'id_item_2544': {
+      'text': 'Voluptas nihil sint debitis aut quasi qui odio. Ducimus sed dolores et molestiae. Porro qui suscipit nemo ab qui facilis ea quia. Ut tempore non perspiciatis molestiae nobis. Nobis nulla sapiente cumque hic assumenda numquam non voluptatem.',
+      'itemNumber': 31,
       'total': { 'votes': { 'yes': 48, 'no': 34 }, 'comments': { 'pro': 10, 'con': 4, 'neutral': 6 } },
       'byDistrict': {
         'id_district_101': {
@@ -6179,6 +6215,8 @@ const devStats = {
       }
     },
     'id_item_2647': {
+      'text': 'Ipsa omnis voluptatum libero voluptas voluptatem. In est nesciunt nesciunt sequi eligendi doloremque in laborum qui. Dolorem saepe est harum ut.',
+      'itemNumber': 32,
       'total': { 'votes': { 'yes': 14, 'no': 12 }, 'comments': { 'pro': 1, 'con': 2, 'neutral': 1 } },
       'byDistrict': {
         'id_district_101': {
@@ -6314,6 +6352,8 @@ const devStats = {
       }
     },
     'id_item_2678': {
+      'text': 'Dolorem magni iste. Laboriosam ea iure explicabo debitis quae vel modi. Aliquid voluptatum delectus. Amet ipsum est. Repudiandae ducimus quae dignissimos.',
+      'itemNumber': 33,
       'total': { 'votes': { 'yes': 7, 'no': 7 }, 'comments': { 'pro': 11, 'con': 7, 'neutral': 1 } },
       'byDistrict': {
         'id_district_101': {
@@ -6612,6 +6652,8 @@ const devStats = {
       }
     },
     'id_item_2712': {
+      'text': 'Nesciunt suscipit eum animi est laudantium praesentium commodi culpa. Alias quia et. Eos dolores similique consectetur doloribus dolores voluptas autem nulla. Delectus vitae ipsam eos ut at nemo vel qui.',
+      'itemNumber': 34,
       'total': { 'votes': { 'yes': 25, 'no': 24 }, 'comments': { 'pro': 15, 'con': 5, 'neutral': 9 } },
       'byDistrict': {
         'id_district_101': {
@@ -6926,6 +6968,8 @@ const devStats = {
       }
     },
     'id_item_2791': {
+      'text': 'Et minus perferendis quia unde culpa. Magni hic omnis necessitatibus id beatae occaecati accusantium. Non enim animi quae qui qui dolorum. A labore qui dolorum. Reprehenderit aut est veniam minima voluptatem molestias nostrum inventore. Repellat sint earum rerum.',
+      'itemNumber': 35,
       'total': { 'votes': { 'yes': 25, 'no': 36 }, 'comments': { 'pro': 12, 'con': 8, 'neutral': 8 } },
       'byDistrict': {
         'id_district_101': {
@@ -7286,6 +7330,8 @@ const devStats = {
       }
     },
     'id_item_2881': {
+      'text': 'Rerum fugit dolor soluta culpa commodi ut corporis quia. Consequuntur omnis culpa quia animi. Quis praesentium quis dolor velit laborum. Neque et doloribus non ut quod.',
+      'itemNumber': 36,
       'total': { 'votes': { 'yes': 8, 'no': 9 }, 'comments': { 'pro': 7, 'con': 12, 'neutral': 5 } },
       'byDistrict': {
         'id_district_101': {
@@ -7602,6 +7648,8 @@ const devStats = {
       }
     },
     'id_item_2923': {
+      'text': 'Qui veniam mollitia deserunt. Nostrum quisquam doloribus ut fugit omnis. Voluptate quia consequuntur pariatur. Et dolorum numquam culpa reiciendis ex recusandae accusamus. Animi magnam eius repellendus consectetur expedita. Fugit sint repellendus consequatur debitis rerum repellendus.',
+      'itemNumber': 37,
       'total': { 'votes': { 'yes': 24, 'no': 13 }, 'comments': { 'pro': 15, 'con': 15, 'neutral': 8 } },
       'byDistrict': {
         'id_district_101': {
@@ -8009,6 +8057,8 @@ const devStats = {
       }
     },
     'id_item_2999': {
+      'text': 'Et beatae itaque est molestias dolor. Nam omnis ab. Ullam animi unde consequatur aliquam soluta assumenda itaque quibusdam. Voluptatum quis repellendus exercitationem quos.',
+      'itemNumber': 38,
       'total': { 'votes': { 'yes': 29, 'no': 31 }, 'comments': { 'pro': 6, 'con': 2, 'neutral': 8 } },
       'byDistrict': {
         'id_district_101': {
@@ -8259,6 +8309,8 @@ const devStats = {
       }
     },
     'id_item_3076': {
+      'text': 'Unde nihil voluptate in repudiandae magnam. Eveniet quia consequatur accusamus eaque. Deserunt nam corporis vitae expedita rem delectus natus numquam nam.',
+      'itemNumber': 39,
       'total': { 'votes': { 'yes': 41, 'no': 31 }, 'comments': { 'pro': 1, 'con': 1, 'neutral': 1 } },
       'byDistrict': {
         'id_district_101': {
@@ -8370,6 +8422,8 @@ const devStats = {
       }
     },
     'id_item_3152': {
+      'text': 'Ipsum occaecati labore consequatur vel maiores et quas. Et quo et. Iusto ratione molestias quia exercitationem sapiente.',
+      'itemNumber': 40,
       'total': { 'votes': { 'yes': 32, 'no': 21 }, 'comments': { 'pro': 7, 'con': 5, 'neutral': 3 } },
       'byDistrict': {
         'id_district_101': {
@@ -8615,6 +8669,8 @@ const devStats = {
       }
     },
     'id_item_3221': {
+      'text': 'Et dolores quia ducimus necessitatibus enim. Tempora debitis dolor. Qui velit nobis rerum cum ut et ut. Veniam aut vitae voluptatum eos et porro qui rerum.',
+      'itemNumber': 41,
       'total': { 'votes': { 'yes': 1, 'no': 0 }, 'comments': { 'pro': 4, 'con': 7, 'neutral': 7 } },
       'byDistrict': {
         'id_district_101': {
@@ -8842,6 +8898,8 @@ const devStats = {
       }
     },
     'id_item_3241': {
+      'text': 'Sed iusto quidem voluptas nihil quod et nisi recusandae. Atque ex quidem. Aut eos beatae quae fugiat. Distinctio voluptatem quo et distinctio itaque architecto. Nihil tempora corporis. Eveniet animi similique pariatur est sunt expedita.',
+      'itemNumber': 42,
       'total': { 'votes': { 'yes': 52, 'no': 40 }, 'comments': { 'pro': 14, 'con': 9, 'neutral': 4 } },
       'byDistrict': {
         'id_district_101': {
@@ -9180,6 +9238,8 @@ const devStats = {
       }
     },
     'id_item_3361': {
+      'text': 'In labore cumque voluptas quia. Optio illo qui nam esse et deleniti tempore. Explicabo impedit eos non hic consequatur architecto ut quia. Aut ut esse exercitationem nisi alias quas numquam.',
+      'itemNumber': 43,
       'total': { 'votes': { 'yes': 33, 'no': 31 }, 'comments': { 'pro': 2, 'con': 2, 'neutral': 2 } },
       'byDistrict': {
         'id_district_101': {
@@ -9315,6 +9375,8 @@ const devStats = {
       }
     },
     'id_item_3432': {
+      'text': 'Quia qui harum. Iusto totam molestiae sunt repellat sed fugit iure rerum sit. Voluptates et cupiditate. Et sapiente minima commodi. Cum itaque in excepturi aut inventore sunt minima adipisci rerum.',
+      'itemNumber': 44,
       'total': { 'votes': { 'yes': 53, 'no': 32 }, 'comments': { 'pro': 15, 'con': 16, 'neutral': 9 } },
       'byDistrict': {
         'id_district_101': {
@@ -9762,6 +9824,8 @@ const devStats = {
       }
     },
     'id_item_3558': {
+      'text': 'Quibusdam ducimus aut et quis dolorem aut similique. Sequi ut nihil ullam quae voluptatem necessitatibus sint quasi voluptatibus. Recusandae adipisci dolorem libero vel fuga blanditiis omnis excepturi sit. Dolorem delectus magnam. Modi excepturi cum facilis.',
+      'itemNumber': 45,
       'total': { 'votes': { 'yes': 53, 'no': 46 }, 'comments': { 'pro': 19, 'con': 9, 'neutral': 14 } },
       'byDistrict': {
         'id_district_101': {
@@ -10168,6 +10232,8 @@ const devStats = {
       }
     },
     'id_item_3700': {
+      'text': 'Dolore et eveniet quod consectetur est explicabo. Et totam soluta perferendis debitis esse sit qui. Modi fugiat qui voluptate porro eum asperiores. Placeat laborum et quam sequi excepturi sit maiores inventore.',
+      'itemNumber': 46,
       'total': { 'votes': { 'yes': 25, 'no': 22 }, 'comments': { 'pro': 5, 'con': 3, 'neutral': 3 } },
       'byDistrict': {
         'id_district_101': {
@@ -10394,6 +10460,8 @@ const devStats = {
       }
     },
     'id_item_3759': {
+      'text': 'Sunt autem reprehenderit dicta nam aspernatur quo. Ducimus laboriosam cupiditate velit doloribus sint sit quis ipsa. Sint fugit velit ipsam molestiae ab voluptatum voluptas est. Non similique non et quidem nam nulla inventore id officia.',
+      'itemNumber': 47,
       'total': { 'votes': { 'yes': 62, 'no': 33 }, 'comments': { 'pro': 5, 'con': 12, 'neutral': 10 } },
       'byDistrict': {
         'id_district_101': {
@@ -10690,10 +10758,9 @@ const devStats = {
       }
     },
     'id_item_3882': {
-      'total': {
-        'votes': { 'yes': 45, 'no': 37 },
-        'comments': { 'pro': 15, 'con': 16, 'neutral': 13 }
-      },
+      'text': 'Dolore consequatur dolorem consectetur voluptas sint non consequatur. Sint ut sed hic. Quisquam praesentium et qui aliquid quia hic.',
+      'itemNumber': 48,
+      'total': { 'votes': { 'yes': 46, 'no': 37 }, 'comments': { 'pro': 15, 'con': 16, 'neutral': 13 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 5, 'no': 2 },
@@ -11097,10 +11164,9 @@ const devStats = {
       }
     },
     'id_item_4009': {
-      'total': {
-        'votes': { 'yes': 38, 'no': 36 },
-        'comments': { 'pro': 19, 'con': 13, 'neutral': 10 }
-      },
+      'text': 'Voluptas quasi repudiandae fugiat. Saepe asperiores qui temporibus error consequatur. Rerum fugiat aperiam. Cupiditate a accusamus qui iste consequatur.',
+      'itemNumber': 49,
+      'total': { 'votes': { 'yes': 38, 'no': 36 }, 'comments': { 'pro': 19, 'con': 13, 'neutral': 10 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 7, 'no': 3 },
@@ -11480,10 +11546,9 @@ const devStats = {
       }
     },
     'id_item_4126': {
-      'total': {
-        'votes': { 'yes': 32, 'no': 26 },
-        'comments': { 'pro': 13, 'con': 14, 'neutral': 10 }
-      },
+      'text': 'Animi rerum occaecati quasi eos. Ex sed esse ea qui repudiandae expedita. Vel minima nemo reiciendis mollitia et.',
+      'itemNumber': 50,
+      'total': { 'votes': { 'yes': 32, 'no': 26 }, 'comments': { 'pro': 13, 'con': 14, 'neutral': 10 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 3, 'no': 1 },
@@ -11908,6 +11973,8 @@ const devStats = {
       }
     },
     'id_item_4222': {
+      'text': 'Molestiae recusandae optio harum consequatur. Suscipit odit omnis dolore consequatur. Voluptas et voluptatem neque possimus ut deleniti. Optio quos ullam sapiente non id enim corporis impedit soluta. Et iure ducimus.',
+      'itemNumber': 51,
       'total': { 'votes': { 'yes': 30, 'no': 33 }, 'comments': { 'pro': 4, 'con': 2, 'neutral': 0 } },
       'byDistrict': {
         'id_district_101': {
@@ -12112,6 +12179,8 @@ const devStats = {
       }
     },
     'id_item_4292': {
+      'text': 'Quia animi odio esse delectus. Neque velit beatae aut est nam corporis perspiciatis. Recusandae pariatur dolorem at dignissimos quasi dolore. Blanditiis dolor ut.',
+      'itemNumber': 52,
       'total': { 'votes': { 'yes': 33, 'no': 28 }, 'comments': { 'pro': 0, 'con': 0, 'neutral': 0 } },
       'byDistrict': {
         'id_district_101': {
@@ -12146,7 +12215,9 @@ const devStats = {
       }
     },
     'id_item_512': {
-      'total': { 'votes': { 'yes': 38, 'no': 22 }, 'comments': { 'pro': 0, 'con': 1, 'neutral': 2 } },
+      'text': 'Eos sed sit velit doloribus consequatur. Dolores ea sunt delectus architecto qui. Dicta aut aliquam dolor et nihil expedita enim. Quo ut ullam qui laboriosam voluptas velit nemo.',
+      'itemNumber': 1,
+      'total': { 'votes': { 'yes': 39, 'no': 24 }, 'comments': { 'pro': 0, 'con': 2, 'neutral': 3 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 1, 'no': 0 },
@@ -12219,7 +12290,9 @@ const devStats = {
       }
     },
     'id_item_576': {
-      'total': { 'votes': { 'yes': 5, 'no': 5 }, 'comments': { 'pro': 8, 'con': 13, 'neutral': 11 } },
+      'text': 'Ad praesentium veniam esse amet. Delectus voluptatum veniam laborum. Ut ut dolores et repudiandae laborum. Sed vel dolores ut quia explicabo. Quaerat sunt qui est qui corporis quidem. Voluptates facere rerum et provident.',
+      'itemNumber': 2,
+      'total': { 'votes': { 'yes': 6, 'no': 5 }, 'comments': { 'pro': 9, 'con': 13, 'neutral': 11 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 1, 'no': 0 },
@@ -12531,12 +12604,12 @@ const devStats = {
               }
             },
             'con': {
-              'owner': 'id_user_498',
-              'posted': '2017-04-17T10:05:21.502Z',
+              'owner': 'id_user_442',
+              'posted': '2017-04-11T18:02:39.532Z',
               'role': 'con',
-              'text': 'Architecto hic libero tenetur.',
+              'text': 'Sint sed architecto quia dolorem inventore quo.',
               'userDistrict': { 'id': 'id_district_109', 'name': 'District 9', 'owner': 'id_doug' },
-              'id': 'id_comment_603',
+              'id': 'id_comment_618',
               'votes': { 'up': 0, 'down': 0 },
               'author': {
                 'districts': {
@@ -12546,10 +12619,10 @@ const devStats = {
                     'owner': 'id_doug'
                   }
                 },
-                'firstName': 'Carissa',
-                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/davidmerrique/128.jpg',
-                'lastName': 'Effertz',
-                'id': 'id_user_498'
+                'firstName': 'Johanna',
+                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/yalozhkin/128.jpg',
+                'lastName': 'Jenkins',
+                'id': 'id_user_442'
               }
             }
           },
@@ -12603,6 +12676,8 @@ const devStats = {
       }
     },
     'id_item_619': {
+      'text': 'Corporis dolor quidem voluptate ea aliquid. Voluptatem eos ea qui consectetur. Voluptatum incidunt veniam. Et eveniet commodi maxime incidunt fugit minima. Sint qui impedit ab repellat magnam cupiditate assumenda possimus distinctio.',
+      'itemNumber': 3,
       'total': { 'votes': { 'yes': 0, 'no': 1 }, 'comments': { 'pro': 8, 'con': 8, 'neutral': 10 } },
       'byDistrict': {
         'id_district_101': {
@@ -12943,7 +13018,9 @@ const devStats = {
       }
     },
     'id_item_647': {
-      'total': { 'votes': { 'yes': 55, 'no': 44 }, 'comments': { 'pro': 12, 'con': 5, 'neutral': 5 } },
+      'text': 'Quae ipsam suscipit ad voluptates quia nemo. Eos consectetur aut alias aut qui quo. Consectetur voluptates voluptatem.',
+      'itemNumber': 4,
+      'total': { 'votes': { 'yes': 56, 'no': 44 }, 'comments': { 'pro': 12, 'con': 5, 'neutral': 6 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 5, 'no': 3 },
@@ -12977,19 +13054,19 @@ const devStats = {
           }
         },
         'con': {
-          'owner': 'id_user_434',
-          'posted': '2017-04-11T07:11:00.116Z',
+          'owner': 'id_user_222',
+          'posted': '2017-04-13T09:26:50.771Z',
           'role': 'con',
-          'text': 'Et placeat consectetur accusamus doloremque ut.',
-          'userDistrict': { 'id': 'id_district_103', 'name': 'District 3', 'owner': 'id_doug' },
-          'id': 'id_comment_759',
-          'votes': { 'up': 0, 'down': 0 },
+          'text': 'Quae dignissimos eos reprehenderit doloribus nihil labore consequatur reiciendis.',
+          'userDistrict': { 'id': 'id_district_106', 'name': 'District 6', 'owner': 'id_doug' },
+          'id': 'id_comment_752',
+          'votes': { 'up': 1, 'down': 1 },
           'author': {
-            'districts': { 'id_acc': { 'id': 'id_district_103', 'name': 'District 3', 'owner': 'id_doug' } },
-            'firstName': 'Zachery',
-            'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/alevizio/128.jpg',
-            'lastName': 'Raynor',
-            'id': 'id_user_434'
+            'districts': { 'id_acc': { 'id': 'id_district_106', 'name': 'District 6', 'owner': 'id_doug' } },
+            'firstName': 'Letitia',
+            'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/stevedesigner/128.jpg',
+            'lastName': 'Ebert',
+            'id': 'id_user_222'
           }
         },
         'byDistrict': {
@@ -13137,13 +13214,13 @@ const devStats = {
           'id_district_106': {
             'pro': null,
             'con': {
-              'owner': 'id_user_211',
-              'posted': '2017-04-05T11:56:12.483Z',
+              'owner': 'id_user_222',
+              'posted': '2017-04-13T09:26:50.771Z',
               'role': 'con',
-              'text': 'At minima doloremque ullam.',
+              'text': 'Quae dignissimos eos reprehenderit doloribus nihil labore consequatur reiciendis.',
               'userDistrict': { 'id': 'id_district_106', 'name': 'District 6', 'owner': 'id_doug' },
-              'id': 'id_comment_760',
-              'votes': { 'up': 0, 'down': 0 },
+              'id': 'id_comment_752',
+              'votes': { 'up': 1, 'down': 1 },
               'author': {
                 'districts': {
                   'id_acc': {
@@ -13152,10 +13229,10 @@ const devStats = {
                     'owner': 'id_doug'
                   }
                 },
-                'firstName': 'Nelson',
-                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/justinrhee/128.jpg',
-                'lastName': 'Wolf',
-                'id': 'id_user_211'
+                'firstName': 'Letitia',
+                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/stevedesigner/128.jpg',
+                'lastName': 'Ebert',
+                'id': 'id_user_222'
               }
             }
           },
@@ -13213,7 +13290,9 @@ const devStats = {
       }
     },
     'id_item_769': {
-      'total': { 'votes': { 'yes': 6, 'no': 11 }, 'comments': { 'pro': 8, 'con': 6, 'neutral': 3 } },
+      'text': 'Omnis ea ad quos voluptatibus magnam eligendi. Officiis distinctio temporibus officia. Id quisquam voluptatem tempora reiciendis natus. Unde ut optio mollitia sint laudantium impedit perspiciatis et. Recusandae aperiam vitae ratione architecto placeat. Impedit sit voluptatem eveniet incidunt.',
+      'itemNumber': 5,
+      'total': { 'votes': { 'yes': 8, 'no': 11 }, 'comments': { 'pro': 8, 'con': 7, 'neutral': 3 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 0, 'no': 3 },
@@ -13413,12 +13492,12 @@ const devStats = {
           },
           'id_district_108': {
             'pro': {
-              'owner': 'id_user_447',
-              'posted': '2017-04-13T13:19:45.061Z',
+              'owner': 'id_user_406',
+              'posted': '2017-04-05T22:52:56.754Z',
               'role': 'pro',
-              'text': 'Suscipit esse quibusdam quo id et minus quod voluptatem consectetur.',
+              'text': 'Rerum consequatur fugiat expedita quisquam quaerat.',
               'userDistrict': { 'id': 'id_district_108', 'name': 'District 8', 'owner': 'id_doug' },
-              'id': 'id_comment_803',
+              'id': 'id_comment_792',
               'votes': { 'up': 0, 'down': 0 },
               'author': {
                 'districts': {
@@ -13428,10 +13507,10 @@ const devStats = {
                     'owner': 'id_doug'
                   }
                 },
-                'firstName': 'Andreane',
-                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/aluisio_azevedo/128.jpg',
-                'lastName': 'Denesik',
-                'id': 'id_user_447'
+                'firstName': 'Meta',
+                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/kevka/128.jpg',
+                'lastName': 'Klein',
+                'id': 'id_user_406'
               }
             }, 'con': null
           },
@@ -13488,7 +13567,9 @@ const devStats = {
       }
     },
     'id_item_804': {
-      'total': { 'votes': { 'yes': 21, 'no': 15 }, 'comments': { 'pro': 11, 'con': 13, 'neutral': 5 } },
+      'text': 'Omnis eligendi suscipit odit. Quo dolores rerum ut non. Laborum est nemo ab. Et beatae laborum distinctio rerum. Quaerat placeat qui quaerat inventore. Ratione voluptatem nihil repellendus et consectetur.',
+      'itemNumber': 6,
+      'total': { 'votes': { 'yes': 22, 'no': 15 }, 'comments': { 'pro': 11, 'con': 13, 'neutral': 5 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 2, 'no': 0 },
@@ -13871,7 +13952,9 @@ const devStats = {
       }
     },
     'id_item_870': {
-      'total': { 'votes': { 'yes': 10, 'no': 6 }, 'comments': { 'pro': 0, 'con': 1, 'neutral': 2 } },
+      'text': 'Tempora numquam tempore a illo. Eum sunt sint accusantium assumenda quo iure voluptas aspernatur corporis. Rerum sit iste a molestiae ratione libero repudiandae. Blanditiis minus perferendis explicabo ratione et id at. Illum voluptatem optio vitae est doloribus et voluptatem ipsa. Dicta repudiandae sint molestias et delectus veritatis quia fuga.',
+      'itemNumber': 7,
+      'total': { 'votes': { 'yes': 10, 'no': 7 }, 'comments': { 'pro': 0, 'con': 2, 'neutral': 2 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 1, 'no': 0 },
@@ -13890,20 +13973,13 @@ const devStats = {
       'topComments': {
         'pro': null,
         'con': {
-          'owner': 'id_user_480',
-          'posted': '2017-04-14T06:45:36.068Z',
+          'owner': 'Rsuvga6279gC9biAAB7ix6hr0sB3',
+          'posted': '2017-04-20T02:46:49.465Z',
           'role': 'con',
-          'text': 'Ducimus itaque dignissimos voluptatum aut et error reprehenderit aperiam.',
-          'userDistrict': { 'id': 'id_district_110', 'name': 'District 10', 'owner': 'id_doug' },
-          'id': 'id_comment_888',
-          'votes': { 'up': 1, 'down': 2 },
-          'author': {
-            'districts': { 'id_acc': { 'id': 'id_district_110', 'name': 'District 10', 'owner': 'id_doug' } },
-            'firstName': 'Antonetta',
-            'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/themrdave/128.jpg',
-            'lastName': 'Dare',
-            'id': 'id_user_480'
-          }
+          'text': 'Terrible idea.',
+          'id': '-Ki8FJh4SXQ9JfHTOfFf',
+          'votes': { 'up': 0, 'down': 0 },
+          'author': { 'id': 'Rsuvga6279gC9biAAB7ix6hr0sB3' }
         },
         'byDistrict': {
           'id_district_101': { 'pro': null, 'con': null },
@@ -13944,7 +14020,9 @@ const devStats = {
       }
     },
     'id_item_890': {
-      'total': { 'votes': { 'yes': 2, 'no': 1 }, 'comments': { 'pro': 8, 'con': 12, 'neutral': 9 } },
+      'text': 'Ducimus laudantium earum animi nisi. Velit molestiae autem fugiat. Velit rem tempora sed quis cumque cumque consequuntur. Maiores nam cumque et nobis fuga et rerum.',
+      'itemNumber': 8,
+      'total': { 'votes': { 'yes': 3, 'no': 1 }, 'comments': { 'pro': 9, 'con': 12, 'neutral': 9 } },
       'byDistrict': {
         'id_district_101': {
           'votes': { 'yes': 0, 'no': 0 },
@@ -14210,12 +14288,12 @@ const devStats = {
               }
             },
             'con': {
-              'owner': 'id_user_454',
-              'posted': '2017-04-13T21:56:28.475Z',
+              'owner': 'id_user_176',
+              'posted': '2017-04-06T13:50:20.949Z',
               'role': 'con',
-              'text': 'Impedit harum est aut qui rerum.',
+              'text': 'In doloremque sit tenetur vitae voluptatem quas.',
               'userDistrict': { 'id': 'id_district_109', 'name': 'District 9', 'owner': 'id_doug' },
-              'id': 'id_comment_896',
+              'id': 'id_comment_897',
               'votes': { 'up': 0, 'down': 0 },
               'author': {
                 'districts': {
@@ -14225,10 +14303,10 @@ const devStats = {
                     'owner': 'id_doug'
                   }
                 },
-                'firstName': 'Hunter',
-                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/eitarafa/128.jpg',
-                'lastName': 'Wolf',
-                'id': 'id_user_454'
+                'firstName': 'Keven',
+                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/malykhinv/128.jpg',
+                'lastName': 'Bradtke',
+                'id': 'id_user_176'
               }
             }
           },
@@ -14282,6 +14360,8 @@ const devStats = {
       }
     },
     'id_item_923': {
+      'text': 'Mollitia odio est doloribus aut et. Eum enim optio vel rem ea culpa repellat omnis. Doloremque rerum incidunt molestias eos ipsam numquam maiores. Sint dolores nostrum suscipit repellat ratione. Culpa asperiores expedita qui.',
+      'itemNumber': 9,
       'total': { 'votes': { 'yes': 13, 'no': 6 }, 'comments': { 'pro': 4, 'con': 5, 'neutral': 5 } },
       'byDistrict': {
         'id_district_101': {
@@ -14533,6 +14613,8 @@ const devStats = {
       }
     },
     'id_item_957': {
+      'text': 'Eum omnis ut et adipisci distinctio amet qui. Dignissimos perspiciatis et sunt qui quisquam. Quas voluptatum eos quae consectetur qui suscipit voluptatem adipisci ut. Pariatur iure quibusdam explicabo laborum sed. Ipsum voluptates labore qui doloribus. Deserunt voluptatem saepe iusto quae assumenda beatae iure hic.',
+      'itemNumber': 10,
       'total': { 'votes': { 'yes': 26, 'no': 23 }, 'comments': { 'pro': 6, 'con': 19, 'neutral': 7 } },
       'byDistrict': {
         'id_district_101': {
@@ -14884,7 +14966,7 @@ const devStats = {
                   }
                 },
                 'firstName': 'Claude',
-                'icon': 'https://s3.amazonaws.com/uifaces/facews/twitter/kurtinc/128.jpg',
+                'icon': 'https://s3.amazonaws.com/uifaces/faces/twitter/kurtinc/128.jpg',
                 'lastName': 'Kerluke',
                 'id': 'id_user_423'
               }
@@ -14916,4 +14998,4 @@ const devStats = {
       }
     }
   }
-}
+};

@@ -46,7 +46,10 @@ export const MEETING_ROUTES = [
     ],
     providers: [
         MeetingService
-    ]
+    ],
+  exports: [
+    DistrictInputTableComponent
+  ]
 })
 export class MeetingModule {
 }

@@ -35,28 +35,26 @@ export class MeetingStatsComponent implements OnChanges {
 
   @Input() meeting: Meeting;
 
+  @Input() stats: MeetingStats;
+
+
+  /*  we run changes in activeDistrict through an output/input cycle so that we can use CDS.OnPush  */
+  @Input() activeDistrict: { id: string | null, name: string } = { id: null, name: 'All Districts' };
+  @Output() activeDistrictChanged = new EventEmitter;
+
   _districts: Office[];
   _districtMap: {[id:string]: Office};
-
   @Input() set districts(val: Office[]){
       if (!!val){
           this._districts = val;
           this._districtMap = val.reduce((result, next) => ({...result, [next.id]: next}), {});
       }
   }
-
   get districts() { return this._districts};
 
-  @Input() stats: MeetingStats;
-
-    /*  we run changes in activeDistrict through an output/input cycle so that we can use CDS.OnPush  */
-    @Input() activeDistrict: { id: string | null, name: string } = {id: null, name: 'All Districts'};
-    @Output() activeDistrictChanged = new EventEmitter;
 
   itemMap: { [id: string]: Item };
-
   private _items: Item[];
-
   @Input() set items(items: Item[]) {
     if (!!items) {
       this.itemMap = items.reduce((result, next) => ({...result, [next.id]: next}), {});
@@ -64,9 +62,24 @@ export class MeetingStatsComponent implements OnChanges {
     }
   }
 
-  get items() {
-    return this._items;
+  get items() {return this._items;}
+
+
+  @Input() reportRequestResult: 'pending' | undefined | { success: boolean, url: string, fromCache: boolean, error?: string };
+  @Output() requestReport: EventEmitter<{ meetingId: string, forDistrict?: string }> = new EventEmitter();
+
+  getReport() {
+    let obj: any = { meetingId: this.meeting.id };
+    if (this.activeDistrict.id !== null) {
+      obj.forDistrict = this.activeDistrict.id;
+    }
+
+    this.requestReport.emit(obj);
   }
+
+
+
+
 
   data: {
     numItems: number;
@@ -185,18 +198,18 @@ export class MeetingStatsComponent implements OnChanges {
   }
 
 
-  updateData() {
+  private updateData() {
 
       let totalSrc = this.activeDistrict.id == null ? this.stats.total : this.stats.total.byDistrict[ this.activeDistrict.id ];
 
-    let numItems = this.meeting.agenda.length;
 
       let participationByDistrict = this.activeDistrict.id == null ? this.districts.map(district => ({
       name: district.name,
       value: this.stats.total.byDistrict[district.id].participants
       })) : null;
 
-      let totParticipants = totalSrc.participants;
+    let numItems = this.meeting.agenda.length;
+    let totParticipants = totalSrc.participants;
       let totComments = totalSrc.comments;
 
       let totVotes = totalSrc.votes;

@@ -9,13 +9,16 @@ import { Item } from '../../item/item.model';
 import { Meeting, MeetingStats } from '../meeting.model';
 import { GroupService } from '../../group/group.service';
 
+
 @Component({
   selector: 'civ-meeting-stats',
   template: `
     <civ-meeting-stats-view [stats]="stats$ | async" [meeting]="meeting$ | async"
                             [districts]="(group$ | async)?.districts" [items]="items$ | async"
                             [activeDistrict]="activeDistrict$ | async"
-                            (activeDistrictChanged)="activeDistrict$.next($event)"
+                            (activeDistrictChanged)="setActiveDistrict($event)"
+                            [reportRequestResult]="reportRequestResult"
+                            (requestReport)="getReport($event)"
                             *ngIf="!!(items$ | async) && !!(stats$ | async)"
     >
 
@@ -28,8 +31,9 @@ export class MeetingStatsContainerComponent implements OnInit {
   meeting$: Observable<Meeting>;
   stats$: Observable<MeetingStats>;
   items$: Observable<Item[]>;
+  activeDistrict$: Subject<{ id: string, name: string }> = new BehaviorSubject({ id: null, name: 'All Districts' });
 
-    activeDistrict$: Subject<{ id: string, name: string }> = new BehaviorSubject({id: null, name: 'All Districts'});
+  reportRequestResult: 'pending' | { success: boolean, url: string, fromCache: boolean, error?: string } | undefined;
 
   constructor(private meetingSvc: MeetingService, private groupSvc: GroupService) {
 
@@ -41,8 +45,20 @@ export class MeetingStatsContainerComponent implements OnInit {
 
   }
 
+  getReport(it: { meetingId: string, forDistrict?: string }) {
+    this.reportRequestResult = 'pending';
+    this.meetingSvc.getPDFReport(it.meetingId, it.forDistrict).take(1).subscribe(response => {
+      this.reportRequestResult = response;
+    })
+  }
+
   ngOnInit() {
 
+  }
+
+  setActiveDistrict(it: { id: string, name: string }) {
+    this.reportRequestResult = undefined;
+    this.activeDistrict$.next(it);
   }
 
 }

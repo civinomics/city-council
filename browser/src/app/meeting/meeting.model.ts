@@ -52,6 +52,8 @@ export type MeetingStats = {
 
   byItem: {
     [itemId: string]: {
+      text: string;
+      itemNumber: number;
       total: ItemStatsAdt;
       byDistrict: { [districtId: string]: ItemStatsAdt }
       topComments: {

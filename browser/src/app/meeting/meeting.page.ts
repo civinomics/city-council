@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { animate, style, transition, trigger } from '@angular/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Meeting } from './meeting.model';
@@ -65,18 +64,18 @@ import { FollowService } from '../shared/services/follow.service';
       </div>
     `,
     styleUrls: [ './../shared/pages.scss' ],
-    host: { '[@host]': '' },
+  /* host: { '[@host]': '' },
     animations: [
         trigger('host', [
             transition('void => *', [
                 style({ opacity: 0 }),
-                animate('250ms 100ms ease-in', style({ opacity: 1 }))
-            ])/*,
+   animate('200ms 200ms ease-in', style({ opacity: 1 }))
+   ]),
              transition('* => void', [
-             animate('250ms 100ms ease-in', style({transform:'translateX(-100%)'}))
-             ])*/
+   animate('200ms ease-in', style({transform:'translateX(-100%)'}))
+   ])
         ])
-    ]
+   ]*/
 })
 export class MeetingPage implements OnInit {
 

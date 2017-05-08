@@ -1,12 +1,35 @@
 <div class="outer-wrapper" *ngIf="!!data" fxLayout="column" fxLayoutGap="50px">
-  <div class="district-selector" fxLayout="row" fxLayoutAlign="start center" fxFlexAlign="center" fxLayoutGap="10px">
-    <label for="distSelector">Report for:</label>
-    <md-select id="distSelector" (change)="setActiveDistrict($event.value)" [(ngModel)]="activeDistrict"
-               [placeholder]="activeDistrict.id == null ? 'All Districts' : ''">
-      <md-option *ngFor="let district of districtSortOptions" [value]="district">{{district.name}}</md-option>
-    </md-select>
+
+  <div fxLayout="row" fxLayoutAlign="space-around center">
+    <div class="district-selector" fxLayout="row" fxLayoutAlign="start center" fxFlexAlign="center" fxLayoutGap="10px">
+      <label for="distSelector">Report for:</label>
+      <md-select id="distSelector" (change)="setActiveDistrict($event.value)" [(ngModel)]="activeDistrict"
+                 [placeholder]="activeDistrict.id == null ? 'All Districts' : ''">
+        <md-option *ngFor="let district of districtSortOptions" [value]="district">{{district.name}}</md-option>
+      </md-select>
+
+    </div>
+
+    <div class="report-row" fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="10px">
+
+      <button md-raised-button color="primary" (click)="getReport()" [disabled]="!!reportRequestResult">
+        <md-icon fontSet="fa" fontIcon="fa-file-pdf-o"></md-icon>
+        <span style="margin-left: 5px">Generate PDF report</span>
+      </button>
+
+      <div *ngIf="reportRequestResult">
+        <div *ngIf="reportRequestResult === 'pending'">
+          <md-spinner color="primary"></md-spinner>
+        </div>
+        <div *ngIf="reportRequestResult.success">
+          <a target="_blank" [href]="reportRequestResult.url">download link</a>
+        </div>
+      </div>
+
+    </div>
   </div>
-    <div class="squares" fxLayout="row" fxLayoutGap="20px" *ngIf="!!data" fxFlexAlign="center" fxLayoutWrap="wrap">
+
+  <div class="squares" fxLayout="row" fxLayoutGap="20px" *ngIf="!!data" fxFlexAlign="center" fxLayoutWrap="wrap">
     <div class="square">
       <div class="value">{{data.numItems}}</div>
       <div class="key">

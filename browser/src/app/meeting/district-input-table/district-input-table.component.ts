@@ -1,5 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Office } from '../../group/office.model';
+
+export type Datatype = {
+  district: string,
+  votes: { yes: number, no: number },
+  comments: { pro: number, con: number }
+};
 
 @Component({
     selector: 'civ-district-input-table',
@@ -8,7 +13,7 @@ import { Office } from '../../group/office.model';
 })
 export class DistrictInputTableComponent implements OnInit {
 
-    @Input() data: { district: Office, votes: { yes: number, no: number }, comments: { pro: number, con: number } }[];
+  @Input() data: Datatype[];
 
     constructor() {
     }
