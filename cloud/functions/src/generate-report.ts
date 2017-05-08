@@ -1,7 +1,7 @@
 import { renderReport } from '@civ/meeting-reports';
 import * as functions from 'firebase-functions';
 import * as moment from 'moment';
-import { getStorageBucket } from './_internal';
+import { getStorageBucket, initializeAdminApp } from './_internal';
 import * as pdf from 'html-pdf';
 //import {computeMeetingStats} from './meeting-stats';
 import { Observable } from 'rxjs/Observable';
@@ -10,78 +10,149 @@ import 'rxjs/add/observable/of';
 
 import { reportData } from './dev-stats';
 
+const cors = require('cors')({ origin: true });
 
-export const report = functions.https.onRequest((request, response) => {
-  doRender(request, response);
-});
-
-export function doRender(req, response) {
+const app = initializeAdminApp();
 
 
+export const report = functions.https.onRequest(handle);
+
+function handle(req, res) {
   const meetingId = req.query[ 'meetingId' ] || 'test';
 
-  console.log(`generating report for meeting ${meetingId}`);
+  checkCached(meetingId).then(url => {
+    if (url == null) {
+      doRender(meetingId).then(url => {
+        cacheUrl(meetingId, url).then(() => {
 
-  const stats$: Observable<any> = Observable.of(reportData); //computeMeetingStats(meetingId);
+          cors(req, res, () => {
+            res.send(JSON.stringify({
+              success: true,
+              fromCache: false,
+              url
+            }));
+          })
+
+        })
+      })
+    } else {
+      cors(req, res, () => {
+        res.send(JSON.stringify({
+          success: true,
+          fromCache: true,
+          url
+        }));
+      })
+
+    }
+  });
+}
+
+function checkCached(meetingId): Promise<string | null> {
+  return new Promise((resolve, reject) => {
+
+    app.database().ref(`internal/meeting_report/${meetingId}`).once('value', snapshot => {
+      if (!snapshot.exists()) {
+        resolve(null);
+        return;
+      }
+
+      let val = snapshot.val(),
+        timestamp = moment(val.timestamp);
+
+      if (timestamp.isSameOrAfter(moment().subtract(1, 'hour'))) {
+        resolve(val.url);
+      } else {
+        resolve(null);
+      }
+
+    }).catch(err => reject(err));
 
 
-  stats$.subscribe(stats => {
-
-    renderReport(meetingId).then(htmlString => {
-
-      console.log(htmlString);
-
-      /*            pdf.create(htmlString, {format:"letter", orientation: "portrait"}).toFile('test.pdf', function(err, file){
-       console.log('wrote it');
-       console.log(file)
-       });
-       */
+  });
+}
 
 
-      pdf.create(htmlString, { format: 'letter', orientation: 'portrait' }).toStream(function (err, stream) {
+function cacheUrl(meetingId, url) {
+  return new Promise((resolve, reject) => {
+    app.database().ref(`internal/meeting_report/${meetingId}`).set({
+      timestamp: moment().toISOString(),
+      url
+    }).then(() => {
+      resolve();
+    }).catch(err => reject(err));
+  })
+}
 
-        /*              response.setHeader('Content-Type', 'application/pdf');
-         response.setHeader('Content-Disposition', `attachment; filename=${meetingId.pdf}`);
+export function doRender(meetingId): Promise<string> {
 
-         */
+  return new Promise((resolve, reject) => {
 
-        const bucket = getStorageBucket();
+    console.log(`generating report for meeting ${meetingId}`);
 
-        const now = moment().toISOString().split('.')[ 0 ];
-
-        const path = `meeting_reports/${meetingId}-${now}.pdf`;
-
-        const file = bucket.file(path);
-
-        const writeStream = file.createWriteStream();
+    const stats$: Observable<any> = Observable.of(reportData); //computeMeetingStats(meetingId);
 
 
-        stream.pipe(writeStream).on('finish', (x) => {
-          file.makePublic((err, response) => {
-            let xx = 3;
+    stats$.subscribe(stats => {
 
-            file.getSignedUrl(url => {
-              let yy = 4;
-            })
+      renderReport(meetingId).then(htmlString => {
+
+        console.log(htmlString);
+
+
+        pdf.create(htmlString, { format: 'letter', orientation: 'portrait' }).toStream(function (err, stream) {
+
+
+          const bucket = getStorageBucket();
+
+          const now = moment().toISOString().split('.')[ 0 ];
+
+          const path = `meeting_reports%2f${meetingId}-${now}.pdf`;
+
+          const file = bucket.file(path);
+
+          const writeStream = file.createWriteStream();
+
+          stream.pipe(writeStream).on('finish', (x) => {
+            file.makePublic((err, response) => {
+              if (err) {
+                reject(err);
+              }
+
+              file.getMetadata().then(resp => {
+                let metadata = resp[ 0 ];
+                resolve(metadata.mediaLink);
+              }, err => {
+                reject(err);
+              })
+
+              /*              file.getSignedUrl({
+               action: 'read',
+               expires: moment().add(6, 'months').format('MM-DD-YYYY').toString()
+               }, (err, url) => {
+
+               if (err){
+               reject(err);
+               } else {
+               resolve(url);
+               }
+               })*/
+
+            });
 
           });
 
+
         });
 
+      })
 
-        console.log(`https://firebasestorage.googleapis.com/v0/b/civ-cc.appspot.com/o/${path}?alt=media`)
-        ;
-        /*  response.send(JSON.stringify({
-         success: true,
-         filePath: `https://firebasestorage.googleapis.com/v0/b/civ-cc.appspot.com/o/${path}?alt=media`
-         }));*/
-
-
-      });
 
     })
-
-
-  })
+  });
 
 }
+/************ TEST
+
+ handle({query:{meetingId:'id_meeting_515'}} as any, {} as any);
+ */

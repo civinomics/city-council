@@ -11,7 +11,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/combineLatest';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/mergeMap';
-import * as fs from 'fs';
 
 import {
   Group,
@@ -410,8 +409,10 @@ function getGroup(groupId): Observable<Group> {
 
 }
 
+/****** TEST **********
 
 computeMeetingStats('id_meeting_511').subscribe(it => {
   fs.writeFileSync('dev-stats.json', JSON.stringify(it));
   console.log('done');
 });
+ */

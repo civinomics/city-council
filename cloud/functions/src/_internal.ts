@@ -7,7 +7,7 @@ import { Observer } from 'rxjs/Observer';
 const creds = require('./admin-creds');
 
 const gcs = require('@google-cloud/storage')(
-  { projectId: 'civ-cc', keyFileName: './admin-creds' }
+  { projectId: 'civ-cc', keyFileName: './admin-creds.json' }
 );
 
 const adminCreds = require('./admin-creds.json');
