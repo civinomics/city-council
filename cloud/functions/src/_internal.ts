@@ -1,9 +1,14 @@
 import * as admin from 'firebase-admin';
 import * as firebase from 'firebase';
-import {firebaseAppConfig, serviceAppCreds} from './firebase-creds';
-import {Observable} from 'rxjs/Observable';
-import {Observer} from 'rxjs/Observer';
-import * as gcloud from 'gcloud';
+import { firebaseAppConfig, serviceAppCreds } from './firebase-creds';
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
+
+const creds = require('./admin-creds');
+
+const gcs = require('@google-cloud/storage')(
+  { projectId: 'civ-cc', keyFileName: './admin-creds' }
+);
 
 const adminCreds = require('./admin-creds.json');
 const SOCRATA_ENV_VAR_KEY = 'civcc.socrata-key';
@@ -36,12 +41,7 @@ export function initializeFirebaseApp(): Observable<firebase.app.App> {
 
 export function getStorageBucket() {
 
-  const app = gcloud.storage({
-    projectId: 'civ-cc',
-    keyFileName: './admin-creds.json'
-  });
-
-  return app.bucket('civ-cc.appspot.com');
+  return gcs.bucket('civ-cc.appspot.com');
 
 
 }

@@ -9,7 +9,9 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "@civ/city-council": "0.0.4",
+    "@civ/city-council": "^1.0.0-alpha.0",
+    "@civ/meeting-reports": "^1.0.0-alpha.1",
+    "@google-cloud/storage": "^1.1.0",
     "cors": "^2.8.3",
     "firebase": "^3.7.6",
     "firebase-admin": "^4.1.2",
