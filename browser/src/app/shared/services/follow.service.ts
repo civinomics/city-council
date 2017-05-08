@@ -9,7 +9,7 @@ export class FollowService {
 
   constructor(private db: AngularFireDatabase, private authSvc: AuthService) { }
 
-  getFollowCount(type: 'meeting' | 'group', id: string): Observable<number> {
+  getFollowCount(type: 'meeting' | 'group' | 'item', id: string): Observable<number> {
     return this.db.object(`/following/${type}/${id}`)
       .map(it => {
         if (!it.$exists()) {
@@ -21,7 +21,7 @@ export class FollowService {
       });
   }
 
-  follow(type: 'meeting' | 'group', id: string): Observable<any> {
+  follow(type: 'meeting' | 'group' | 'item', id: string): Observable<any> {
     return this.authSvc.sessionUserId$.take(1).flatMap(userId => {
       if (!userId) {
         return Observable.of({ success: false, message: 'auth-required' });
@@ -31,7 +31,7 @@ export class FollowService {
 
   }
 
-  unfollow(type: 'meeting' | 'group', id: string): Observable<any> {
+  unfollow(type: 'meeting' | 'group' | 'item', id: string): Observable<any> {
     return this.authSvc.sessionUserId$.take(1).flatMap(userId => {
       if (!userId) {
         return Observable.of({ success: false, message: 'auth-required' });
@@ -41,7 +41,7 @@ export class FollowService {
 
   }
 
-  isFollowing(type: 'meeting' | 'group', id: string): Observable<boolean> {
+  isFollowing(type: 'meeting' | 'group' | 'item', id: string): Observable<boolean> {
     return this.authSvc.sessionUserId$.flatMap(userId => {
 
       if (!userId) {
@@ -54,7 +54,7 @@ export class FollowService {
     });
   }
 
-  private doAddRemove(type: 'meeting' | 'group', id: string, userId: string, value: boolean): Observable<any> {
+  private doAddRemove(type: 'meeting' | 'group' | 'item', id: string, userId: string, value: boolean): Observable<any> {
     return Observable.create((observer: Observer<any>) => {
       this.db.object(`/following/${type}/${id}`).update({ [userId]: value }).then(res => {
         observer.next({ success: true });

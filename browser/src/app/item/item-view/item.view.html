@@ -81,6 +81,15 @@
   </div>
 </div>
 
+<div class="follow-row" fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="10px">
+  <div *ngIf="numFollows > 0" class="follower-count">
+    <strong>{{numFollows}}</strong> followers
+  </div>
+  <button md-raised-button [color]="isFollowing ? 'primary' : 'accent' " (click)="addOrRemoveFollow()">{{isFollowing ?
+    'UNFOLLOW' : 'FOLLOW'}}
+  </button>
+</div>
+
 
 <div class="back-to-agenda">
   <button md-button (click)="back.emit()">

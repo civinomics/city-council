@@ -62,13 +62,13 @@ export class ItemViewComponent implements OnInit, OnChanges {
 
   @Input() item: Item;
   @Input() userVote: Vote | null;
+  @Input() numFollows: number;
+  @Input() isFollowing: boolean;
   @Input() activeMeeting: string;
-
   @Input() userComment: Comment | null;
-
   @Input() votes: Vote[];
 
-
+  @Output() follow: EventEmitter<boolean> = new EventEmitter();
   @Output() vote: EventEmitter<{ itemId: string, value: number }> = new EventEmitter();
   @Output() comment: EventEmitter<{ itemId: string, text: string, role: string }> = new EventEmitter();
   @Output() back: EventEmitter<any> = new EventEmitter();
@@ -85,6 +85,10 @@ export class ItemViewComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  addOrRemoveFollow() {
+    this.follow.emit(!this.isFollowing);
   }
 
 

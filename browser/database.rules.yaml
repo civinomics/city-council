@@ -70,6 +70,12 @@ root:
         $userId:
           .value: isCurrentUser($userId)
 
+    item:
+      $itemId:
+        .write: true
+        $userId:
+          .value: isCurrentUser($userId)
+
   meeting:
     .read: true
     .write: isSuperuser()

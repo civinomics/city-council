@@ -11,13 +11,19 @@ import { Comment } from '../comment/comment.model';
 
 import { CommentService } from '../comment/comment.service';
 import { AppFocusService } from '../core/focus.service';
+import { FollowService } from '../shared/services/follow.service';
 
 @Component({
   selector: 'civ-item-container',
   template: `
-    <civ-item-view [item]="item$ | async" [userVote]="userVote$ | async" [userComment]="userComment$ | async"
+    <civ-item-view [item]="item$ | async"
+                   [userVote]="userVote$ | async"
+                   [userComment]="userComment$ | async"
                    [votes]="votes$ | async"
                    [activeMeeting]="activeMeeting$ | async"
+                   [numFollows]="numFollows$ | async"
+                   [isFollowing]="isFollowing$ | async"
+                   (follow)="doFollow($event)"
                    (vote)="castVote($event)" (comment)="postComment($event)" (back)="backToAgenda()"></civ-item-view>
   `,
   /*  host: { '[@host]': '' },
@@ -44,17 +50,20 @@ export class ItemPageComponent implements OnInit {
 
   activeMeeting$: Observable<string>;
 
+
+  numFollows$: Observable<number>;
+  isFollowing$: Observable<boolean>;
+
   constructor(private store: Store<AppState>,
               private router: Router,
               private route: ActivatedRoute,
               private itemSvc: ItemService,
-              private voteSvc: VoteService, private commentSvc: CommentService, private focusSvc: AppFocusService) {
+              private voteSvc: VoteService,
+              private commentSvc: CommentService,
+              private focusSvc: AppFocusService,
+              private followSvc: FollowService) {
 
-  }
-
-
-  ngOnInit() {
-    const itemId = this.route.params.map(params => params['itemId']);
+    const itemId$ = this.route.params.map(params => params[ 'itemId' ]);
 
     this.route.params.subscribe(params => {
       this.focusSvc.selectItem(params['itemId']);
@@ -64,7 +73,7 @@ export class ItemPageComponent implements OnInit {
     });
 
 
-    this.item$ = this.itemSvc.getSelectedItem().share();
+    this.item$ = this.itemSvc.getSelectedItem();
     this.userVote$ = this.voteSvc.getUserVoteForSelectedItem();
 
     this.votes$ = this.item$.take(1)//get the initial page rendered before loading votes
@@ -77,6 +86,16 @@ export class ItemPageComponent implements OnInit {
 
 
     this.activeMeeting$ = this.route.params.map(params => params['meetingId']);
+
+    this.numFollows$ = itemId$.flatMap(id => this.followSvc.getFollowCount('item', id));
+
+    this.isFollowing$ = itemId$.flatMap(id => this.followSvc.isFollowing('item', id));
+
+  }
+
+
+  ngOnInit() {
+
   }
 
   castVote(it: { itemId: string, value: 1 | -1 }) {
@@ -92,5 +111,30 @@ export class ItemPageComponent implements OnInit {
     this.router.navigate([ '../../' ], { relativeTo: this.route })
   }
 
+  doFollow(add: boolean) {
+    if (add) {
+      this.addFollow()
+    } else {
+      this.unfollow();
+    }
+  }
+
+  addFollow() {
+    this.item$.take(1).subscribe(item => {
+      this.followSvc.follow('item', item.id).subscribe(result => {
+        console.log('follow result"');
+        console.log(result);
+      })
+    })
+  }
+
+  unfollow() {
+    this.item$.take(1).subscribe(item => {
+      this.followSvc.unfollow('item', item.id).subscribe(result => {
+        console.log('unfollow result"');
+        console.log(result);
+      })
+    })
+  }
 
 }
