@@ -8,7 +8,7 @@ export { report } from './src/generate-report';
 
 export { newCommentNotifications } from './src/item-notifications';
 
-export { checkMeetings } from './src/meeting-notifications';
+export { newMeetingNotifications, closedMeetingNotifications } from './src/meeting-notifications';
 
 export { importAgendas } from './src/import-agendas';
 
