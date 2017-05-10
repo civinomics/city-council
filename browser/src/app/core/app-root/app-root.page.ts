@@ -33,6 +33,8 @@ export class AppRootComponent implements OnInit {
         height: '90vh'
       });
       dialog.afterClosed().subscribe(result => {
+        console.log('dialog closed');
+        console.log(result);
         if (!!req.callback) {
           req.callback(result);
         }

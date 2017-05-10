@@ -56,9 +56,11 @@ export class CommentService {
         console.debug('no user signed in - opening modal');
         this.authService.requestAuthModal('We need you to sign in before voting.', (result) => {
           setTimeout(() => {
-            console.debug(`modal callback - result ${result} : casting again`);
-            this.postComment(itemId, text, role);
-          }, 1000);
+            if (!!result) {
+              console.debug(`modal callback - result ${result} : casting again`);
+              this.postComment(itemId, text, role);
+            }
+          }, 500);
         });
         return;
       } else if (user.isVerified == false) {
