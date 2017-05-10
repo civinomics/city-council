@@ -82,23 +82,7 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
   constructor(private mapsAPILoader: MapsAPILoader,  private zone: NgZone){}
 
   ngAfterViewInit(): void {
-    this.mapsAPILoader.load().then(() => {
-      let autocomplete = new google.maps.places.Autocomplete(this.rawAddressInput.nativeElement, {
-        types: ["address"]
-      });
-
-      autocomplete.addListener('place_changed', () => {
-        let place = autocomplete.getPlace();
-        if (!!place){
-          this.zone.run(()=> {
-            this.updateAddress(place);
-          })
-
-        }
-      });
-
-    })
-
+    this.initAddressAutocomplete();
   }
 
   private updateAddress(place: any){
@@ -116,6 +100,12 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     //firstName, lastName and email changes can only be triggered when a user has initialized a social signin
+
+    if (changes[ 'mode' ] && this.mode == 'sign-up') {
+      setTimeout(() => { // give the template time to update
+        this.initAddressAutocomplete();
+      }, 750);
+    }
 
     if (changes['email'] && !changes['email'].firstChange) {
       this.socialConnected = true;
@@ -204,6 +194,30 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
       });
     }
   }
+
+
+  private initAddressAutocomplete() {
+    if (!!this.addressInput) {
+      this.mapsAPILoader.load().then(() => {
+        let autocomplete = new google.maps.places.Autocomplete(this.rawAddressInput.nativeElement, {
+          types: [ 'address' ]
+        });
+
+        autocomplete.addListener('place_changed', () => {
+          let place = autocomplete.getPlace();
+          if (!!place) {
+            this.zone.run(() => {
+              this.updateAddress(place);
+            })
+
+          }
+        });
+
+      })
+    }
+
+  }
+
 
 
 }
