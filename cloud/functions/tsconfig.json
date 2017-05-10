@@ -1,7 +1,8 @@
 {
   "compileOnSave": false,
   "include": [
-    "src"
+    "src",
+    "index.ts"
   ],
   "compilerOptions": {
     "baseUrl": "src",
@@ -21,7 +22,7 @@
     ],
     "lib": [
       "es2016",
-      "DOM"
+      "dom"
     ]
   }
 }

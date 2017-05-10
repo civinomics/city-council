@@ -5,3 +5,5 @@ export {districts} from './src/check-districts';
 export {stats} from './src/meeting-stats';
 
 export { report } from './src/generate-report';
+
+export { newCommentNotifications } from './src/item-notifications';
