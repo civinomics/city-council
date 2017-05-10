@@ -8,10 +8,10 @@ import { parseVote, Vote } from './vote.model';
 import { SessionUser } from '../user/user.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelectedItem } from '../state';
+import { AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelectedItem, getVotesState } from '../state';
 import { SELECT_ITEM } from '../core/focus.reducer';
-import { VotesLoadedAction } from './vote.reducer';
-
+import { State as VotesState, VotesLoadedAction } from './vote.reducer';
+import { SESSION_USER_LOADED } from '../user/auth.reducer';
 @Injectable()
 export class VoteService {
   @Effect()
@@ -34,8 +34,21 @@ export class VoteService {
     .filter(it => !!it)
     .flatMap(id => this.loadVotesForItem(id).take(1).map(votes => new VotesLoadedAction(votes, id)));
 
-  constructor(private authService: AuthService, private db: AngularFireDatabase, private store: Store<AppState>, private actions: Actions, private authSvc: AuthService) {
+  @Effect()
+  loadSessionUserVotesEffect = this.actions.ofType(SESSION_USER_LOADED)
+    .map(toPayload)
+    .filter(it => !!it && !!it.votes)
+    .flatMap(it => this.loadSessionUserVotes(it.votes))
+    .debounceTime(100)
+    .mergeMap(dict => {
+      return Object.keys(dict).map(itemId => new VotesLoadedAction([ dict[ itemId ] ], itemId));
 
+    });
+
+  private state$: Observable<VotesState>;
+
+  constructor(private authService: AuthService, private db: AngularFireDatabase, private store: Store<AppState>, private actions: Actions) {
+    this.state$ = this.store.select(getVotesState);
   }
 
 
@@ -84,6 +97,26 @@ export class VoteService {
 
   public getVotesForSelectedItem() {
     return this.store.select(getVotesForSelectedItem).map(dict => values(dict || {}));
+  }
+
+  public getSessionUserVoteFor(targetId: string): Observable<Vote | null> {
+
+    return this.authService.sessionUser$.flatMap(it => {
+      let voteId = it.votes[ targetId ];
+      console.log(`voteid: ${voteId}`)
+      if (!!voteId) {
+        return this.state$.map(state => (state.entities[ targetId ] || {})[ voteId ]);
+      }
+      return Observable.of(null);
+    })
+  }
+
+  private loadSessionUserVotes(ids: { [itemId: string]: string }): Observable<{ [itemId: string]: Vote }> {
+    return Observable.from(Object.keys(ids)).flatMap(itemId =>
+      this.db.object(`/vote/${itemId}/${ids[ itemId ]}`)
+        .map(data => parseVote(data))
+        .map(data => ({ [itemId]: data }))
+    ).scan((result, entry) => ({ ...result, ...entry }), {});
   }
 
 

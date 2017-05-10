@@ -37,7 +37,6 @@ export class CommentService {
 
 
   constructor(private authService: AuthService, private db: AngularFireDatabase, private store: Store<AppState>, private actions: Actions) {
-
   }
 
   public getCommentsForSelectedItem() {

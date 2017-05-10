@@ -3,6 +3,8 @@ import { MdInputDirective } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Comment } from '../../core/models';
 import { CommentService } from '../comment.service';
+import { VoteService } from '../../vote/vote.service';
+import { Vote } from '../../vote/vote.model';
 
 @Component({
     selector: 'civ-comment',
@@ -81,11 +83,16 @@ export class CommentComponent implements OnInit {
     newText: string;
     originalText: string;
 
-    constructor(private commentSvc: CommentService) {
+  userVote: Vote | null;
+
+  constructor(private commentSvc: CommentService, private voteSvc: VoteService) {
     }
 
     ngOnInit() {
         this.newText = this.originalText = this.comment.text;
+      this.voteSvc.getSessionUserVoteFor(this.comment.id).subscribe(it => {
+        this.userVote = it;
+      })
     }
 
     toggleEditing() {
@@ -105,5 +112,9 @@ export class CommentComponent implements OnInit {
     get authorDistrict() {
         return this.comment.author.districts[ this.activeContext ];
     }
+
+  vote(value: 1 | -1) {
+    this.voteSvc.castVote(this.comment.id, value);
+  }
 
 }

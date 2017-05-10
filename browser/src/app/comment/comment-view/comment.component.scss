@@ -54,6 +54,20 @@
   font-weight: 600;
 }
 
+.vote-tick {
+  &.chosen {
+
+    &.up {
+    }
+
+  }
+
+  &.rejected {
+    opacity: 0.2;
+  }
+
+}
+
 md-icon, button[md-button]:not([disabled]) {
   &.red {
     color: mat-color($mat-red, 700);
