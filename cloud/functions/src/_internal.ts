@@ -76,8 +76,8 @@ export function getEmailTransport(): Transporter {
   return createTransport({
     service: 'Gmail',
     auth: {
-      user: 'drew@civinomics.com',
-      pass: '44Midi888'
+      user: functions.config().notifications.address,
+      pass: functions.config().notifications.pw
     }
   });
 }

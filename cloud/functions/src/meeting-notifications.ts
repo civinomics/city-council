@@ -13,6 +13,8 @@ import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { SendMailOptions } from 'nodemailer';
+import * as moment from 'moment';
+import Moment = moment.Moment;
 
 let app: admin.app.App;
 
@@ -36,6 +38,30 @@ export const newMeetingNotifications = functions.database.ref(`/meeting`).onWrit
     console.error(`error handling meeting write event: ${JSON.stringify(err)}`)
   })
 });
+
+function checkForAndNotifyOfClosedMeetings() {
+  findNewlyClosedMeetings().then(meetings => {
+    //TODO
+  });
+}
+
+function findNewlyClosedMeetings(): Promise<Meeting[]> {
+  return new Promise((resolve, reject) => {
+    db.ref(`/meeting`).once('value', snapshot => {
+      const newlyClosed = [];
+      const now = moment();
+      const hourAgo = now.subtract(1, 'hours'); // TODO: are we going to miss or double-send here?
+      snapshot.forEach(child => {
+        let deadline = moment(child.val().feedbackDeadline);
+        if (deadline.isBefore(now) && deadline.isAfter(hourAgo)) {
+          newlyClosed.push(parseMeeting({ ...snapshot.val(), id: snapshot.key }));
+        }
+        return false;
+      });
+      resolve(newlyClosed);
+    }).catch(err => reject(err));
+  });
+}
 
 function handleMeetingWriteEvent(delta: DeltaSnapshot) {
   return new Promise((resolve, reject) => {
