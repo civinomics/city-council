@@ -43,13 +43,14 @@ export type NewCommentData = {
 }
 
 export const parseComment: (data: RawComment|Comment|RawCommentWithAuthor|CommentWithAuthor) => Comment = (data) => {
+  let votes = data.votes || { up: 0, down: 0 };
     return {
         ...parseEntity(data),
         text: data.text,
         role: data.role,
         posted: moment(data.posted),
         userDistrict: data.userDistrict || null,
-        votes: data.votes,
+      votes,
         replies: data.replies,
         author: !!data.author ? parseUser(data.author) : null
     }
@@ -59,9 +60,20 @@ export function commentsEqual(x: Comment, y: Comment): boolean {
     if (x.id != y.id || x.text != y.text || x.role != y.role || x.userDistrict != y.userDistrict) {
         return false;
     }
+  if (!(!x.votes && !y.votes)) { //if at least one has votes
+    if (!(!!x.votes && !!y.votes)) { //if they don't both have votes, they're unequal
+      return false;
+    }
+    if (x.votes.up != y.votes.up || x.votes.down != y.votes.down) {
+      return false;
+    }
+  }
     return true;
 }
 
 export function mergeComments(prev: Comment, next: Comment): Comment {
+  console.log('merging: ');
+  console.log(prev);
+  console.log(next);
     return {...prev, ...next};
 }

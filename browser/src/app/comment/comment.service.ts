@@ -4,12 +4,13 @@ import { AuthService } from '../user/auth.service';
 import { AngularFireDatabase } from 'angularfire2';
 import { Observable } from 'rxjs';
 import { Comment, parseComment } from './comment.model';
-import { SessionUser } from '../user/user.model';
+import { parseUser, SessionUser, User } from '../user/user.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { AppState, getCommentsForSelectedItem, getSessionUser, getUserCommentForSelectedItem } from '../state';
 import { SELECT_ITEM } from '../core/focus.reducer';
 import { Store } from '@ngrx/store';
 import { CommentsLoadedAction } from './comment.reducer';
+import { parseVote } from '../vote/vote.model';
 
 @Injectable()
 export class CommentService {
@@ -20,10 +21,10 @@ export class CommentService {
         .map(toPayload)
         .filter(it => !!it)
       )
-      .filter(([user, itemId]) => !!user && !!user.comments[itemId])
-      .flatMap(([user, itemId]) =>
-        this.loadSingleComment(itemId, user.comments[itemId]).map(comment =>
-          new CommentsLoadedAction([comment], itemId)
+      .filter(([ user, itemId ]) => !!user && !!user.comments[ itemId ])
+      .flatMap(([ user, itemId ]) =>
+        this.loadSingleComment(itemId, user.comments[ itemId ]).map(comment =>
+          new CommentsLoadedAction([ comment ], itemId)
         )
       );
 
@@ -32,7 +33,7 @@ export class CommentService {
   loadCommentsForSelectedItemEffect = this.actions.ofType(SELECT_ITEM)
     .map(toPayload)
     .filter(it => !!it)
-    .flatMap(id => this.loadCommentsForItem(id).take(1).map(votes => new CommentsLoadedAction(votes, id)));
+    .flatMap(id => this.loadCommentsForItem(id).map(comments => new CommentsLoadedAction(comments, id)));
 
 
   constructor(private authService: AuthService, private db: AngularFireDatabase, private store: Store<AppState>, private actions: Actions) {
@@ -40,7 +41,7 @@ export class CommentService {
   }
 
   public getCommentsForSelectedItem() {
-    return this.store.select(getCommentsForSelectedItem);
+    return this.store.select(getCommentsForSelectedItem).map(dict => Object.keys(dict).map(id => dict[ id ]));
   }
 
   public getUserCommentForSelectedItem() {
@@ -76,7 +77,7 @@ export class CommentService {
           this.createNewComment(itemId, text, role, user);
         } else {
           console.debug('extant comment exists - editing');
-          this.editComment(itemId, extantComment, {role, text});
+          this.editComment(itemId, extantComment, { role, text });
         }
 
 
@@ -93,7 +94,7 @@ export class CommentService {
       text,
       role,
       posted: moment().toISOString(),
-      userDistrict: user.districts['id_acc'] || null,
+      userDistrict: user.districts[ 'id_acc' ] || null,
       owner: user.id
     };
 
@@ -101,7 +102,7 @@ export class CommentService {
       let commentId = res.key;
       console.debug(`successfully posted new comment to ${itemId} with id ${commentId}`);
 
-      this.db.object(`/user_private/${user.id}/comments`).update({[itemId]: commentId}).then(() => {
+      this.db.object(`/user_private/${user.id}/comments`).update({ [itemId]: commentId }).then(() => {
         console.debug(`successfully created user_private/comments/${itemId}/${commentId}`);
       })
 
@@ -109,7 +110,7 @@ export class CommentService {
   }
 
   private editComment(itemId: string, extant: Comment, updated: { text?: string, role?: string }) {
-    let put = {text: updated.text || extant.text, role: updated.role || extant.role};
+    let put = { text: updated.text || extant.text, role: updated.role || extant.role };
 
     this.db.object(`/comment/${itemId}/${extant.id}`).update(put)
       .then(() => {
@@ -121,12 +122,35 @@ export class CommentService {
       })
   }
 
-  private loadCommentsForItem(itemId: string): Observable<Comment[]> {
-    return this.db.list(`/comment/${itemId}`)/*
-     .flatMap(comments => {
+  private getAuthor(id: string): Observable<User> {
+    return this.db.object(`user/${id}`).take(1).map(it => parseUser(it));
+  }
 
-     })*/
-      .map(arr => arr.map(comment => parseComment(comment)));
+  private getVoteCounts(id: string): Observable<{ up: number, down: number }> {
+    return this.db.list(`/vote/${id}`)
+      .map(votes => votes.map(vote => parseVote(vote)))
+      .map(votes => ({
+        up: votes.filter(it => it.value == 1).length,
+        down: votes.filter(it => it.value == -1).length
+      }))
+  }
+
+  private loadCommentsForItem(itemId: string): Observable<Comment[]> {
+    return this.db.list(`/comment/${itemId}`)
+      .take(1)
+      .map(arr => arr.map(comment => parseComment(comment)))
+      .flatMap(comments =>
+        Observable.combineLatest(...comments.map(comment =>
+          this.getVoteCounts(comment.id).withLatestFrom(this.getAuthor(comment.id), (votes, author) => {
+            console.log('asdf');
+            return {
+              ...comment,
+              author,
+              votes
+            }
+          })
+        ))
+      );
 
 
   }

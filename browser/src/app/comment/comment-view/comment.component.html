@@ -29,11 +29,11 @@
     </div>
 
     <div *ngIf="showVoteBtn" fxLayout="row" fxLayoutAlign="start center">
-      <button md-icon-button>
+      <button md-icon-button (click)="vote(1)">
         <md-icon>expand_less</md-icon>
       </button>
       <div class="vote-count">{{comment.votes.up - comment.votes.down}}</div>
-      <button md-icon-button>
+      <button md-icon-button (click)="vote(-1)">
         <md-icon>expand_more</md-icon>
       </button>
     </div>
