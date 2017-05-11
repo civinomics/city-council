@@ -1,21 +1,164 @@
+$PAGE_PADDING: 20px;
+$PAGE_HEIGHT: 772px;
+$PAGE_WIDTH: 570px;
+
+.page-break {
+  position: absolute;
+  width: 100%;
+  border-bottom: 1px solid darkorange;
+}
 
 :host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: block;
+  padding: $PAGE_PADDING;
+  box-sizing: border-box;
+  position: relative;
+  width: $PAGE_WIDTH;
+}
 
-  & > div {
-    margin-bottom: 30px;
-  }
+.page {
+  position: relative;
+  box-sizing: border-box;
+  page-break-inside: avoid;
+  page-break-after: always;
+}
+
+.heading {
+  text-align: center;
+  text-transform: uppercase;
+  margin: 20px 0;
+  font-weight: 600;
+}
+
+.cover {
+  padding-top: 40%
 }
 
 .group-info {
-  display: flex;
-  align-items: center;
+  padding-bottom: 15%;
+  text-align: center;
 
   .flag {
-    height: 50px;
+    height: 40px;
     margin-right: 20px;
+    border-radius: 2px;
+    border: 1px solid #333;
   }
 
+  .title {
+    position: relative;
+    top: -15px
+  }
+
+}
+
+.meeting-info {
+  margin-bottom: 30px;
+  .top-line, .for-district, .meeting-name {
+    margin-bottom: 5px;
+    text-align: center;
+  }
+  .top-line, .for-district {
+    font-size: 0.9em;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .meeting-name {
+    font-size: 1.1em;
+  }
+}
+
+.squares {
+  margin: 30px 0 80px 0;
+
+  .square {
+    display: inline-block;
+    width: 95px;
+    margin: 0 10px;
+    &:first-of-type {
+      margin-left: 20px;
+    }
+
+    &:last-of-type {
+      margin-right: 20px;
+    }
+
+    border: 1px solid #616161;
+    color: rgba(0, 0, 0, .87);
+    padding: 10px;
+    text-align: center;
+    .value {
+      font-size: 1.75em;
+      margin-bottom: 5px;
+    }
+
+    .key {
+      text-transform: uppercase;
+      font-weight: 200;
+    }
+
+  }
+}
+
+.page.item {
+  padding-top: 20px;
+
+  .item-text {
+    margin-bottom: 30px;
+  }
+
+  .item-no {
+    font-weight: 500;
+  }
+
+  .comment-row {
+    margin-bottom: 5px;
+    padding: 5px;
+    border-bottom: 1px solid #444;
+    page-break-inside: avoid;
+    position: relative;
+
+    .info-row {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      padding-top: 5px;
+    }
+
+    .votes {
+      font-weight: 600;
+      & > span {
+        margin: 0 10px;
+      }
+
+    }
+
+    .byline {
+      text-align: right;
+    }
+
+    .author-name {
+      font-weight: 500;
+    }
+
+    .role {
+      font-weight: 600;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+  }
+
+}
+
+.pro {
+  color: rgb(46, 114, 51);
+}
+
+.con {
+  color: rgb(189, 45, 45);
 }

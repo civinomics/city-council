@@ -1,0 +1,27 @@
+<table class="table table-striped">
+
+  <thead>
+  <tr>
+    <td colspan="2">District</td>
+    <td>Comments</td>
+    <td>Votes</td>
+    <td><span class="green">pro</span> : <span class="red">con</span></td>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr *ngFor="let entry of data">
+    <td colspan="2">{{entry.district}}</td>
+    <td>{{entry.comments.pro + entry.comments.con + entry.comments.neutral}}</td>
+    <td>{{entry.votes.yes + entry.votes.no}}</td>
+    <td><span class="green">{{entry.votes.yes + entry.comments.pro}}</span> : <span class="red">{{entry.votes.no + entry.comments.con}}</span>
+    </td>
+  </tr>
+  </tbody>
+
+</table>
+
+
+<!--
+
+-->

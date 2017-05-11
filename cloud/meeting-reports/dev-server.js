@@ -1,5 +1,10 @@
-const functions = require('./dist/build/main');
+const functions = require('./dist/build/index');
 const express = require('express');
+const fs = require('fs');
+
+const devStats = require('./dev-stats').reportData;
+const devComments = JSON.parse(fs.readFileSync('./dev-comments.json'));
+
 const template =
     `
 <!doctype html>
@@ -26,8 +31,8 @@ app.set('views', 'src');
 app.engine('html', function (_, options, callback) {
     console.log('in engine');
     console.log(options.req.url);
-    const url = options.req.url.split('meeting/')[1];
-    functions.renderReport(url).then(html => callback(null, html));
+  const id = options.req.url.split('meeting/')[1];
+  functions.renderReport(id, devStats, devComments, '').then(html => callback(null, html));
 });
 
 app.get('/meeting/**', function (req, res) {

@@ -7,13 +7,15 @@ export type Datatype = { name: string, value: number };
 @Component({
   selector: 'civ-participation-pie',
   template: `
-    <svg:svg [attr.height]="height" [attr.width]="width">
+    <svg:svg [attr.height]="height" [attr.width]="width" class="gfx">
       <svg:g [attr.transform]="rootGTransform">
         <svg:g *ngFor="let slice of slices" class="pie-slice">
           <path [attr.d]="slice.path" [attr.fill]="slice.color"></path>
-            <svg:text [attr.transform]="slice.label.transform" dy="0.35em" [attr.text-anchor]="slice.label.textAnchor">
-                {{slice.label.text}}
-            </svg:text>
+          <svg:text [attr.transform]="slice.label.transform"
+                    dy="0.35em"
+                    [attr.text-anchor]="slice.label.textAnchor">
+            {{slice.label.text}}
+          </svg:text>
         </svg:g>
       </svg:g>
 
@@ -32,9 +34,8 @@ export class ParticipationPieComponent implements OnInit {
   arcs: Array<PieArcDatum<Datatype>>;
 
   slices: any;
-
-  height = 500;
-  width = 800;
+  height = 300;
+  width = 420;
   innerRadius: number;
   outerRadius: number;
   rootGTransform: string;

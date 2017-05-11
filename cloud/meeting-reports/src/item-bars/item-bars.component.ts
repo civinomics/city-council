@@ -7,42 +7,53 @@ export interface Datatype {
 
 
 @Component({
-  selector: 'item-bars',
+  selector: 'civ-item-bars',
   styleUrls: [ './item-bars.component.scss' ],
   template: `
-    <div *ngFor="let item of items" class="item">
-      <div class="bar" [style.width.%]="scale(item.pro + item.con)">
-        <div class="text">{{item.itemNumber}}: {{item.text}}</div>
+    <div *ngFor="let item of items" class="item" [style.height.px]="BAR_HEIGHT" [style.margin-bottom.px]="BAR_MARGIN">
+      <div class="bar pro" [style.width.%]="scale(item.pro)">
       </div>
+      <div class="bar con" [style.left.%]="scale(item.pro)" [style.width.%]="scale(item.con)">
+      </div>
+      <span class="item-no"><small>#</small>{{item.itemNumber}}</span>
     </div>
   `
 })
 export class ItemBarsComponent {
 
-  @Input() data: Datatype[];
+  items: Datatype[] = [];
 
-  scale: ScaleLinear<number, number> = scaleLinear().range([ 0, 100 ]);
+  scale: ScaleLinear<number, number> = scaleLinear().range([ 0, 98 ]);
+
+  @Input() set data(data: Datatype[]) {
+    if (!!data) {
+      this.items = data
+        .filter(entry => entry.pro + entry.con > 0)
+        .sort((x, y) => ((y.pro + y.con) - (x.pro + x.con)));
+
+      console.log(JSON.stringify(this.items, null, '\t'));
+
+      this.scale.domain([
+        (this.items[ this.items.length - 1 ].pro + this.items[ this.items.length - 1 ].con),
+        (this.items[ 0 ].pro + this.items[ 0 ].con)
+      ]);
+
+
+    }
+
+  }
+
+  private readonly BAR_HEIGHT = 15;
+  private readonly BAR_MARGIN = 8;
+
+
 
   constructor() {
 
   }
 
   ngOnInit() {
-    let sorted = this.data.sort((x, y) => ((x.pro + x.con) - (y.pro + y.con)));
-    this.scale.domain([
-      (sorted[ 0 ].pro + sorted[ 0 ].con),
-      (sorted[ sorted.length - 1 ].pro + sorted[ sorted.length - 1 ].con)
-    ]);
-  }
 
-  get items() {
-    return this.data.map(entry => ({
-      ...entry,
-      text: entry.text.length < 50 ? entry.text : entry.text.substring(0, 50).concat('...')
-    })).sort((x, y) => (y.pro + y.con) - (x.pro + x.con));
-  }
-
-  width(item: any) {
   }
 
 }

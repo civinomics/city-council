@@ -2,17 +2,16 @@ import 'zone.js/dist/zone-node';
 
 import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
-import { renderModuleFactory, platformServer, INITIAL_CONFIG, PlatformState } from '@angular/platform-server';
-import { MeetingReportAdt, MeetingStats, Comment } from '@civ/city-council';
+import { INITIAL_CONFIG, platformServer, PlatformState } from '@angular/platform-server';
+import { Comment, MeetingReportAdt } from '@civ/city-council';
 import { ALL_COMMENTS, ALL_DISTRICTS, FOR_DISTRICT, REPORT_DATA } from './tokens';
 import { MeetingReportModuleNgFactory } from '../ngfactory/build/report.module.ngfactory';
 import { ApplicationRef, enableProdMode, NgModuleRef } from '@angular/core';
 import { MeetingReportModule } from './report.module';
-const templateCache = {}; // cache for page templates
-const outputCache = {};   // cache for rendered pages
-
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/first';
+const templateCache = {}; // cache for page templates
+const outputCache = {};   // cache for rendered pages
 
 export const DOC = `<!doctype html>
 <html>
@@ -21,7 +20,7 @@ export const DOC = `<!doctype html>
   <title>ReportRenderer</title>
   <base href="/">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,600,700,800">
-  <style>html, body{ margin: 0; font-family: 'Work Sans', Helvetica, Arial, sans-serif; }</style>
+  <style>html, body { margin: 0; font-family: 'Work Sans', Helvetica, Arial, sans-serif; font-size: 13px; }</style>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
@@ -33,9 +32,13 @@ export const DOC = `<!doctype html>
 
 enableProdMode();
 
-export function renderReport(meetingId: string, forDistrict: string = ALL_DISTRICTS, reportData: MeetingReportAdt, allComments: {[id:string]: Comment[]}): Promise<string> {
+export function renderReport(meetingId: string, reportData: MeetingReportAdt, allComments: { [id: string]: Comment[] }, forDistrict: string = ALL_DISTRICTS): Promise<string> {
   return new Promise((resolve, reject) => {
     let url = `https://civinomics.com/meeting_report/${meetingId}`;
+    if (forDistrict == '') {
+      forDistrict = ALL_DISTRICTS;
+    }
+
     platformServer([
       {
         provide: INITIAL_CONFIG,
@@ -71,7 +74,7 @@ export function renderReport(meetingId: string, forDistrict: string = ALL_DISTRI
            moduleRef.instance.serializeState();
            */
 
-          const html = state.renderToStrigit ng();
+          const html = state.renderToString();
           console.log('rendered module');
 
           moduleRef.destroy();

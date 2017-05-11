@@ -1,4 +1,11 @@
 
-.foo {
-  color: black;
+:host {
+  display: block;
+  width: 580px;
+  margin: auto;
+}
+
+.gfx {
+  display: block;
+  margin: auto;
 }

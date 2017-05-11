@@ -1,7 +1,75 @@
-<div class="group-info">
-  <img class="flag" [src]="group.icon">
-  <div class="title">{{group.name}}</div>
+<div class="cover page">
+
+  <div class="group-info">
+    <img class="flag" [src]="group.icon">
+    <span class="title">{{group.name}}</span>
+  </div>
+
+  <div class="meeting-info">
+    <div class="top-line">Public feedback report for</div>
+    <div class="meeting-name">{{meeting.title}}</div>
+    <div class="for-district">{{forDistrictText}}</div>
+  </div>
+
 </div>
 
+<div class="page summary">
 
-<civ-participation-pie [data]="pieData"></civ-participation-pie>
+  <div class="squares">
+    <div class="square" *ngFor="let square of squares">
+      <div class="value">{{square.value}}</div>
+      <div class="key"> {{square.key}}</div>
+    </div>
+  </div>
+
+  <div class="heading">
+    Participation by district
+  </div>
+  <civ-participation-pie [data]="pieData" class="pie-host"></civ-participation-pie>
+</div>
+
+<div class="page item-totals">
+  <div class="heading">
+    Input by item
+  </div>
+  <civ-item-bars [data]="itemBarData"></civ-item-bars>
+</div>
+
+<div *ngFor="let entry of itemsWithActivity" class="page item">
+  <div class="item-text"><span class="item-no">{{entry.itemNumber}}: </span> {{entry.text}}</div>
+
+  <civ-district-input-table [data]="tableData(entry.id)"></civ-district-input-table>
+
+
+  <div class="heading">
+    Comments
+  </div>
+  <div *ngFor="let comment of itemComments[entry.id]" class="comment-row">
+    <div class="comment-text">
+      {{comment.text}}
+    </div>
+    <div class="info-row">
+      <div>
+        <div class="role {{comment.role}}">{{comment.role}}</div>
+        <div class="votes">
+          <span class="pro">+{{comment.votes.up}}</span>
+          <span class="con">-{{comment.votes.down}}</span>
+        </div>
+      </div>
+
+      <div class="byline">
+        <div class="author-name">- {{comment.author.firstName}} {{comment.author.lastName}}</div>
+        <div class="district">{{userDistrict(comment.author)}}</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page no-activity">
+  <div class="explanation">The following items received no public feedback, either in the form of comments or votes:
+  </div>
+  <div *ngFor="let item of itemsWithoutActivity" style="margin-bottom: 20px">
+    <strong>{{item.itemNumber}}: </strong> {{item.text}}
+  </div>
+</div>

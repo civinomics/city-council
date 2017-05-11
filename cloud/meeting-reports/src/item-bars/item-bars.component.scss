@@ -1,31 +1,43 @@
+$proGreen: rgba(56, 142, 60, 0.5);
+$conRed: rgba(211, 47, 47, 0.5);
 
 :host {
   display: block;
-  width: 800px;
-  margin: auto;
+  position: relative;
+  width: 100%;
 }
 
 .item {
   margin-bottom: 10px;
-  height: 40px;
+  min-height: 15px;
   position: relative;
-
+  margin-left: 10px;
   .bar {
     position: absolute;
-    left: 0;
     top: 0;
     bottom: 0;
     background-color: #999;
     z-index: 0;
+
+    &.pro {
+      background-color: $proGreen;
+    }
+
+    &.con {
+      background-color: $conRed;
+    }
+
   }
 
-  .text {
-    font-weight: 500;
+  .item-no {
+    font-weight: 700;
+    font-size: 14px;
     z-index: 1;
-    padding-top: 10px;
     overflow: visible;
-    white-space: nowrap;
+    position: relative;
+    top: -2px;
   }
 
 }
+
 
