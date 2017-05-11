@@ -102,12 +102,25 @@ export class VoteService {
   public getSessionUserVoteFor(targetId: string): Observable<Vote | null> {
 
     return this.authService.sessionUser$.flatMap(it => {
-      let voteId = it.votes[ targetId ];
-      console.log(`voteid: ${voteId}`)
-      if (!!voteId) {
-        return this.state$.map(state => (state.entities[ targetId ] || {})[ voteId ]);
+      if (!it || !it.votes[ targetId ]) {
+        return Observable.of(null);
+
       }
-      return Observable.of(null);
+
+      let voteId = it.votes[ targetId ];
+      if (!!voteId) {
+        return this.state$
+          .map(state => (state.entities[ targetId ] || {})[ voteId ])
+          .distinctUntilChanged((x, y) => {
+            if (x && y) {
+              return x.value == y.value
+            } else if (!(x || y)) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+      }
     })
   }
 

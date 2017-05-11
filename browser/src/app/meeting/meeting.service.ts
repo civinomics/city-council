@@ -87,7 +87,7 @@ export class MeetingService {
   }
 
   public getPDFReport(meetingId: string, forDistrict?: string): Observable<{ success: boolean, url: string, error?: string, fromCache: boolean }> {
-    let url = `${REPORT_GENERATOR_URL}?meetingId:${meetingId}`;
+    let url = `${REPORT_GENERATOR_URL}?meetingId=${meetingId}`;
     if (!!forDistrict) {
       url += `&forDistrict=${forDistrict}`
     }

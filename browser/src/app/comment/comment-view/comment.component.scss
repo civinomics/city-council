@@ -6,13 +6,14 @@
 
 .outer-wrapper {
   border-radius: 5px;
+  background-color: mat-color($mat-grey, 400);
 
   &.con {
-    background-color: rgba(198, 40, 40, 0.65);
+    background-color: rgba(198, 40, 40, 0.3);
   }
 
   &.pro {
-    background-color: rgba(46, 125, 50, 0.65);
+    background-color: rgba(46, 125, 50, 0.3);
   }
 
 }

@@ -81,7 +81,7 @@ import { FollowService } from './shared/services/follow.service';
 
   bootstrap: [ AppRootComponent ],
 })
-export class AppModule {
+export class CivBrowserModule {
 
   constructor() {
 

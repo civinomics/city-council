@@ -222,7 +222,7 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
 
 }
 
-export const EMAIL_REGEX = /^[\w\d_.-~]+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+export const EMAIL_REGEX = /^[\w\d_.-~+^$%&*()]+@[\w\d_.-~+^$%&*()]+?\.[a-zA-Z]{2,5}$/;
 export const ZIP_REGEX = /\d{5}/;
 
 export type AddressComponentType = 'street_number'|'route'|'neighborhood'|'sublocality_level_1'|'sublocality'|'administrative_area_level_2'|''

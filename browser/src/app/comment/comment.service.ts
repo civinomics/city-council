@@ -11,6 +11,7 @@ import { SELECT_ITEM } from '../core/focus.reducer';
 import { Store } from '@ngrx/store';
 import { CommentsLoadedAction } from './comment.reducer';
 import { parseVote } from '../vote/vote.model';
+import { VoteService } from '../vote/vote.service';
 
 @Injectable()
 export class CommentService {
@@ -36,7 +37,7 @@ export class CommentService {
     .flatMap(id => this.loadCommentsForItem(id).map(comments => new CommentsLoadedAction(comments, id)));
 
 
-  constructor(private authService: AuthService, private db: AngularFireDatabase, private store: Store<AppState>, private actions: Actions) {
+  constructor(private authService: AuthService, private db: AngularFireDatabase, private store: Store<AppState>, private actions: Actions, private voteSvc: VoteService) {
   }
 
   public getCommentsForSelectedItem() {
@@ -122,7 +123,7 @@ export class CommentService {
   }
 
   private getAuthor(id: string): Observable<User> {
-    return this.db.object(`user/${id}`).take(1).map(it => parseUser(it));
+    return this.db.object(`/user/${id}`).take(1).map(it => parseUser(it));
   }
 
   private getVoteCounts(id: string): Observable<{ up: number, down: number }> {
@@ -131,17 +132,29 @@ export class CommentService {
       .map(votes => ({
         up: votes.filter(it => it.value == 1).length,
         down: votes.filter(it => it.value == -1).length
-      }))
+      })).startWith({ up: 0, down: 0 })
+  }
+
+  private getUserVoteFor(commentId: string) {
+    return this.voteSvc.getSessionUserVoteFor(commentId).startWith(null);
   }
 
   private loadCommentsForItem(itemId: string): Observable<Comment[]> {
+    let processed = 0;
     return this.db.list(`/comment/${itemId}`)
       .take(1)
       .map(arr => arr.map(comment => parseComment(comment)))
+      .do(arr => console.log(`comments: ${arr.length}`))
       .flatMap(comments =>
+
         Observable.combineLatest(...comments.map(comment =>
-          this.getVoteCounts(comment.id).withLatestFrom(this.getAuthor(comment.id), (votes, author) => {
-            console.log('asdf');
+          Observable.combineLatest(
+            //      this.getUserVoteFor(comment.id),
+            this.getVoteCounts(comment.id),
+            this.getAuthor(comment.owner).take(1),
+            (votes, author) => {
+              console.log('loaded comment ' + comment.id);
+              console.log(`processed: ${++processed}`);
             return {
               ...comment,
               author,

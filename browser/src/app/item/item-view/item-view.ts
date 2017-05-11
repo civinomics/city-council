@@ -68,6 +68,16 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @Input() userComment: Comment | null;
   @Input() votes: Vote[];
 
+  @Input() showingAllComments: boolean;
+  @Output() showAllComments: EventEmitter<boolean> = new EventEmitter();
+
+  topPro: Comment | null;
+  topCon: Comment | null;
+
+
+  @Input() comments: Comment[];
+
+
   @Output() follow: EventEmitter<boolean> = new EventEmitter();
   @Output() vote: EventEmitter<{ itemId: string, value: number }> = new EventEmitter();
   @Output() comment: EventEmitter<{ itemId: string, text: string, role: string }> = new EventEmitter();
@@ -105,6 +115,13 @@ export class ItemViewComponent implements OnInit, OnChanges {
         no: this.votes.filter(vote => vote.value == -1).length,
       }
     }
+    if (changes[ 'comments' ] && !!this.comments) {
+      this.comments
+        .sort((x, y) => (y.votes.up - y.votes.down) - (x.votes.up - x.votes.down));
+
+      this.topPro = this.comments.filter(it => it.role == 'pro')[ 0 ];
+      this.topCon = this.comments.filter(it => it.role == 'con')[ 0 ];
+    }
   }
 
   get itemNumber() {
@@ -113,6 +130,7 @@ export class ItemViewComponent implements OnInit, OnChanges {
     }
     return this.item.onAgendas[this.activeMeeting].itemNumber;
   }
+
 
   get isClosedSession() {
     if (!this.item || !this.activeMeeting || !this.item.onAgendas[ this.activeMeeting ]) {
@@ -148,5 +166,8 @@ export class ItemViewComponent implements OnInit, OnChanges {
     return !this.userVote ? null : this.userVote.value;
   }
 
+  toggleShowAllComments() {
+    this.showAllComments.emit(!this.showingAllComments);
+  }
 
 }

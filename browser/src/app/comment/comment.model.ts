@@ -1,6 +1,7 @@
 import * as moment from 'moment';
 import { Entity, parseEntity, RawEntity } from '../core/models';
 import { parseUser, RawUser, User } from '../user/user.model';
+import { Vote } from '../vote/vote.model';
 import Moment = moment.Moment;
 export type CommentRole = 'pro' | 'con' | 'neutral';
 
@@ -12,7 +13,8 @@ export interface Comment extends Entity {
 
     votes?: { up?: number, down?: number },
     replies?: string[];
-    author?: User
+  author?: User,
+  sessionUserVote?: Vote | null;
     //
 
 }
@@ -42,7 +44,7 @@ export type NewCommentData = {
     role: string;
 }
 
-export const parseComment: (data: RawComment|Comment|RawCommentWithAuthor|CommentWithAuthor) => Comment = (data) => {
+export const parseComment: (data: Comment | any) => Comment = (data) => {
   let votes = data.votes || { up: 0, down: 0 };
     return {
         ...parseEntity(data),
@@ -50,6 +52,7 @@ export const parseComment: (data: RawComment|Comment|RawCommentWithAuthor|Commen
         role: data.role,
         posted: moment(data.posted),
         userDistrict: data.userDistrict || null,
+      sessionUserVote: data.sessionUserVote || null,
       votes,
         replies: data.replies,
         author: !!data.author ? parseUser(data.author) : null
@@ -60,6 +63,11 @@ export function commentsEqual(x: Comment, y: Comment): boolean {
     if (x.id != y.id || x.text != y.text || x.role != y.role || x.userDistrict != y.userDistrict) {
         return false;
     }
+
+  if (x.sessionUserVote != y.sessionUserVote) {
+    return false;
+  }
+
   if (!(!x.votes && !y.votes)) { //if at least one has votes
     if (!(!!x.votes && !!y.votes)) { //if they don't both have votes, they're unequal
       return false;
@@ -68,7 +76,8 @@ export function commentsEqual(x: Comment, y: Comment): boolean {
       return false;
     }
   }
-    return true;
+
+  return true;
 }
 
 export function mergeComments(prev: Comment, next: Comment): Comment {

@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import { MdInputDirective } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Comment } from '../../core/models';
@@ -9,6 +19,7 @@ import { Vote } from '../../vote/vote.model';
 @Component({
     selector: 'civ-comment',
     templateUrl: './comment.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
     styleUrls: [ './comment.component.scss' ],
     animations: [
         trigger('editBtnRow', [
@@ -24,9 +35,16 @@ import { Vote } from '../../vote/vote.model';
 
     ]
 })
-export class CommentComponent implements OnInit {
+export class CommentComponent implements OnInit, OnChanges {
 
-    @Input() comment: Comment;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes[ 'comment' ]) {
+      console.log(changes[ 'comment' ]);
+    }
+  }
+
+
+  @Input() comment: Comment;
 
     @Input() canEdit: boolean;
 
@@ -83,16 +101,11 @@ export class CommentComponent implements OnInit {
     newText: string;
     originalText: string;
 
-  userVote: Vote | null;
-
   constructor(private commentSvc: CommentService, private voteSvc: VoteService) {
     }
 
     ngOnInit() {
         this.newText = this.originalText = this.comment.text;
-      this.voteSvc.getSessionUserVoteFor(this.comment.id).subscribe(it => {
-        this.userVote = it;
-      })
     }
 
     toggleEditing() {
@@ -110,8 +123,29 @@ export class CommentComponent implements OnInit {
     }
 
     get authorDistrict() {
+      if (!this.comment.author) {
+        return null;
+      }
         return this.comment.author.districts[ this.activeContext ];
     }
+
+  get authorIcon() {
+    if (!this.comment.author) {
+      return null;
+    }
+    return this.comment.author.icon;
+  }
+
+  get authorName() {
+    if (!this.comment.author) {
+      return ''
+    }
+    return `${this.comment.author.firstName} ${this.comment.author.lastName}`
+  }
+
+  get userVote(): Vote | null {
+    return this.comment.sessionUserVote;
+  }
 
   vote(value: 1 | -1) {
     this.voteSvc.castVote(this.comment.id, value);

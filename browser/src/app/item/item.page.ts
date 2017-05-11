@@ -12,17 +12,23 @@ import { Comment } from '../comment/comment.model';
 import { CommentService } from '../comment/comment.service';
 import { AppFocusService } from '../core/focus.service';
 import { FollowService } from '../shared/services/follow.service';
+import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Component({
   selector: 'civ-item-container',
   template: `
-    <civ-item-view [item]="item$ | async"
+    <civ-item-view *ngIf="item$ | async as item"
+                   [item]="item"
                    [userVote]="userVote$ | async"
                    [userComment]="userComment$ | async"
                    [votes]="votes$ | async"
+                   [comments]="comments$ | async"
                    [activeMeeting]="activeMeeting$ | async"
                    [numFollows]="numFollows$ | async"
                    [isFollowing]="isFollowing$ | async"
+                   [showingAllComments]="allComments$ | async"
+                   (showAllComments)="allComments$.next($event)"
                    (follow)="doFollow($event)"
                    (vote)="castVote($event)" (comment)="postComment($event)" (back)="backToAgenda()"></civ-item-view>
   `,
@@ -54,6 +60,8 @@ export class ItemPageComponent implements OnInit {
   numFollows$: Observable<number>;
   isFollowing$: Observable<boolean>;
 
+  allComments$: Subject<boolean> = new BehaviorSubject(false);
+
   constructor(private store: Store<AppState>,
               private router: Router,
               private route: ActivatedRoute,
@@ -79,9 +87,9 @@ export class ItemPageComponent implements OnInit {
     this.votes$ = this.item$.take(1)//get the initial page rendered before loading votes
       .flatMapTo(this.voteSvc.getVotesForSelectedItem());
 
-    this.userComment$ = this.commentSvc.getUserCommentForSelectedItem();
+    this.userComment$ = Observable.timer(250).flatMapTo(this.commentSvc.getUserCommentForSelectedItem());
 
-    this.comments$ = this.item$.take(1).flatMapTo(this.commentSvc.getCommentsForSelectedItem());
+    this.comments$ = Observable.timer(1000).flatMapTo(this.commentSvc.getCommentsForSelectedItem());
 
 
 

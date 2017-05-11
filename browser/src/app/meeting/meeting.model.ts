@@ -72,9 +72,7 @@ export type MeetingReportAdt = {
 }
 
 export const parseMeeting: (data: RawMeeting | Meeting | any) => Meeting = (data: RawMeeting) => {
-
-
-  let agenda: string[] = data.agenda instanceof Array ? data.agenda : Object.keys(data.agenda);
+  let agenda: string[] = data.agenda instanceof Array ? data.agenda : Object.keys(data.agenda || {});
 
   return {
     ...parseEntity(data),
