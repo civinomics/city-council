@@ -8,6 +8,7 @@ import { AppFocusService } from '../core/focus.service';
 import { GroupService } from '../group/group.service';
 import { AuthService } from '../user/auth.service';
 import { FollowService } from '../shared/services/follow.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'civ-meeting-container',
@@ -97,7 +98,8 @@ export class MeetingPage implements OnInit {
                 private route: ActivatedRoute,
                 private focusSvc: AppFocusService,
                 private authSvc: AuthService,
-                private followSvc: FollowService) {
+                private followSvc: FollowService,
+                private title: Title) {
         const id$ = this.route.params.map(params => params[ 'meetingId' ]).distinctUntilChanged();
 
         this.route.params.subscribe(params => {
@@ -111,6 +113,8 @@ export class MeetingPage implements OnInit {
         );
 
       this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
+
+      this.meeting$.take(1).subscribe(meeting => this.title.setTitle(meeting.title));
 
       this.isAdmin$ = this.authSvc.sessionUser$.withLatestFrom(this.meeting$, (user, meeting) => !!user && ((user.superuser || meeting.owner == user.id)));
 

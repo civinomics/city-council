@@ -14,6 +14,7 @@ import { AppFocusService } from '../core/focus.service';
 import { FollowService } from '../shared/services/follow.service';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'civ-item-container',
@@ -69,7 +70,8 @@ export class ItemPageComponent implements OnInit {
               private voteSvc: VoteService,
               private commentSvc: CommentService,
               private focusSvc: AppFocusService,
-              private followSvc: FollowService) {
+              private followSvc: FollowService,
+              private title: Title) {
 
     const itemId$ = this.route.params.map(params => params[ 'itemId' ]);
 
@@ -82,6 +84,12 @@ export class ItemPageComponent implements OnInit {
 
 
     this.item$ = this.itemSvc.getSelectedItem();
+
+    this.item$.take(1).subscribe(item =>
+      this.title.setTitle(item.text.length > 20 ? item.text.substring(0, 20).concat('...') : item.text)
+    );
+
+
     this.userVote$ = this.voteSvc.getUserVoteForSelectedItem();
 
     this.votes$ = this.item$.take(1)//get the initial page rendered before loading votes

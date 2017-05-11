@@ -8,6 +8,7 @@ import { MeetingService } from '../meeting/meeting.service';
 import { AppFocusService } from '../core/focus.service';
 import { AuthService } from '../user/auth.service';
 import { FollowService } from '../shared/services/follow.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'civ-group',
@@ -92,12 +93,20 @@ export class GroupPage implements OnInit {
   isFollowing$: Observable<boolean>;
   baseUrl: Observable<string[]>;
 
-  constructor(private groupSvc: GroupService, private followSvc: FollowService, private meetingSvc: MeetingService, private router: Router, private route: ActivatedRoute, private focusSvc: AppFocusService, private authSvc: AuthService) {
+  constructor(private groupSvc: GroupService,
+              private followSvc: FollowService,
+              private meetingSvc: MeetingService,
+              private router: Router,
+              private route: ActivatedRoute,
+              private focusSvc: AppFocusService,
+              private authSvc: AuthService,
+              private title: Title) {
 
 
     this.baseUrl = this.route.params.take(1).map(params =>
         [ '/group', params[ 'groupId' ] ]
     );
+
 
 
 
@@ -108,6 +117,8 @@ export class GroupPage implements OnInit {
 
 
     this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
+
+    this.group$.take(1).subscribe(group => this.title.setTitle(group.name));
 
 
     this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.group$, (user, group) => !!user && ((user.superuser || group.owner == user.id)));
