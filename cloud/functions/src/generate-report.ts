@@ -1,4 +1,5 @@
 import { renderReport } from '@civ/meeting-reports';
+import { Comment } from '@civ/city-council';
 import * as functions from 'firebase-functions';
 import * as moment from 'moment';
 import { getStorageBucket, initializeAdminApp } from './_internal';
@@ -9,6 +10,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 
 import { reportData } from './dev-stats';
+import { getMeetingComments } from './meeting-comments';
 
 const cors = require('cors')({ origin: true });
 
@@ -18,11 +20,24 @@ const app = initializeAdminApp();
 export const report = functions.https.onRequest(handle);
 
 function handle(req, res) {
-  const meetingId = req.query[ 'meetingId' ] || 'test';
+  const meetingId = req.query[ 'meetingId' ];
+
+  if (!!meetingId) {
+    /*cors(req, res, () => {
+     res.send(JSON.stringify({
+     success: false,
+     error: 'No meeting ID provided - please include a meetingId query param.'
+     }));
+     });
+     return;*/
+  }
+
+  const forDistrict = req.query[ 'forDistrict' ];
+
 
   checkCached(meetingId).then(url => {
     if (url == null) {
-      doRender(meetingId).then(url => {
+      createMeetingReport(meetingId, forDistrict).then(url => {
         cacheUrl(meetingId, url).then(() => {
 
           cors(req, res, () => {
@@ -84,75 +99,81 @@ function cacheUrl(meetingId, url) {
   })
 }
 
-export function doRender(meetingId): Promise<string> {
+export function createMeetingReport(meetingId: string, forDistrict?: string): Promise<string> {
 
   return new Promise((resolve, reject) => {
 
     console.log(`generating report for meeting ${meetingId}`);
 
-    const stats$: Observable<any> = Observable.of(reportData); //computeMeetingStats(meetingId);
+    const stats$: Observable<any> = Observable.of(reportData).take(1); //computeMeetingStats(meetingId);
+
+    let comments$: Observable<{ [id: string]: Comment[] }> = getMeetingComments(meetingId);
 
 
-    stats$.subscribe(stats => {
+    Observable.forkJoin(stats$.take(1), comments$.take(1))
+      .subscribe(([ stats, comments ]) => {
 
-      renderReport(meetingId).then(htmlString => {
+        renderReport(meetingId, forDistrict, stats, comments).then(htmlString => {
 
-        console.log(htmlString);
-
-
-        pdf.create(htmlString, { format: 'letter', orientation: 'portrait' }).toStream(function (err, stream) {
+          console.log(htmlString);
 
 
-          const bucket = getStorageBucket();
+          pdf.create(htmlString, { format: 'letter', orientation: 'portrait' }).toStream(function (err, stream) {
 
-          const now = moment().toISOString().split('.')[ 0 ];
 
-          const path = `meeting_reports%2f${meetingId}-${now}.pdf`;
+            const bucket = getStorageBucket();
 
-          const file = bucket.file(path);
+            const now = moment().toISOString().split('.')[ 0 ];
 
-          const writeStream = file.createWriteStream();
+            const path = `meeting_reports%2f${meetingId}-${now}.pdf`;
 
-          stream.pipe(writeStream).on('finish', (x) => {
-            file.makePublic((err, response) => {
-              if (err) {
-                reject(err);
-              }
+            const file = bucket.file(path);
 
-              file.getMetadata().then(resp => {
-                let metadata = resp[ 0 ];
-                resolve(metadata.mediaLink);
-              }, err => {
-                reject(err);
-              })
+            const writeStream = file.createWriteStream();
 
-              /*              file.getSignedUrl({
-               action: 'read',
-               expires: moment().add(6, 'months').format('MM-DD-YYYY').toString()
-               }, (err, url) => {
+            stream.pipe(writeStream).on('finish', (x) => {
+              file.makePublic((err, response) => {
+                if (err) {
+                  reject(err);
+                }
 
-               if (err){
-               reject(err);
-               } else {
-               resolve(url);
-               }
-               })*/
+                file.getMetadata().then(resp => {
+                  let metadata = resp[ 0 ];
+                  resolve(metadata.mediaLink);
+                }, err => {
+                  reject(err);
+                })
+
+                /*              file.getSignedUrl({
+                 action: 'read',
+                 expires: moment().add(6, 'months').format('MM-DD-YYYY').toString()
+                 }, (err, url) => {
+
+                 if (err){
+                 reject(err);
+                 } else {
+                 resolve(url);
+                 }
+                 })*/
+
+              });
 
             });
 
+
           });
 
-
-        });
-
-      })
+        })
 
 
-    })
+      });
+
+
   });
 
 }
-/************ TEST
+/************ TEST  *************/
 
- handle({query:{meetingId:'id_meeting_515'}} as any, {} as any);
+/*
+ handle({query:{meetingId:'id_meeting_511'}} as any, {} as any);
  */

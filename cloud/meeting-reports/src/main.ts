@@ -2,13 +2,17 @@ import 'zone.js/dist/zone-node';
 
 import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
-import { renderModuleFactory } from '@angular/platform-server';
-import { MeetingReportAdt } from '@civ/city-council';
-import { REPORT_DATA } from './tokens';
+import { renderModuleFactory, platformServer, INITIAL_CONFIG, PlatformState } from '@angular/platform-server';
+import { MeetingReportAdt, MeetingStats, Comment } from '@civ/city-council';
+import { ALL_COMMENTS, ALL_DISTRICTS, FOR_DISTRICT, REPORT_DATA } from './tokens';
 import { MeetingReportModuleNgFactory } from '../ngfactory/build/report.module.ngfactory';
-import { reportData } from './dev-stats';
+import { ApplicationRef, enableProdMode, NgModuleRef } from '@angular/core';
+import { MeetingReportModule } from './report.module';
 const templateCache = {}; // cache for page templates
 const outputCache = {};   // cache for rendered pages
+
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/first';
 
 export const DOC = `<!doctype html>
 <html>
@@ -27,31 +31,56 @@ export const DOC = `<!doctype html>
 </html>
 `;
 
-export function renderReport(meetingId: string): Promise<string> {
+enableProdMode();
+
+export function renderReport(meetingId: string, forDistrict: string = ALL_DISTRICTS, reportData: MeetingReportAdt, allComments: {[id:string]: Comment[]}): Promise<string> {
   return new Promise((resolve, reject) => {
     let url = `https://civinomics.com/meeting_report/${meetingId}`;
+    platformServer([
+      {
+        provide: INITIAL_CONFIG,
+        useValue: {
+          document: DOC,
+          url: url
+        }
+      },
 
-    getMeetingData(meetingId).then(data => {
-      renderModuleFactory(MeetingReportModuleNgFactory, {
-        document: DOC,
-        url: url,
-        extraProviders: [
-          {
-            provide: REPORT_DATA,
-            useValue: data
-          }
-        ]
-      }).then(str => {
-        console.log('rendered module');
-        resolve(str);
-      }, err => {
-        reject(err);
-      });
+      {
+        provide: FOR_DISTRICT,
+        useValue: forDistrict
+      },
+      {
+        provide: REPORT_DATA,
+        useValue: reportData
+      },
+      {
+        provide: ALL_COMMENTS,
+        useValue: allComments
+      },
+    ]).bootstrapModuleFactory(MeetingReportModuleNgFactory).then((moduleRef: NgModuleRef<MeetingReportModule>) => {
+      console.log('bootstrapped module');
+      const state = moduleRef.injector.get(PlatformState);
+      const appRef = moduleRef.injector.get(ApplicationRef);
+
+      appRef.isStable
+        .filter(val => val == true)
+        .first()
+        .subscribe(() => {
+
+          /* call functions on the module before toStringing and destroying it
+           moduleRef.instance.serializeState();
+           */
+
+          const html = state.renderToStrigit ng();
+          console.log('rendered module');
+
+          moduleRef.destroy();
+
+          resolve(html);
+
+        }, err => {
+          reject(err);
+        });
     });
-  })
-}
-function getMeetingData(meetingId: string): Promise<MeetingReportAdt> {
-  return new Promise((resolve, reject) => {
-    resolve(reportData);
   });
 }
