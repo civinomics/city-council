@@ -6,6 +6,7 @@ import { Observer } from 'rxjs/Observer';
 import { merge } from 'rxjs/observable/merge';
 import * as moment from 'moment';
 import 'rxjs/add/operator/take';
+import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/combineLatest';
@@ -29,24 +30,55 @@ import {
 const cors = require('cors')({ origin: true });
 
 const app = initializeAdminApp();
-
+const db = app.database();
 export const stats = functions.https.onRequest((req, res) => {
   let meetingId = req.query[ 'meeting' ];
 
-  computeMeetingStats(meetingId).subscribe(result => {
+  getOrComputeMeetingStats(meetingId).then(result => {
     cors(req, res, () => {
       res.send(200, JSON.stringify(result));
+    }).catch(err => {
+      cors(req, res, () => {
+        res.send(500, JSON.stringify(err));
+      })
     })
   });
 });
 
-export function computeMeetingStats(meetingId: string): Observable<MeetingStats> {
+export function getOrComputeMeetingStats(meetingId: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    db.ref(`/internal/meeting_stats/${meetingId}`)
+      .once('value', (snapshot) => {
+        //if stats have not been computed, or were computed > 1 hr ago, recompute them and cache
+        if (!snapshot.exists() || moment(snapshot.val().timestamp).isBefore(moment().subtract(1, 'hours'))) {
+          computeMeetingStats(meetingId).take(1).subscribe(stats => {
+            const stringified = JSON.stringify(stats);
+            //add to cache
+            db.ref(`internal/meeting_stats/${meetingId}`).set({
+              timestamp: moment().toISOString(),
+              payload: stringified
+            }).then(() => {
+              resolve(stringified);
+            }).catch(err => {
+              reject(err);
+            })
+          }, err => {
+            reject(err)
+          })
+        } else {
+          resolve(snapshot.val().payload);
+        }
+      })
+  })
+}
+
+
+function computeMeetingStats(meetingId: string): Observable<MeetingStats> {
 
   return getMeeting(meetingId)
     .mergeMap(meeting => {
       meeting = parseMeeting(meeting);
 
-      console.log(meeting);
 
       let group = getGroup(meeting.groupId);
 
@@ -61,8 +93,14 @@ export function computeMeetingStats(meetingId: string): Observable<MeetingStats>
           [next.itemId]: next.votes
         }), {});
 
-      let items$ = Observable.forkJoin(...meeting.agenda.map(id => getItem(id))).map(items =>
-        items.reduce((result, item) => ({ ...result, [item.id]: item }), {}));
+      let items$ = Observable.from(meeting.agenda)
+        .flatMap(itemId => getItem(itemId).take(1))
+        .reduce((result, item: Item) => {
+          console.log(`item: ${item.id}`);
+          return { ...result, [item.id]: item }
+        }, {});
+
+
 
       let itemComments$ = merge(...meeting.agenda.map(id => getCommentsForItem(id).take(1).map(comments => ({
         itemId: id,
@@ -118,7 +156,7 @@ function prepareReport(meeting: Meeting,
     }
   }), {
     'NO_DISTRICT': {
-      votes: allVotes.filter(vote => (vote.userDistrict || { id: null } as any).idf == null).length,
+      votes: allVotes.filter(vote => (vote.userDistrict || { id: null } as any).id == null).length,
       comments: allComments.filter(comment => comment.userDistrict == null).length,
       participants: uniqueParticipants.filter(it => it.district == null).length
     }
@@ -150,10 +188,12 @@ function prepareReport(meeting: Meeting,
 
     const sortByNetVotes = (x, y) => (y.votes.up - y.votes.down) - (x.votes.up - x.votes.down);
 
+    let undistrictedItemVotes = itemVotes.filter(vote => (vote.userDistrict || { id: null } as any).id == null),
+      undistrictedItemComments = itemComments.filter(vote => (vote.userDistrict || { id: null } as any).id == null);
+
     let byDistrict = districtIds.reduce((districtResults, districtId) => {
       let itemVotesInDistrict = itemVotes.filter(vote => (vote.userDistrict || { id: null } as any).id == districtId);
       let itemCommentsInDistrict = itemComments.filter(comment => (comment.userDistrict || { id: null } as any).id == districtId);
-
 
       return {
         ...districtResults,
@@ -169,19 +209,27 @@ function prepareReport(meeting: Meeting,
           }
         }
       }
-    }, {});
+    }, {
+      NO_DISTRICT: {
+        votes: {
+          yes: undistrictedItemVotes.filter(it => it.value == 1).length,
+          no: undistrictedItemVotes.filter(it => it.value == -1).length
+        },
+        comments: {
+          pro: undistrictedItemComments.filter(it => it.role == 'pro').length,
+          con: undistrictedItemComments.filter(it => it.role == 'con').length,
+          neutral: undistrictedItemComments.filter(it => it.role == 'neutral').length
+        }
+      }
+    });
 
-
-    if (itemComments.length > 0) {
-      let x = itemComments.sort(sortByNetVotes);
-      console.log(x);
-    }
 
     let topPro = itemComments.filter(comm => comm.role == 'pro')
         .sort(sortByNetVotes)[ 0 ] || null;
 
     let topCon = itemComments.filter(comm => comm.role == 'con')
         .sort(sortByNetVotes)[ 0 ] || null;
+
 
     let topCommentsByDistrict = districtIds.reduce((districtResults, districtId) => {
       let districtComments = itemComments.filter(comment => (comment.userDistrict || { id: null } as any).id == districtId);
@@ -193,7 +241,12 @@ function prepareReport(meeting: Meeting,
           con: districtComments.filter(comm => comm.role == 'con').sort(sortByNetVotes)[ 0 ] || null,
         }
       }
-    }, {});
+    }, {
+      NO_DISTRICT: {
+        pro: undistrictedItemComments.filter(comm => comm.role == 'pro').sort(sortByNetVotes)[ 0 ] || null,
+        con: undistrictedItemComments.filter(comm => comm.role == 'con').sort(sortByNetVotes)[ 0 ] || null
+      }
+    });
 
     let topComments = {
       pro: topPro,
@@ -227,7 +280,7 @@ function prepareReport(meeting: Meeting,
 function getItem(itemId: string): Observable<Item> {
   return Observable.create((observer: Observer<Item>) => {
     app.database().ref(`/item/${itemId}`).once('value', (snapshot) => {
-      observer.next(parseItem(snapshot.val()));
+      observer.next(parseItem({ id: itemId, ...snapshot.val() }));
       observer.complete()
     }).catch(err => {
       observer.error(err);
@@ -409,10 +462,3 @@ function getGroup(groupId): Observable<Group> {
 
 }
 
-/****** TEST **********
-
-computeMeetingStats('id_meeting_511').subscribe(it => {
-  fs.writeFileSync('dev-stats.json', JSON.stringify(it));
-  console.log('done');
-});
- */

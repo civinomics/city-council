@@ -11,6 +11,7 @@ import { MeetingService } from './meeting.service';
 import { MeetingStatsContainerComponent } from './meeting-stats/meeting-stats-container.component';
 import { MeetingStatsComponent } from './meeting-stats/meeting-stats.component';
 import { CommentModule } from '../comment/comment.module';
+import { ActivityPipe } from './meeting-stats/activity.pipe';
 
 export const MEETING_ROUTES = [
     {
@@ -42,7 +43,8 @@ export const MEETING_ROUTES = [
         MeetingStatsComponent,
         MeetingAgendaViewComponent,
         DistrictInputTableComponent,
-        MeetingPage
+      MeetingPage,
+      ActivityPipe
     ],
     providers: [
         MeetingService

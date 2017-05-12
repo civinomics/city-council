@@ -22,7 +22,10 @@ import { MeetingService } from '../meeting.service';
 
 import { schemeCategory10 } from 'd3-scale';
 import { Comment } from '../../comment/comment.model';
+import { hasActivity } from './activity.pipe';
 let x: User | RawUser | CommentWithAuthor | RawCommentWithAuthor;
+
+const NO_DISTRICT = 'NO_DISTRICT';
 
 @Component({
   selector: 'civ-meeting-stats-view',
@@ -61,7 +64,6 @@ export class MeetingStatsComponent implements OnChanges {
       this._items = items.sort((x, y) => this.itemNumber(x) - this.itemNumber(y));
     }
   }
-
   get items() {return this._items;}
 
 
@@ -126,7 +128,7 @@ export class MeetingStatsComponent implements OnChanges {
 
 
   get activityByItemHeight() {
-      return this._items.length * (20 + 5);
+    return this.data.activityByItem.length * (20 + 5);
   }
 
     constructor(private meetingSvc: MeetingService, private cdr: ChangeDetectorRef) {
@@ -189,7 +191,13 @@ export class MeetingStatsComponent implements OnChanges {
       district,
       votes: this.stats.byItem[item.id].byDistrict[district.id].votes,
       comments: this.stats.byItem[item.id].byDistrict[district.id].comments
-    }))
+    })).concat([ {
+      district: {
+        name: NO_DISTRICT
+      } as any,
+      votes: this.stats.byItem[ item.id ].byDistrict[ NO_DISTRICT ].votes,
+      comments: this.stats.byItem[ item.id ].byDistrict[ NO_DISTRICT ].comments
+    } ])
   }
 
 
@@ -206,7 +214,10 @@ export class MeetingStatsComponent implements OnChanges {
       let participationByDistrict = this.activeDistrict.id == null ? this.districts.map(district => ({
       name: district.name,
       value: this.stats.total.byDistrict[district.id].participants
-      })) : null;
+      })).concat([ {
+        name: NO_DISTRICT,
+        value: this.stats.total.byDistrict[ NO_DISTRICT ].participants
+      } ]) : null;
 
     let numItems = this.meeting.agenda.length;
     let totParticipants = totalSrc.participants;
@@ -214,7 +225,9 @@ export class MeetingStatsComponent implements OnChanges {
 
       let totVotes = totalSrc.votes;
 
-      let activityByItem = this.items.map(item => {
+    let activityByItem = this.items
+      .filter(item => hasActivity(this.stats.byItem[ item.id ].total))
+      .map(item => {
           let src = this.activeDistrict.id == null ? this.stats.byItem[item.id].total :
               this.stats.byItem[item.id].byDistrict[this.activeDistrict.id];
 

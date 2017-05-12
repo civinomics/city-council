@@ -84,7 +84,10 @@
        [infiniteScrollDistance]="0.25"
        (scrolled)="scrolled($event)" #itemDetails>
     <div class="heading">PUBLIC INPUT</div>
-    <div *ngFor="let item of items | limit:numItemsShown;" class="item" fxLayout="column" fxLayoutGap="10px">
+    <div *ngFor="let item of items | activity:stats.byItem | limit:numItemsShown;"
+         class="item"
+         fxLayout="column"
+         fxLayoutGap="10px">
       <div class="item-text">
         <strong>{{itemNumber(item)}}. </strong> <span>{{item.text}}</span>
       </div>
@@ -104,5 +107,14 @@
 
   </div>
 
+</div>
 
+<div class="inactive-items">
+  <div class="explanation">
+    No feedback was received on the following items:
+  </div>
+
+  <div *ngFor="let item of items | activity:stats.byItem:false" class="inactive-item-row">
+    <strong>{{itemNumber(item)}}.</strong><span>{{item.text}}</span>
+  </div>
 </div>

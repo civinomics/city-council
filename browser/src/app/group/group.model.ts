@@ -1,4 +1,4 @@
-import {keys} from 'lodash';
+import { keys } from 'lodash';
 import { Entity, RawEntity } from '../core/models';
 import { Office, RawOffice } from './office.model';
 
@@ -17,6 +17,14 @@ export type RawGroup = RawEntity & {
 }
 
 export function parseGroup(data: RawGroup | Group | any): Group {
+
+  let districts;
+  if (Array.isArray(data.districts)) {
+    districts = data.districts;
+  } else {
+    districts = Object.keys(data.districts).map(id => ({ ...data.districts[ id ], id }));
+  }
+
   return {
     id: data.$key || data.id,
     owner: data.owner,
@@ -24,7 +32,7 @@ export function parseGroup(data: RawGroup | Group | any): Group {
     name: data.name,
     icon: data.icon,
     meetingIds: keys(data.meetings),
-    districts: Object.keys(data.districts).map(id => ({...data.districts[id], id}))
+    districts
   }
 }
 

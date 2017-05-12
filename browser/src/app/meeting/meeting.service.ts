@@ -55,8 +55,9 @@ export class MeetingService {
             return Observable.of(this.statsCache$[meetingId]);
         }
         console.log(`fetching new mtg stats`);
-        //return this.http.get(`https://us-central1-civ-cc.cloudfunctions.net/stats?meeting=${meetingId}`).map(it => it.json() as MeetingStats)
-        return Observable.of(devStats)
+      return this.http.get(`https://us-central1-civ-cc.cloudfunctions.net/stats?meeting=${meetingId}`)
+        .map(it => JSON.parse(it.json()) as MeetingStats)
+
             .map(raw => this.parseMeetingStats(raw))
             .do(it => {
                 this.statsCache$[meetingId] = it;

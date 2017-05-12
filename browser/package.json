@@ -1,6 +1,6 @@
 {
   "name": "@civ/city-council",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.10",
   "license": "MIT",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
@@ -15,7 +15,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node_modules/.bin/ng serve",
-    "build": "rimraf dist && ng build --prod --aot --output-hashing none && npm run build:lib && ",
+    "build": "rimraf dist && ng build --prod --aot --output-hashing none && npm run build:lib",
     "build:lib": "rimraf dist/src && ngc -p tsconfig.lib.json",
     "test": "ng test",
     "lint": "ng lint",

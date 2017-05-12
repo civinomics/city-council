@@ -79,3 +79,17 @@
   }
 
 }
+
+.inactive-items {
+  padding: 0 15px;
+  .explanation {
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+}
+
+.inactive-item-row {
+  margin: 5px 0;
+  font-size: 0.85em;
+}
