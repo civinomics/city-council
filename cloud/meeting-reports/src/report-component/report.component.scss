@@ -62,6 +62,7 @@ $PAGE_WIDTH: 570px;
     font-size: 0.9em;
     font-style: italic;
     font-weight: 500;
+    text-transform: uppercase;
   }
 
   .meeting-name {
@@ -75,13 +76,13 @@ $PAGE_WIDTH: 570px;
   .square {
     display: inline-block;
     width: 95px;
-    margin: 0 10px;
+    margin: 0 5px;
     &:first-of-type {
-      margin-left: 20px;
+      margin-left: 10px;
     }
 
     &:last-of-type {
-      margin-right: 20px;
+      margin-right: 10px;
     }
 
     border: 1px solid #616161;

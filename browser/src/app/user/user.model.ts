@@ -76,3 +76,11 @@ export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) =>
     comments: data.comments || {}
   }
 };
+
+export function userDistrict(user: User, groupId: string){
+  if (!user || !user.districts[groupId]){
+    return null;
+  }
+
+  return user.districts[groupId].id;
+}

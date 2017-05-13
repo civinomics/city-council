@@ -117,7 +117,7 @@ export class ItemViewComponent implements OnInit, OnChanges {
     }
     if (changes[ 'comments' ] && !!this.comments) {
       this.comments
-        .sort((x, y) => (y.votes.up - y.votes.down) - (x.votes.up - x.votes.down));
+        .sort((x, y) => (y.voteStats.up - y.voteStats.down) - (x.voteStats.up - x.voteStats.down));
 
       this.topPro = this.comments.filter(it => it.role == 'pro')[ 0 ];
       this.topCon = this.comments.filter(it => it.role == 'con')[ 0 ];

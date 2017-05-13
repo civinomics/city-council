@@ -11,13 +11,19 @@ export interface Comment extends Entity {
     posted: Moment;
     userDistrict: null | {id: string, name: string}
 
-    votes?: { up?: number, down?: number },
-    replies?: string[];
-  author?: User,
-  sessionUserVote?: Vote | null;
+    voteStats?: { up?: number, down?: number },
+    author?: User,
+    sessionUserVote?: Vote | null;
     //
-
 }
+
+
+export type DenormalizedComment = Comment & {
+  votes: Vote[],
+  replies: Comment[],
+  author: User
+}
+
 
 export type RawComment = RawEntity & {
     [P in 'text' | 'role' | 'userDistrict']: Comment[P]
@@ -45,7 +51,7 @@ export type NewCommentData = {
 }
 
 export const parseComment: (data: Comment | any) => Comment = (data) => {
-  let votes = data.votes || { up: 0, down: 0 };
+  let voteStats = data.voteStats || { up: 0, down: 0 };
     return {
         ...parseEntity(data),
         text: data.text,
@@ -53,7 +59,7 @@ export const parseComment: (data: Comment | any) => Comment = (data) => {
         posted: moment(data.posted),
         userDistrict: data.userDistrict || null,
       sessionUserVote: data.sessionUserVote || null,
-      votes,
+      voteStats,
         replies: data.replies,
         author: !!data.author ? parseUser(data.author) : null
     }
@@ -68,11 +74,11 @@ export function commentsEqual(x: Comment, y: Comment): boolean {
     return false;
   }
 
-  if (!(!x.votes && !y.votes)) { //if at least one has votes
-    if (!(!!x.votes && !!y.votes)) { //if they don't both have votes, they're unequal
+  if (!(!x.voteStats && !y.voteStats)) { //if at least one has votes
+    if (!(!!x.voteStats && !!y.voteStats)) { //if they don't both have votes, they're unequal
       return false;
     }
-    if (x.votes.up != y.votes.up || x.votes.down != y.votes.down) {
+    if (x.voteStats.up != y.voteStats.up || x.voteStats.down != y.voteStats.down) {
       return false;
     }
   }

@@ -1,6 +1,7 @@
 import * as moment from 'moment';
 import { Entity, parseEntity, RawEntity } from '../core/models';
 import Moment = moment.Moment;
+import { User } from '../user/user.model';
 
 export interface Vote extends Entity {
   value: number;
@@ -8,7 +9,14 @@ export interface Vote extends Entity {
   userDistrict: null | {id: string, name: string};
 }
 
+
+export type DenormalizedVote = Vote & {
+  author: User
+}
+
 export type RawVote = RawEntity & {[P in 'value' | 'userDistrict']: Vote[P]} & { posted: string };
+
+
 
 export function parseVote(data: RawVote): Vote {
 

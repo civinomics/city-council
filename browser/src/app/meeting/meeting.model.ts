@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { keys } from 'lodash';
 import { ItemStatsAdt } from '../item/item.model';
 import { Group, RawGroup } from '../group/group.model';
-import { CommentWithAuthor, RawCommentWithAuthor } from '../comment/comment.model';
+import { CommentWithAuthor, DenormalizedComment, RawCommentWithAuthor } from '../comment/comment.model';
 import Moment = moment.Moment;
 
 export type MeetingStatus = 'open' | 'closed' | 'draft'
@@ -35,7 +35,6 @@ export const MeetingFields = [ 'title', 'startTime', 'endTime', 'feedbackDeadlin
 
 
 export type MeetingStats = {
-  priors: { date: string, value: number }[];
 
   total: {
     votes: number;
@@ -55,12 +54,8 @@ export type MeetingStats = {
       text: string;
       itemNumber: number;
       total: ItemStatsAdt;
+      comments: DenormalizedComment[];
       byDistrict: { [districtId: string]: ItemStatsAdt }
-      topComments: {
-        pro: CommentWithAuthor | RawCommentWithAuthor;
-        con: CommentWithAuthor | RawCommentWithAuthor;
-        byDistrict: { [districtId: string]: { pro: CommentWithAuthor | RawCommentWithAuthor | null, con: CommentWithAuthor | RawCommentWithAuthor | null } }
-      }
     }
   }
 }

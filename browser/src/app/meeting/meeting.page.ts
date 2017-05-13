@@ -114,7 +114,9 @@ export class MeetingPage implements OnInit {
 
       this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
 
-      this.meeting$.take(1).subscribe(meeting => this.title.setTitle(meeting.title));
+      this.meeting$
+        .filter(it => !!it)
+        .take(1).subscribe(meeting => this.title.setTitle(meeting.title));
 
       this.isAdmin$ = this.authSvc.sessionUser$.withLatestFrom(this.meeting$, (user, meeting) => !!user && ((user.superuser || meeting.owner == user.id)));
 

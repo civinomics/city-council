@@ -10,12 +10,13 @@ import {
   parseGroup,
   parseMeeting,
   RawEntity,
+  Vote,
   User
 } from '@civ/city-council';
 import * as fromPie from '../participation-pie/participation-pie.component';
 import * as fromBar from '../item-bars/item-bars.component';
 import * as fromTable from '../item-table/district-input-table.component';
-let _dontRemoveImports: RawEntity | User | Comment;
+let _dontRemoveImports: RawEntity | User | Comment | Vote;
 export const PAGE_HEIGHT = 772;
 export const PAGE_WIDTH = 590;
 
@@ -33,28 +34,29 @@ export class MeetingReportComponent {
   pieData: fromPie.Datatype[];
   itemBarData: fromBar.Datatype[];
 
-  itemComments: CommentDict;
-
   squares: { key: string, value: number }[];
 
-  constructor(@Inject(REPORT_DATA) private reportData: MeetingReportAdt, @Inject(FOR_DISTRICT) private forDistrict: string, @Inject(ALL_COMMENTS) private allComments: CommentDict) {
+  constructor(@Inject(REPORT_DATA) private reportData: MeetingReportAdt, @Inject(FOR_DISTRICT) private forDistrict: string) {
     this.stats = reportData.stats;
-    this.group = parseGroup(reportData.group as any);
-    this.meeting = parseMeeting(reportData.meeting as any);
+    this.group = parseGroup(reportData.group);
+    this.meeting = parseMeeting(reportData.meeting);
+    console.log(JSON.stringify(this.group.districts));
+
+
 
     this.districts = this.group.districts.reduce((result, next) =>
         ({...result, [next.id]: next}),
       {});
 
-    this.itemComments = Object.keys(allComments).reduce((result, id) => ({
-      ...result,
-      [id]: sortComments(allComments[ id ])
-    }), {});
-
-    this.pieData = Object.keys(this.districts).map(id => ({
-      name: this.districts[id].name,
-      value: this.stats.total.byDistrict[id].participants
-    }));
+    this.pieData = this.group.districts.map(district =>({
+      name: district.name,
+      value: this.stats.total.byDistrict[district.id].participants
+    })).concat([
+      {
+        name: 'NO DISTRICT',
+        value: this.stats.total.byDistrict["NO_DISTRICT"].participants
+      }
+    ]);
 
 
     this.itemBarData = Object.keys(this.stats.byItem).map(id => {
@@ -89,7 +91,13 @@ export class MeetingReportComponent {
       district: district.name,
       votes: entry.byDistrict[ district.id ].votes,
       comments: entry.byDistrict[ district.id ].comments
-    }))
+    })).concat([
+      {
+        district: "NO_DISTRICT",
+        votes: entry.byDistrict["NO_DISTRICT"].votes,
+        comments: entry.byDistrict["NO_DISTRICT"].comments
+      }
+    ])
   }
 
   userDistrict(user: User) {
@@ -113,10 +121,10 @@ export class MeetingReportComponent {
   }
 
   get forDistrictText() {
-    return this.forDistrict == ALL_DISTRICTS ? 'from all districts' : `from ${this.forDistrict}`;
+    return this.forDistrict == ALL_DISTRICTS ? '' : `${this.forDistrict.toUpperCase()}`;
   }
 
 
 }
 
-const sortComments = (comments: Comment[]) => comments.sort((x, y) => (y.votes.up - y.votes.down) - (x.votes.up - x.votes.down));
+const sortComments = (comments: Comment[]) => comments.sort((x, y) => (y.voteStats.up - y.voteStats.down) - (x.voteStats.up - x.voteStats.down));

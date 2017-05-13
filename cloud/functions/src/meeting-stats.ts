@@ -3,7 +3,6 @@ import { uniqBy } from 'lodash';
 import { initializeAdminApp } from './_internal';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
-import { merge } from 'rxjs/observable/merge';
 import * as moment from 'moment';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/observable/from';
@@ -14,19 +13,17 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/operator/mergeMap';
 
 import {
+  DenormalizedComment,
+  DenormalizedVote,
   Group,
   Item,
   Meeting,
   MeetingStats,
-  parseGroup,
-  parseItem,
-  parseMeeting,
-  RawComment,
-  RawUser,
-  Vote
+  userDistrict
 } from '@civ/city-council';
+import { getCommentsOn, getGroup, getItem, getMeeting, getVotesOn } from './utils';
 
-
+const NO_DISTRICT = 'NO_DISTRICT';
 const cors = require('cors')({ origin: true });
 
 const app = initializeAdminApp();
@@ -45,122 +42,72 @@ export const stats = functions.https.onRequest((req, res) => {
   });
 });
 
-export function getOrComputeMeetingStats(meetingId: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    db.ref(`/internal/meeting_stats/${meetingId}`)
-      .once('value', (snapshot) => {
-        //if stats have not been computed, or were computed > 1 hr ago, recompute them and cache
-        if (!snapshot.exists() || moment(snapshot.val().timestamp).isBefore(moment().subtract(1, 'hours'))) {
-          computeMeetingStats(meetingId).take(1).subscribe(stats => {
-            const stringified = JSON.stringify(stats);
-            //add to cache
-            db.ref(`internal/meeting_stats/${meetingId}`).set({
-              timestamp: moment().toISOString(),
-              payload: stringified
-            }).then(() => {
-              resolve(stringified);
-            }).catch(err => {
-              reject(err);
-            })
-          }, err => {
-            reject(err)
-          })
-        } else {
-          resolve(snapshot.val().payload);
-        }
-      })
-  })
+export async function getOrComputeMeetingStats(meetingId: string): Promise<MeetingStats> {
+
+  const cacheSnapshot = await db.ref(`/internal/meeting_stats/${meetingId}`).once('value');
+
+  if (!cacheSnapshot.exists() || moment(cacheSnapshot.val().timestamp).isBefore(moment().subtract(1, 'hours'))) {
+    const stats = await computeMeetingStats(meetingId);
+
+    await db.ref(`internal/meeting_stats/${meetingId}`).set({
+      timestamp: moment().toISOString(),
+      payload: JSON.stringify(stats)
+    });
+
+    return stats;
+  }
+
+  return JSON.parse(cacheSnapshot.val().payload) as MeetingStats;
+
 }
 
 
-function computeMeetingStats(meetingId: string): Observable<MeetingStats> {
+export async function computeMeetingStats(meetingId: string): Promise<MeetingStats> {
 
-  return getMeeting(meetingId)
-    .mergeMap(meeting => {
-      meeting = parseMeeting(meeting);
+  const meeting = await getMeeting(meetingId, db);
 
-
-      let group = getGroup(meeting.groupId);
-
-      let priorMtgActivity = getPriorMeetingActivity(meetingId);
-
-      let itemVotes$ = merge(...meeting.agenda.map(id => getVotesForItem(id).take(1).map(votes => ({
-        itemId: id,
-        votes
-      }))))
-        .reduce((result, next: { itemId: string, votes: Vote[] }) => ({
-          ...result,
-          [next.itemId]: next.votes
-        }), {});
-
-      let items$ = Observable.from(meeting.agenda)
-        .flatMap(itemId => getItem(itemId).take(1))
-        .reduce((result, item: Item) => {
-          console.log(`item: ${item.id}`);
-          return { ...result, [item.id]: item }
-        }, {});
+  //do these all in parallel
+  const [ group, items, votes, comments ]: [ Group, Item[], DenormalizedVote[][], DenormalizedComment[][] ] = await Promise.all([
+    getGroup(meeting.groupId, db),
+    Promise.all(meeting.agenda.map(itemId => getItem(itemId, db))),
+    Promise.all(meeting.agenda.map(itemId => getVotesOn(itemId, db))),
+    Promise.all(meeting.agenda.map(itemId => getCommentsOn(itemId, db))),
+  ]);
 
 
-
-      let itemComments$ = merge(...meeting.agenda.map(id => getCommentsForItem(id).take(1).map(comments => ({
-        itemId: id,
-        comments
-      }))))
-        .reduce((result, next: { itemId: string, comments: RawComment[] }) => ({
-          ...result,
-          [next.itemId]: next.comments
-        }), {});
-
-      return Observable.combineLatest(group.take(1), priorMtgActivity.take(1), itemVotes$.take(1), itemComments$.take(1), items$.take(1))
-        .map(([ group, priors, votes, comments, items ]) => ({
-          group,
-          priors,
-          meeting,
-          votes,
-          comments,
-          items
-        }))
-    }).map((data: {
-        meeting: Meeting,
-        priors: { date: string, value: number }[],
-        group: Group,
-        votes: { [id: string]: Vote[] },
-        comments: { [id: string]: RawComment[] },
-        items: { [id: string]: Item },
-      }) =>
-        prepareReport(data.meeting, data.group, data.priors, data.votes, data.comments, data.items)
-    );
+  return prepareReport(meeting, group, items.map((item, idx) => ({
+    ...item,
+    votes: votes[ idx ],
+    comments: comments[ idx ]
+  })));
 }
+
 
 function prepareReport(meeting: Meeting,
                        group: Group,
-                       priors: { date: string, value: number }[],
-                       votes: { [id: string]: Vote[] },
-                       comments: { [id: string]: RawComment[] },
-                       items: { [id: string]: Item }) {
+                       items: (Item & { comments: DenormalizedComment[], votes: DenormalizedVote[] })[]): MeetingStats {
 
-  let districtIds = group.districts.map(it => it.id);
+  let districtIds = group.districts.map(it => it.id).concat([ null ]); //null signifies undistricted users
 
-  let allVotes = Object.keys(votes).reduce((result, itemId) => [ ...result, ...votes[ itemId ] ], []),
-    allComments = Object.keys(comments).reduce((result, itemId) => [ ...result, ...comments[ itemId ] ], []);
+  let allVotes: DenormalizedVote[] = items.reduce((result, item) => [ ...result, ...item.votes ], []),
+    allComments: DenormalizedComment[] = items.reduce((result, item) => [ ...result, ...item.comments ], []);
 
-  let uniqueParticipants = uniqBy([ ...allComments, ...allVotes ].map(it =>
-    ({ userId: it.owner, district: (it.userDistrict || { id: null } as any).id })), 'userId');
+  let uniqueParticipants = uniqBy(
+    [ ...allComments, ...allVotes ].map(it => ({
+      userId: it.owner,
+      district: (it.userDistrict || { id: null } as any).id
+    })),
+    'userId'
+  );
 
   let districtTotals = districtIds.reduce((result, districtId) => ({
     ...result,
-    [districtId]: {
-      votes: allVotes.filter(vote => (vote.userDistrict || { id: null } as any).id == districtId).length,
-      comments: allComments.filter(comment => (comment.userDistrict || { id: null } as any).id == districtId).length,
+    [districtId || NO_DISTRICT]: {
+      votes: allVotes.filter(vote => userDistrict(vote.author, meeting.groupId) == districtId).length,
+      comments: allComments.filter(comment => userDistrict(comment.author, meeting.groupId) == districtId).length,
       participants: uniqueParticipants.filter(it => it.district == districtId).length
     }
-  }), {
-    'NO_DISTRICT': {
-      votes: allVotes.filter(vote => (vote.userDistrict || { id: null } as any).id == null).length,
-      comments: allComments.filter(comment => comment.userDistrict == null).length,
-      participants: uniqueParticipants.filter(it => it.district == null).length
-    }
-  });
+  }), {});
 
 
   let total = {
@@ -170,123 +117,61 @@ function prepareReport(meeting: Meeting,
     byDistrict: districtTotals
   };
 
-  let byItem = meeting.agenda.reduce((itemsResult, itemId) => {
-    let itemVotes = votes[ itemId ],
-      itemComments = comments[ itemId ];
 
-    let total = {
+  const sortByNetVotes = (x, y) => (y.votes.up - y.votes.down) - (x.votes.up - x.votes.down);
+
+
+  let byItem = items.reduce((byItemResult, item) => {
+
+    let itemTotal = {
       votes: {
-        yes: itemVotes.filter(vote => vote.value == 1).length,
-        no: itemVotes.filter(vote => vote.value == -1).length
+        yes: item.votes.filter(vote => vote.value == 1).length,
+        no: item.votes.filter(vote => vote.value == -1).length
       },
       comments: {
-        pro: itemComments.filter(it => it.role == 'pro').length,
-        con: itemComments.filter(it => it.role == 'con').length,
-        neutral: itemComments.filter(it => it.role == 'neutral').length
+        pro: item.comments.filter(it => it.role == 'pro').length,
+        con: item.comments.filter(it => it.role == 'con').length,
+        neutral: item.comments.filter(it => it.role == 'neutral').length
       }
     };
 
-    const sortByNetVotes = (x, y) => (y.votes.up - y.votes.down) - (x.votes.up - x.votes.down);
-
-    let undistrictedItemVotes = itemVotes.filter(vote => (vote.userDistrict || { id: null } as any).id == null),
-      undistrictedItemComments = itemComments.filter(vote => (vote.userDistrict || { id: null } as any).id == null);
-
-    let byDistrict = districtIds.reduce((districtResults, districtId) => {
-      let itemVotesInDistrict = itemVotes.filter(vote => (vote.userDistrict || { id: null } as any).id == districtId);
-      let itemCommentsInDistrict = itemComments.filter(comment => (comment.userDistrict || { id: null } as any).id == districtId);
+    let byDistrict = districtIds.reduce((byDistrictResult, districtId) => {
+      let districtVotes = item.votes.filter(vote => userDistrict(vote.author, meeting.groupId) == districtId);
+      let districtComments = item.comments.filter(comment => userDistrict(comment.author, meeting.groupId) == districtId);
 
       return {
-        ...districtResults,
-        [districtId]: {
+        ...byDistrictResult,
+        [districtId || NO_DISTRICT]: { // use NO_DISTRICT as key for the null entry
           votes: {
-            yes: itemVotesInDistrict.filter(it => it.value == 1).length,
-            no: itemVotesInDistrict.filter(it => it.value == -1).length
+            yes: districtVotes.filter(it => it.value == 1).length,
+            no: districtVotes.filter(it => it.value == -1).length
           },
           comments: {
-            pro: itemCommentsInDistrict.filter(it => it.role == 'pro').length,
-            con: itemCommentsInDistrict.filter(it => it.role == 'con').length,
-            neutral: itemCommentsInDistrict.filter(it => it.role == 'neutral').length
+            pro: districtComments.filter(it => it.role == 'pro').length,
+            con: districtComments.filter(it => it.role == 'con').length,
+            neutral: districtComments.filter(it => it.role == 'neutral').length
           }
         }
       }
-    }, {
-      NO_DISTRICT: {
-        votes: {
-          yes: undistrictedItemVotes.filter(it => it.value == 1).length,
-          no: undistrictedItemVotes.filter(it => it.value == -1).length
-        },
-        comments: {
-          pro: undistrictedItemComments.filter(it => it.role == 'pro').length,
-          con: undistrictedItemComments.filter(it => it.role == 'con').length,
-          neutral: undistrictedItemComments.filter(it => it.role == 'neutral').length
-        }
-      }
-    });
 
-
-    let topPro = itemComments.filter(comm => comm.role == 'pro')
-        .sort(sortByNetVotes)[ 0 ] || null;
-
-    let topCon = itemComments.filter(comm => comm.role == 'con')
-        .sort(sortByNetVotes)[ 0 ] || null;
-
-
-    let topCommentsByDistrict = districtIds.reduce((districtResults, districtId) => {
-      let districtComments = itemComments.filter(comment => (comment.userDistrict || { id: null } as any).id == districtId);
-
-      return {
-        ...districtResults,
-        [districtId]: {
-          pro: districtComments.filter(comm => comm.role == 'pro').sort(sortByNetVotes)[ 0 ] || null,
-          con: districtComments.filter(comm => comm.role == 'con').sort(sortByNetVotes)[ 0 ] || null,
-        }
-      }
-    }, {
-      NO_DISTRICT: {
-        pro: undistrictedItemComments.filter(comm => comm.role == 'pro').sort(sortByNetVotes)[ 0 ] || null,
-        con: undistrictedItemComments.filter(comm => comm.role == 'con').sort(sortByNetVotes)[ 0 ] || null
-      }
-    });
-
-    let topComments = {
-      pro: topPro,
-      con: topCon,
-      byDistrict: topCommentsByDistrict
-    };
-
-    let item = items[ itemId ],
-      text = item.text,
-      itemNumber = item.onAgendas[ meeting.id ].itemNumber;
+    }, {});
 
     return {
-      ...itemsResult,
-      [itemId]: {
-        text,
-        itemNumber,
-        total,
-        byDistrict,
-        topComments
+      ...byItemResult, [item.id]: {
+        text: item.text,
+        itemNumber: item.onAgendas[ meeting.id ].itemNumber,
+        comments: item.comments,
+        total: itemTotal,
+        byDistrict
       }
-    }
-
+    };
 
   }, {});
 
-  return {
-    priors, total, byItem
-  }
-}
 
-function getItem(itemId: string): Observable<Item> {
-  return Observable.create((observer: Observer<Item>) => {
-    app.database().ref(`/item/${itemId}`).once('value', (snapshot) => {
-      observer.next(parseItem({ id: itemId, ...snapshot.val() }));
-      observer.complete()
-    }).catch(err => {
-      observer.error(err);
-      observer.complete();
-    })
-  });
+  return {
+    total, byItem
+  }
 }
 
 function getPriorMeetingActivity(meetingId: string): Observable<{ date: string, value: number }[]> {
@@ -359,106 +244,3 @@ function getSimpleActivityTotalForMeeting(mtgId: string): Observable<number> {
 
   })
 }
-
-function getVotesForItem(itemId: string): Observable<Vote[]> {
-  return Observable.create((observer: Observer<Vote[]>) => {
-    app.database().ref(`/vote/${itemId}`).once('value', (snapshot) => {
-      let val = snapshot.val();
-      if (val == null) {
-        observer.next([]);
-      } else {
-        observer.next(Object.keys(val).map(id => ({ ...val[ id ], id })));
-      }
-      observer.complete();
-    }, err => {
-      observer.error(err);
-    })
-  })
-}
-
-function getCommentsForItem(itemId: string): Observable<RawComment[]> {
-  return Observable.create((observer: Observer<RawComment[]>) => {
-    app.database().ref(`/comment/${itemId}`).once('value', (snapshot) => {
-      let val = snapshot.val();
-      if (val == null) {
-        observer.next([]);
-        observer.complete();
-      } else {
-        let commentIds = Object.keys(val);
-
-        Observable.forkJoin(...commentIds.map(id =>
-            Observable.forkJoin(
-              getCommentVoteStats(id).take(1),
-              getUser(val[ id ].owner).take(1)
-            ).take(1).map(([ votes, author ]) => ({ ...val[ id ], id, votes, author }))
-          )
-        ).subscribe(result => {
-          observer.next(result);
-          observer.complete();
-        }, err => {
-          observer.error(err);
-        });
-
-      }
-    }, err => {
-      observer.error(err);
-    })
-  })
-}
-
-function getUser(userId: string): Observable<RawUser> {
-  return Observable.create((observer: Observer<RawUser>) => {
-    app.database().ref(`/user/${userId}`).once('value', (snapshot) => {
-      let xx = snapshot.val();
-      observer.next({ ...snapshot.val(), id: userId });
-      observer.complete();
-    }, err => { observer.error(err) });
-  });
-}
-
-function getCommentVoteStats(commentId: string): Observable<{ up: number, down: number }> {
-  return Observable.create((observer: Observer<{ up: number, down: number }>) => {
-      app.database().ref(`/vote/${commentId}`).once('value', (snapshot) => {
-          let votes = snapshot.val();
-          if (votes == null) {
-            observer.next({ up: 0, down: 0 });
-          } else {
-            votes = Object.keys(votes).map(id => votes[ id ]);
-            observer.next({
-              up: votes.filter(vote => vote.value == 1).length,
-              down: votes.filter(vote => vote.value == -1).length
-            });
-          }
-          observer.complete();
-        }, err => {
-          observer.error(err || null);
-        }
-      )
-    }
-  )
-}
-
-function getMeeting(meetingId): Observable<Meeting> {
-  return Observable.create((observer: Observer<Meeting>) => {
-    app.database().ref(`/meeting/${meetingId}`).once('value', (snapshot) => {
-      observer.next(parseMeeting({ ...snapshot.val(), id: meetingId }));
-      observer.complete();
-    }, err => {
-      observer.error(err);
-    })
-  })
-
-}
-
-function getGroup(groupId): Observable<Group> {
-  return Observable.create((observer: Observer<Group>) => {
-    app.database().ref(`/group/${groupId}`).once('value', (snapshot) => {
-      observer.next(parseGroup({ ...snapshot.val(), id: groupId }));
-      observer.complete();
-    }, err => {
-      observer.error(err);
-    })
-  })
-
-}
-

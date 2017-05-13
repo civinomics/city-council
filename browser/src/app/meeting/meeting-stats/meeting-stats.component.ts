@@ -23,6 +23,7 @@ import { MeetingService } from '../meeting.service';
 import { schemeCategory10 } from 'd3-scale';
 import { Comment } from '../../comment/comment.model';
 import { hasActivity } from './activity.pipe';
+import { userDistrict } from '../../user/user.model';
 let x: User | RawUser | CommentWithAuthor | RawCommentWithAuthor;
 
 const NO_DISTRICT = 'NO_DISTRICT';
@@ -174,16 +175,22 @@ export class MeetingStatsComponent implements OnChanges {
   }
 
   topPro(item: Item) {
+    let src = this.activeDistrict.id == null ?
+      this.stats.byItem[item.id].comments :
+      this.stats.byItem[item.id].comments.filter(it => userDistrict(it.author, this.meeting.groupId) == this.activeDistrict.id);
 
+    const cons = src.filter(it => it.role == 'pro');
+    return sortByNetVotes(cons)[cons.length - 1];
   }
 
 
   topCon(item: Item) {
       let src = this.activeDistrict.id == null ?
-        this.stats.byItem[item.id].topComments :
-        this.stats.byItem[item.id].topComments.byDistrict[this.activeDistrict.id];
+        this.stats.byItem[item.id].comments :
+        this.stats.byItem[item.id].comments.filter(it => userDistrict(it.author, this.meeting.groupId) == this.activeDistrict.id);
 
-    return src.con;
+    const cons = src.filter(it => it.role == 'con');
+    return sortByNetVotes(cons)[cons.length - 1];
   }
 
   districtTableData(item: Item) {
@@ -247,13 +254,11 @@ export class MeetingStatsComponent implements OnChanges {
       });
 
       let topComments = this.items.reduce((result, item) => {
-          let src = this.activeDistrict.id == null ?
-              this.stats.byItem[ item.id ].topComments :
-              this.stats.byItem[ item.id ].topComments.byDistrict[ this.activeDistrict.id ];
+
 
           return {
               ...result,
-              [item.id]: { pro: src.pro, con: src.con }
+              [item.id]: { pro: this.topPro(item), con: this.topCon(item) }
           }
       }, {});
 
@@ -270,3 +275,5 @@ export class MeetingStatsComponent implements OnChanges {
 
 
 }
+
+const sortByNetVotes = (arr: Comment[]) => arr.sort(((x, y) => (x.voteStats.up - x.voteStats.down) - (y.voteStats.up - y.voteStats.down)));

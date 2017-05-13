@@ -7,7 +7,7 @@
 
   <div class="meeting-info">
     <div class="top-line">Public feedback report for</div>
-    <div class="meeting-name">{{meeting.title}}</div>
+    <div class="meeting-name">{{meeting.title}}: {{meeting.startTime | amDateFormat: 'M/DD/YY'}}</div>
     <div class="for-district">{{forDistrictText}}</div>
   </div>
 
@@ -40,11 +40,10 @@
 
   <civ-district-input-table [data]="tableData(entry.id)"></civ-district-input-table>
 
-
   <div class="heading">
     Comments
   </div>
-  <div *ngFor="let comment of itemComments[entry.id]" class="comment-row">
+  <div *ngFor="let comment of entry.comments" class="comment-row">
     <div class="comment-text">
       {{comment.text}}
     </div>
@@ -52,8 +51,8 @@
       <div>
         <div class="role {{comment.role}}">{{comment.role}}</div>
         <div class="votes">
-          <span class="pro">+{{comment.votes.up}}</span>
-          <span class="con">-{{comment.votes.down}}</span>
+          <span class="pro">+{{comment.voteStats.up}}</span>
+          <span class="con">-{{comment.voteStats.down}}</span>
         </div>
       </div>
 
