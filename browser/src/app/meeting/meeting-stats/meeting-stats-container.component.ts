@@ -13,18 +13,26 @@ import { GroupService } from '../../group/group.service';
 @Component({
   selector: 'civ-meeting-stats',
   template: `
-    <civ-meeting-stats-view [stats]="stats$ | async" [meeting]="meeting$ | async"
+    <civ-meeting-stats-view *ngIf="!!(stats$ | async) && (!!items$ | async); else loading"
+                            [stats]="stats$ | async" [meeting]="meeting$ | async"
                             [districts]="(group$ | async)?.districts" [items]="items$ | async"
                             [activeDistrict]="activeDistrict$ | async"
                             (activeDistrictChanged)="setActiveDistrict($event)"
                             [reportRequestResult]="reportRequestResult"
-                            (requestReport)="getReport($event)"
-                            *ngIf="!!(items$ | async) && !!(stats$ | async)"
-    >
+                            (requestReport)="getReport($event)">
 
     </civ-meeting-stats-view>
+
+    <ng-template #loading>
+      <civ-loading class="loading"></civ-loading>
+    </ng-template>
+
   `,
-  styles: []
+  styles: [ `
+    :host { display: block }
+
+    .loading { position: absolute; top: 112px; left: 0; right: 0; bottom: 0 }
+  ` ]
 })
 export class MeetingStatsContainerComponent implements OnInit {
   group$: Observable<Group>;
@@ -38,7 +46,7 @@ export class MeetingStatsContainerComponent implements OnInit {
   constructor(private meetingSvc: MeetingService, private groupSvc: GroupService) {
 
     this.group$ = this.groupSvc.getSelectedGroup();
-    this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
+    this.meeting$ = Observable.timer(30000).flatMapTo(this.meetingSvc.getSelectedMeeting().filter(it => !!it));
     this.stats$ = this.meeting$.take(1).map(it => it.id).flatMap(id => this.meetingSvc.getMeetingStats(id));
 
     this.items$ = this.meetingSvc.getAgendaItemsOfSelectedMeeting().map(arr => arr.filter(it => !!it));

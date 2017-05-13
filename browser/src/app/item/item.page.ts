@@ -19,7 +19,7 @@ import { Title } from '@angular/platform-browser';
 @Component({
   selector: 'civ-item-container',
   template: `
-    <civ-item-view *ngIf="item$ | async as item"
+    <civ-item-view *ngIf="item$ | async as item; else loading"
                    [item]="item"
                    [userVote]="userVote$ | async"
                    [userComment]="userComment$ | async"
@@ -31,20 +31,13 @@ import { Title } from '@angular/platform-browser';
                    [showingAllComments]="allComments$ | async"
                    (showAllComments)="allComments$.next($event)"
                    (follow)="doFollow($event)"
-                   (vote)="castVote($event)" (comment)="postComment($event)" (back)="backToAgenda()"></civ-item-view>
+                   (vote)="castVote($event)" (comment)="postComment($event)" (back)="backToAgenda()">
+
+    </civ-item-view>
+    <ng-template #loading>
+      <civ-loading class="loading"></civ-loading>
+    </ng-template>
   `,
-  /*  host: { '[@host]': '' },
-   animations: [
-   trigger('host', [
-   transition('void => *', [
-   style({ opacity: 0, transform: 'translateX(100%)' }),
-   animate('200ms 200ms ease-in', style({ opacity: 1,  transform: 'translateX(0)'  }))
-   ]),
-   transition('* => void', [
-   animate('200ms ease-in', style({transform:'translateX(100%)', opacity: 0}))
-   ])
-   ])
-   ],*/
   styleUrls: [ './../shared/pages.scss' ],
 })
 export class ItemPageComponent implements OnInit {
@@ -85,7 +78,9 @@ export class ItemPageComponent implements OnInit {
 
     this.item$ = this.itemSvc.getSelectedItem();
 
-    this.item$.take(1).subscribe(item =>
+    this.item$
+      .filter(it => !!it)
+      .take(1).subscribe(item =>
       this.title.setTitle(item.text.length > 20 ? item.text.substring(0, 20).concat('...') : item.text)
     );
 

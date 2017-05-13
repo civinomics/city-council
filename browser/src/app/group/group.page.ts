@@ -13,11 +13,11 @@ import { Title } from '@angular/platform-browser';
 @Component({
   selector: 'civ-group',
   template: `
-      <div fxLayout="row" fxLayoutAlign="space-around stretch">
+    <div fxLayout="row" fxLayoutAlign="space-around stretch" *ngIf="group$ | async as group">
           <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="10px">
-              <img class="flag" [src]="(group$ | async)?.icon" class.xs="mini">
+            <img class="flag" [src]="group.icon" class.xs="mini">
               <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="5px">
-                  <div class="place-title">{{(group$ | async)?.name}}</div>
+                <div class="place-title">{{group.name}}</div>
                   <div class="follow-row"
                        fxLayout="row"
                        fxLayoutAlign="space-around center"
@@ -118,7 +118,9 @@ export class GroupPage implements OnInit {
 
     this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
 
-    this.group$.take(1).subscribe(group => this.title.setTitle(group.name));
+    this.group$
+      .filter(it => !!it)
+      .take(1).subscribe(group => this.title.setTitle(group.name));
 
 
     this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.group$, (user, group) => !!user && ((user.superuser || group.owner == user.id)));

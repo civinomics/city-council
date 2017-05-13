@@ -1,4 +1,4 @@
-<div class="outer-wrapper" *ngIf="!!data" fxLayout="column" fxLayoutGap="50px">
+<div class="outer-wrapper" *ngIf="!!data" fxLayout="column" fxLayoutGap="60px">
 
   <div fxLayout="row" fxLayoutAlign="space-around center">
     <div class="district-selector" fxLayout="row" fxLayoutAlign="start center" fxFlexAlign="center" fxLayoutGap="10px">
@@ -70,11 +70,12 @@
   <div class="by-item row" [style.height.px]="activityByItemHeight">
     <div class="heading">Activity by item</div>
     <ngx-charts-bar-horizontal-stacked
-            [results]="data.activityByItem.reverse()"
-            [barPadding]="4"
-            [customColors]="barColors"
-            [scheme]="pieColorScheme"
-            [yAxis]="true"
+      [results]="data.activityByItem.reverse()"
+      [barPadding]="4"
+      [customColors]="barColors"
+      [scheme]="pieColorScheme"
+      [yAxis]="true"
+      [xAxis]="true"
     >
 
     </ngx-charts-bar-horizontal-stacked>

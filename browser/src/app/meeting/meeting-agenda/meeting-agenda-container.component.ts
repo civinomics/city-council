@@ -13,15 +13,18 @@ import { GroupService } from '../../group/group.service';
 @Component({
   selector: 'civ-meeting-agenda',
   template: `
-    <civ-meeting-agenda-view [meeting]="meeting$ | async" [items]="items$ | async" [group]="group$ | async"
+    <civ-meeting-agenda-view *ngIf="!!(meeting$ | async) && !!(items$ | async) && !!(group$ | async); else loading"
+                             [meeting]="meeting$ | async"
+                             [items]="items$ | async"
+                             [group]="group$ | async"
                              [stats]="stats$"
                              (showItem)="showItem($event)">
-
     </civ-meeting-agenda-view>
+    <ng-template #loading>
+      <civ-loading class="loading"></civ-loading>
+    </ng-template>
   `,
-  styles: [`:host {
-    display: block
-  }`],
+  styleUrls: [ '../../shared/pages.scss' ],
   host: {'[@host]': ''},
   animations: [
     trigger('host', [

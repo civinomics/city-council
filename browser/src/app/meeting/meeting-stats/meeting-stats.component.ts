@@ -254,8 +254,6 @@ export class MeetingStatsComponent implements OnChanges {
       });
 
       let topComments = this.items.reduce((result, item) => {
-
-
           return {
               ...result,
               [item.id]: { pro: this.topPro(item), con: this.topCon(item) }

@@ -13,9 +13,9 @@ import { Title } from '@angular/platform-browser';
 @Component({
     selector: 'civ-meeting-container',
     template: `
-      <div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="15px">
-        <div class="focus-title">{{(meeting$ | async)?.title}}:
-          {{(meeting$ | async)?.startTime | amDateFormat: 'M/DD/YY'}}
+      <div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="15px" *ngIf="meeting$ | async as meeting">
+        <div class="focus-title">{{meeting.title}}:
+          {{meeting.startTime | amDateFormat: 'M/DD/YY'}}
         </div>
         <div class="follow-row"
              fxLayout="row"
@@ -65,7 +65,16 @@ import { Title } from '@angular/platform-browser';
         </nav>
         <router-outlet></router-outlet>
       </div>
+      <ng-template #loading>
+        <civ-loading class="loading"></civ-loading>
+      </ng-template>
+
     `,
+  styles: [ `
+    :host { display: block }
+
+    .loading { position: absolute; top: 112px; left: 0; right: 0; bottom: 0 }
+  ` ],
     styleUrls: [ './../shared/pages.scss' ],
   /* host: { '[@host]': '' },
     animations: [

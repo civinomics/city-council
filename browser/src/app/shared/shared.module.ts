@@ -21,6 +21,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxErrorsModule } from '@ultimate/ngxerrors';
 import { LimitPipe } from './pipes/limit.pipe';
+import { LoadingComponent } from './components/loading/loading.component';
 
 const VIEW_PROVIDERS = [
     CommonModule,
@@ -46,9 +47,9 @@ const VIEW_PROVIDERS = [
 ];
 
 @NgModule({
-    declarations: [ LimitPipe ],
+  declarations: [ LimitPipe, LoadingComponent ],
     imports: VIEW_PROVIDERS,
-    exports: [ ...VIEW_PROVIDERS, LimitPipe ],
+  exports: [ ...VIEW_PROVIDERS, LimitPipe, LoadingComponent ],
 })
 export class SharedModule {
 }

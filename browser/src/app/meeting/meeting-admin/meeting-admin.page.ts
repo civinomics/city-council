@@ -13,10 +13,14 @@ import { ItemService } from '../../item/item.service';
                                 (setFeedbackStatus)="setFeedbackStatus($event)"
                                 (setPublished)="setPublished($event)"
                                 (updateInfo)="updateInfo($event)"
-                                *ngIf="!!(meeting$ | async) "
+                                *ngIf="!!(meeting$ | async) && !!(items$ | async); else loading "
         ></civ-meeting-admin-view>
+        <ng-template #loading>
+          <civ-loading class="loading"></civ-loading>
+        </ng-template>
+
     `,
-    styles: []
+  styleUrls: [ '../../shared/pages.scss' ],
 })
 export class MeetingAdminPage {
 

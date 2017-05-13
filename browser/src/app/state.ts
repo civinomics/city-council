@@ -95,7 +95,7 @@ export const getFocusedItem = createSelector(getFocusedItemId, getItems, (itemId
 
 export const getMeetingsOfSelectedGroup = createSelector(getFocusedGroup, getMeetings, (group, meetings) => {
   if (group == null) {
-    return []
+    return undefined;
   }
   return group.meetingIds.map(id => meetings[id]);
 });
