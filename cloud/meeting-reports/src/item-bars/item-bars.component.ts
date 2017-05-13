@@ -10,20 +10,23 @@ export interface Datatype {
   selector: 'civ-item-bars',
   styleUrls: [ './item-bars.component.scss' ],
   template: `
-    <div *ngFor="let item of items" class="item" [style.height.px]="BAR_HEIGHT" [style.margin-bottom.px]="BAR_MARGIN">
+    <div *ngFor="let item of items" class="item" [style.margin-bottom.px]="BAR_MARGIN">
       <div class="bar pro" [style.width.%]="scale(item.pro)">
       </div>
       <div class="bar con" [style.left.%]="scale(item.pro)" [style.width.%]="scale(item.con)">
       </div>
       <span class="item-no"><small>#</small>{{item.itemNumber}}</span>
+      <span class="label pro" [style.left.%]="scale(item.pro) / 2" *ngIf="scale(item.pro) > 7">{{item.pro}}</span>
+      <span class="label con" [style.left.%]="scale(item.pro) + (scale(item.con) / 2)">{{item.con}}</span>
+
     </div>
   `
 })
 export class ItemBarsComponent {
 
   items: Datatype[] = [];
-
-  scale: ScaleLinear<number, number> = scaleLinear().range([ 0, 98 ]);
+  w
+  scale: ScaleLinear<number, number> = scaleLinear().range([ 2, 98 ]);
 
   @Input() set data(data: Datatype[]) {
     if (!!data) {
@@ -31,10 +34,9 @@ export class ItemBarsComponent {
         .filter(entry => entry.pro + entry.con > 0)
         .sort((x, y) => ((y.pro + y.con) - (x.pro + x.con)));
 
-      console.log(JSON.stringify(this.items, null, '\t'));
 
       this.scale.domain([
-        (this.items[ this.items.length - 1 ].pro + this.items[ this.items.length - 1 ].con),
+        0,
         (this.items[ 0 ].pro + this.items[ 0 ].con)
       ]);
 

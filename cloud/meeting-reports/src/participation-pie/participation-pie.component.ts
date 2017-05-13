@@ -11,8 +11,9 @@ export type Datatype = { name: string, value: number };
       <svg:g [attr.transform]="rootGTransform">
         <svg:g *ngFor="let slice of slices" class="pie-slice">
           <path [attr.d]="slice.path" [attr.fill]="slice.color"></path>
-          <svg:text [attr.transform]="slice.label.transform"
-                    dy="0.35em"
+          <svg:text class="label"
+                    [attr.transform]="slice.label.transform"
+                    [attr.fill]="slice.color"
                     [attr.text-anchor]="slice.label.textAnchor">
             {{slice.label.text}}
           </svg:text>
@@ -39,12 +40,12 @@ export class ParticipationPieComponent implements OnInit {
   innerRadius: number;
   outerRadius: number;
   rootGTransform: string;
-  colors = ['#F44336', '#673AB7', '#03A9F4', '#4CAF50', '#FF5722', '#607D8B', '#9C27B0', '#3F51B5', '#009688', '#8BC34A', '#CDDC39', '#795548'];
+  colors = [ '#F44336', '#673AB7', '#03A9F4', '#4CAF50', '#FF5722', '#607D8B', '#9C27B0', '#3F51B5', '#009688', '#8BC34A', '#777', '#795548' ];
 
   constructor() { }
 
   ngOnInit() {
-    this.outerRadius = this.height / 2;
+    this.outerRadius = this.height / 2 - 15;
     this.innerRadius = this.outerRadius * 0.9;
     this.arcs = this.pieFxn(this.data);
 
@@ -61,9 +62,12 @@ export class ParticipationPieComponent implements OnInit {
       [arc.data.name]: this.calcTextAnchor(arc)
     }), {});
 
+    const dys = this.arcs.reduce((result, arc) => ({ ...result, [arc.data.name]: this.calcDy(arc) }), {});
+
     this.slices = this.arcs.map(arc => {
 
       let labelPos = labelPositions[ arc.data.name ],
+        dy = dys[ arc.data.name ],
           textAnchor = textAnchors[ arc.data.name ];
 
       return {
@@ -73,6 +77,7 @@ export class ParticipationPieComponent implements OnInit {
         label: {
           transform: `translate(${labelPos[0]}, ${labelPos[1]})`,
           textAnchor,
+          dy,
           text: arc.data.name
         }
       }
@@ -89,6 +94,19 @@ export class ParticipationPieComponent implements OnInit {
       return 'end';
     } else {
       return 'middle';
+    }
+  }
+
+  calcDy(slice: PieArcDatum<Datatype>) {
+    let rads = ((slice.endAngle - slice.startAngle) / 2) + slice.startAngle;
+    if ((rads > 7 * Math.PI / 4 && rads < Math.PI / 4) || (rads > 3 * Math.PI / 4 && rads < 5 * Math.PI / 4)) {
+      return '0';
+    } else if (rads >= Math.PI / 4 && rads <= 3 * Math.PI / 4) {
+      return '0.5em';
+    } else if (rads >= 5 * Math.PI / 4 && rads <= 7 * Math.PI / 4) {
+      return '-0.5em';
+    } else {
+      return '0';
     }
   }
 

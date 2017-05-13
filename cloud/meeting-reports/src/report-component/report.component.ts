@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { ALL_COMMENTS, ALL_DISTRICTS, CommentDict, FOR_DISTRICT, REPORT_DATA } from '../tokens';
+import { ALL_DISTRICTS, FOR_DISTRICT, REPORT_DATA } from '../tokens';
 import {
   Comment,
   Group,
@@ -10,8 +10,8 @@ import {
   parseGroup,
   parseMeeting,
   RawEntity,
-  Vote,
-  User
+  User,
+  Vote
 } from '@civ/city-council';
 import * as fromPie from '../participation-pie/participation-pie.component';
 import * as fromBar from '../item-bars/item-bars.component';
@@ -40,7 +40,6 @@ export class MeetingReportComponent {
     this.stats = reportData.stats;
     this.group = parseGroup(reportData.group);
     this.meeting = parseMeeting(reportData.meeting);
-    console.log(JSON.stringify(this.group.districts));
 
 
 

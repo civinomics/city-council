@@ -43,7 +43,7 @@
   <div class="heading">
     Comments
   </div>
-  <div *ngFor="let comment of entry.comments" class="comment-row">
+  <div *ngFor="let comment of entry.comments | netVotes" class="comment-row">
     <div class="comment-text">
       {{comment.text}}
     </div>
@@ -61,6 +61,9 @@
         <div class="district">{{userDistrict(comment.author)}}</div>
       </div>
     </div>
+  </div>
+  <div *ngIf="entry.comments.length == 0" class="empty-comments-note">
+    NONE
   </div>
 
 </div>

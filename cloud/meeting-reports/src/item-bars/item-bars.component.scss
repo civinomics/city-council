@@ -8,10 +8,11 @@ $conRed: rgba(211, 47, 47, 0.5);
 }
 
 .item {
-  margin-bottom: 10px;
-  min-height: 15px;
+  margin-bottom: 5px;
+  height: 14px;
   position: relative;
-  margin-left: 10px;
+  margin-left: 5px;
+
   .bar {
     position: absolute;
     top: 0;
@@ -35,9 +36,12 @@ $conRed: rgba(211, 47, 47, 0.5);
     z-index: 1;
     overflow: visible;
     position: relative;
-    top: -2px;
+    top: -1px;
   }
+}
 
+.label {
+  position: absolute;
 }
 
 
