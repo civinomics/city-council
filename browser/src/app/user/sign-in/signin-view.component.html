@@ -149,7 +149,7 @@
             [disabled]="!signupForm.valid"
             class="submit-button"
             (click)="submitSignup()">
-      SIGN UP
+      {{mode == 'sign-up' ? 'SIGN UP' : 'LOG IN'}}
     </button>
 
   </form>
