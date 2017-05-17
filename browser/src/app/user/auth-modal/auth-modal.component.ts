@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MdDialogRef } from '@angular/material';
+import { MD_DIALOG_DATA, MdDialogRef } from '@angular/material';
 import { AuthService } from '../auth.service';
 import { SignInContainerComponent } from '../sign-in/signin.page';
 
@@ -13,6 +13,7 @@ import { SignInContainerComponent } from '../sign-in/signin.page';
                         [firstName]="(values$ | async).firstName"
                         [lastName]="(values$ | async).lastName"
                         [email]="(values$ | async).email"
+                        [message]="message"
                         (startSocial)="initSocialSignin($event)"
                         (completeSocial)="completeSocial($event)"
                         (emailSignup)="emailSignup($event)"
@@ -26,8 +27,15 @@ import { SignInContainerComponent } from '../sign-in/signin.page';
 })
 export class AuthModalComponent extends SignInContainerComponent {
 
-  constructor(authSvc: AuthService, router: Router, route: ActivatedRoute, private dialogRef: MdDialogRef<AuthModalComponent>) {
+  message: string | null;
+
+  constructor(authSvc: AuthService,
+              router: Router,
+              route: ActivatedRoute,
+              private dialogRef: MdDialogRef<AuthModalComponent>,
+              @Inject(MD_DIALOG_DATA) @Optional() private data: any) {
     super(authSvc, router, route);
+    this.message = data && data.message || null;
   }
 
 

@@ -30,7 +30,10 @@ export class AppRootComponent implements OnInit {
   ngOnInit(): void {
     this.authService.displayAuthModal$.subscribe(req => {
       let dialog = this.dialog.open(AuthModalComponent, {
-        height: '90vh'
+        height: '90vh',
+        data: {
+          message: req.message
+        }
       });
       dialog.afterClosed().subscribe(result => {
         console.log('dialog closed');

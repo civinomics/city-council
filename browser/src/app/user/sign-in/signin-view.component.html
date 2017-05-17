@@ -1,9 +1,10 @@
 <div fxLayout="column" fxLayoutAlign="start center" class="outer">
   <div class="title">{{mode == 'sign-up' ? 'SIGN UP' : 'LOG IN'}}</div>
+  <div *ngIf="!!message" class="message">{{message}}</div>
   <div *ngIf="!socialConnected">
     ({{mode == 'sign-up' ? 'already have an account?' : 'need to create an account?'}}
-    <a class="mode-toggle" (click)="setMode.emit(mode == 'sign-up' ? 'log-in' : 'sign-up')">{{mode == 'sign-up' ? 'LOG
-      IN' : 'SIGN UP'}}</a>)
+    <a class="mode-toggle" (click)="setMode.emit(mode == 'sign-up' ? 'log-in' : 'sign-up')">
+      {{mode == 'sign-up' ? 'LOG IN' : 'SIGN UP'}}</a>)
   </div>
   <div class="socials" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
     <div><strong>CONNECT: </strong></div>

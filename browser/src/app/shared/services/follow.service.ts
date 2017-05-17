@@ -24,9 +24,25 @@ export class FollowService {
   follow(type: 'meeting' | 'group' | 'item', id: string): Observable<any> {
     return this.authSvc.sessionUserId$.take(1).flatMap(userId => {
       if (!userId) {
-        return Observable.of({ success: false, message: 'auth-required' });
+        return Observable.create((observer: Observer<any>) => {
+          this.authSvc.requestAuthModal(`You need to log in to follow this ${type}!`, (result) => {
+            if (!!result) {
+              setTimeout(() => {
+                console.debug(`modal result: ${result} || retrying follow`);
+                this.follow(type, id).subscribe(res => {
+                  observer.next(res);
+                  observer.complete()
+                }, err => {
+                  observer.error(err);
+                  observer.complete();
+                })
+              })
+            }
+          })
+        });
+      } else {
+        return this.doAddRemove(type, id, userId, true);
       }
-      return this.doAddRemove(type, id, userId, true);
     });
 
   }

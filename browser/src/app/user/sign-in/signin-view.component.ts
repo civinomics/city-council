@@ -39,6 +39,8 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
   @Input() email: string;
   @Input() error: any;
   @Input() mode: 'sign-up'|'log-in' = 'sign-up';
+  @Input() message: string | null;
+
   @Output() setMode = new EventEmitter<'log-in'|'sign-up'>();
 
   @Output() startSocial: EventEmitter<SocialAuthProvider> = new EventEmitter();
