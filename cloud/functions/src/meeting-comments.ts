@@ -1,6 +1,5 @@
-import * as functions from 'firebase-functions';
 import { initializeAdminApp } from './_internal';
-import { Comment, parseComment } from '@civ/city-council';
+import { Comment, parseComment, parseUser } from '@civ/city-council';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/fromPromise';
@@ -15,56 +14,80 @@ const cors = require('cors')({ origin: true });
 const app = initializeAdminApp();
 const db = app.database();
 
-
-export const meeting_comments = functions.https.onRequest((req, res) => {
-
-  const meetingId = req.query[ 'meetingId' ];
-
-  if (!!meetingId) {
-    cors(req, res, () => {
-      res.send(JSON.stringify({
-        success: false,
-        error: 'No meeting ID provided - please include a meetingId query param.'
-      }));
-    });
-    return;
-  }
-
-  getMeetingComments(meetingId).subscribe(result => {
-    console.log(result);
-  });
-
-});
-
 export function getMeetingComments(meetingId: string): Observable<{ [id: string]: Comment[] }> {
-
   return Observable.fromPromise(
     new Promise((resolve, reject) => {
         db.ref(`/meeting/${meetingId}`).once('value', snapshot => {
+          if (!snapshot.exists()) {
+            reject(`Meeting ${meetingId} does not exist`)
+          }
           resolve(Object.keys(snapshot.val().agenda));
         }).catch(err => {
+          console.info(`Error getting comments for meeting id ${meetingId}: ${JSON.stringify(err)}`);
           reject(err);
         })
       }
     )
-  ).flatMap((agendaItemIds: string[]) => Observable.forkJoin(...agendaItemIds.map(itemId =>
-      Observable.fromPromise(new Promise((resolveItem, rejectItem) => {
-        db.ref(`/comment/${itemId}`).once('value', snapshot => resolveItem(snapshot.val())).catch(err => rejectItem(err))
-      })).take(1)
-        .do(it => {
-          console.log(it);
-        })
-        .map((dict: { [id: string]: any }) => {
+  ).flatMap((agendaItemIds: string[]) => Observable.from(agendaItemIds).flatMap(itemId =>
+      Observable.fromPromise(new Promise((resolve, reject) => {
+        db.ref(`/comment/${itemId}`)
+          .once('value', snapshot => {
+            let dict = snapshot.val();
+            if (dict == null) {
+              resolve([]);
+              return;
+            }
+            const comments = [];
+            snapshot.forEach(commentChild => {
+              comments.push(parseComment({ ...commentChild.val(), id: commentChild.key }));
+              return false;
+            });
 
-          return Object.keys(dict || {}).map(commentId => parseComment({ ...dict[ commentId ], id: commentId }));
-        })
+            Promise.all(comments.map(comment => new Promise((resolveComm, rejectComm) => {
+              let author, votes;
+              db.ref(`/user/${comment.owner}`).once('value', userSnapshot => {
+                author = parseUser({ ...userSnapshot.val(), id: userSnapshot.key });
+
+                db.ref(`/vote/${comment.id}`).once('value', votesSnapshot => {
+                  if (votesSnapshot.val() == null) {
+                    votes = { up: 0, down: 0 };
+                  } else {
+                    let ups = 0, downs = 0;
+                    votesSnapshot.forEach(voteChild => {
+                      let value = (voteChild.val().value);
+                      if (value == -1) {
+                        downs++;
+                      } else if (value == 1) {
+                        ups++;
+                      } else {
+                        console.warn(`unexpected value ${value} for vote ${votesSnapshot.key}`);
+                      }
+                      return false;
+                    });
+                    votes = { up: ups, down: downs };
+                  }
+                  resolveComm({ ...comment, author, votes });
+                }).catch(err => rejectComm(`error getting comment votes: ${JSON.stringify(err)}`))
+
+              }).catch(err => rejectComm(`error getting comment author: ${JSON.stringify(err)}`))
+
+            }))).then(comments => {
+              resolve(comments)
+            });
+          }).catch(err => reject(err))
+      })).take(1)
         .map((comments: Comment[]) => ({ [itemId]: comments }))
     )
-    ).reduce((result, entry) => ({ ...result, ...entry }), {})
-  );
+  ).reduce((result, entry) => {
+    return { ...result, ...entry };
+  }, {});
+
 
 }
 /*
 
- getMeetingComments('id_meeting_511');
+ getMeetingComments('id_meeting_511').subscribe(res => {
+ fs.writeFileSync('comments.json', JSON.stringify(res));
+ console.log('done');
+ });
  */

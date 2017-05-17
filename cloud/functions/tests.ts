@@ -1,11 +1,18 @@
-import { computeMeetingStats } from './src/meeting-stats';
-import * as fs from 'fs';
+/*
 
 
-computeMeetingStats('id_meeting_511').then(it => {
+ const app = initializeAdminApp();
+ const database = app.database();
+ */
+
+/*getFollowersWithEmailAddresses('group', 'id_acc', database).then(it => {
+ console.log(it);
+ })*/
+
+/*computeMeetingStats('id_meeting_511').then(it => {
   fs.writeFileSync('dev-stats2.json', JSON.stringify(it));
   console.log('done');
-});
+ });*/
 
 /*
  getOrComputeMeetingStats('-KjZWYD7GevirhrxSmF2').then(it => {

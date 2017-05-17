@@ -2,9 +2,9 @@ import * as functions from 'firebase-functions';
 import { Event } from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { DeltaSnapshot } from 'firebase-functions/lib/providers/database';
-import { getEmailTransport, initializeAdminApp, initializeMockAdminApp } from './_internal';
+import { getEmailTransport, initializeAdminApp } from './_internal';
 import { Group, Meeting, parseMeeting } from '@civ/city-council';
-import { getFollowers, getGroup, getMeeting, getUserEmail } from './notification-utils';
+import { getFollowers, getFollowersWithEmailAddresses, getGroup, getMeeting, getUserEmail } from './utils';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/from';
@@ -14,21 +14,24 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { SendMailOptions } from 'nodemailer';
 import * as moment from 'moment';
+import { createMeetingReport } from './generate-report';
 import Moment = moment.Moment;
 
 let app: admin.app.App;
 
-if (process.argv.indexOf('dev') >= 0) {
-  app = initializeMockAdminApp();
-} else {
-  app = initializeAdminApp();
-}
+app = initializeAdminApp();
 
 let db: admin.database.Database = app.database();
 
 export const closedMeetingNotifications = functions.pubsub.topic('hourly-tick').onPublish((event) => {
-  console.log('got hourly tick, checking for newly closed meetings');
+  console.info(`Checking for newly closed meetings`);
+  doClosedMeetingRoutine().then(result => {
+    console.info(`Closed meeting routine completed successfully.`)
+  }).catch(err => {
+    console.error(`Error in closed meeting routine: ${err.message}`);
+  })
 });
+
 
 export const newMeetingNotifications = functions.database.ref(`/meeting`).onWrite((event: Event<DeltaSnapshot>) => {
   console.info(`handling meeting write event`);
@@ -39,22 +42,67 @@ export const newMeetingNotifications = functions.database.ref(`/meeting`).onWrit
   })
 });
 
-function checkForAndNotifyOfClosedMeetings() {
-  findNewlyClosedMeetings().then(meetings => {
-    //TODO
-  });
+function doClosedMeetingRoutine() {
+  return new Promise((resolve, reject) => {
+    findNewlyClosedMeetings().then(meetings => {
+      console.info(`found ${meetings.length} newly closed meetings: ${JSON.stringify(meetings.map(it => it.id))}`);
+      meetings.forEach(meeting => {
+        sendNotificationsForClosedMeeting(meeting).then(result => {
+          console.info(result);
+          markMeetingNotificationsSent(meeting.id).then(() => {
+            console.info(`Marked notifications for meeting ${meeting.id} as sent, returning successfully.`);
+          }).catch(err => {
+            console.error(`Error marking notifications as sent: ${JSON.stringify(err)}`);
+            reject(err);
+          })
+        }).catch(err => {
+          console.error(`Error sending emails: ${JSON.stringify(err)}`);
+          reject(err);
+        })
+      });
+      resolve('success');
+    });
+  })
 }
+
+async function sendNotificationsForClosedMeeting(meeting: Meeting) {
+
+  const followers = await getFollowersWithEmailAddresses('group', meeting.groupId, db);
+  console.info(`notifying: ${JSON.stringify(followers)}`);
+  const reportUrl = await createMeetingReport(meeting.id);
+  console.info(`got report`);
+  const transport = getEmailTransport();
+
+  return await Promise.all(Object.keys(followers).map(userId => new Promise((resolve, reject) => {
+    transport.sendMail(createClosedMeetingNotification(followers[ userId ], meeting, reportUrl as string)).then(res => {
+      console.info(`successfully notified ${followers[ userId ]}`);
+      resolve(res);
+    }, err => {
+      console.error(`error notifying ${followers[ userId ]}: ${JSON.stringify(err)}`);
+      reject(err);
+    })
+  })));
+}
+
+function markMeetingNotificationsSent(id: string): Promise<any> {
+  return db.ref(`/meeting/${id}`).update({ notificationsSent: true });
+};
+
+function unmarkMeetingNotificationsSent(id: string): Promise<any> {
+  return db.ref(`/meeting/${id}`).update({ notificationsSent: false });
+};
+
 
 function findNewlyClosedMeetings(): Promise<Meeting[]> {
   return new Promise((resolve, reject) => {
     db.ref(`/meeting`).once('value', snapshot => {
       const newlyClosed = [];
       const now = moment();
-      const hourAgo = now.subtract(1, 'hours'); // TODO: are we going to miss or double-send here?
       snapshot.forEach(child => {
-        let deadline = moment(child.val().feedbackDeadline);
-        if (deadline.isBefore(now) && deadline.isAfter(hourAgo)) {
-          newlyClosed.push(parseMeeting({ ...snapshot.val(), id: snapshot.key }));
+        let meeting = child.val();
+        let deadline = moment(meeting.feedbackDeadline);
+        if (deadline.isBefore(now) && !meeting.notificationsSent) {
+          newlyClosed.push(parseMeeting({ ...meeting, id: child.key }));
         }
         return false;
       });
@@ -92,15 +140,19 @@ function handleMeetingWriteEvent(delta: DeltaSnapshot) {
   });
 }
 
+function checkIfNotificationsNulled(delta: DeltaSnapshot) {
+
+}
+
 function sendNewMeetingNotifications(emails: string[], meeting: Meeting, group: Group) {
   const transport = getEmailTransport();
 
   return Promise.all(emails.map(email =>
-    transport.sendMail(createNewMeetingtNotificationEmail(email, meeting, group))
+    transport.sendMail(createNewMeetingtNotification(email, meeting, group))
   ));
 }
 
-function createNewMeetingtNotificationEmail(to: string, meeting: Meeting, group: Group,): SendMailOptions {
+function createNewMeetingtNotification(to: string, meeting: Meeting, group: Group): SendMailOptions {
 
   let subject = `New meeting agenda published for ${group.name}`;
 
@@ -112,7 +164,18 @@ function createNewMeetingtNotificationEmail(to: string, meeting: Meeting, group:
     html: `<p>A new meeting agenda for <a href="${groupLink}">${group.name}</a> has been published on Civinomics. Check it out here:</p>
            <p><a href="${meetingLink}">${meeting.title}</a></p>`
   }
+}
 
+function createClosedMeetingNotification(to: string, meeting: Meeting, reportUrl: string) {
+  let subject = `Final feedback report available for ${meeting.title}`;
+
+  let meetingStatsLink = `https://civinomics.com/group/${meeting.groupId}/meeting/${meeting.id}/stats`;
+  return {
+    to,
+    subject,
+    html: `<p>The feedback period for ${meeting.title} has ended! </p>
+           <p>The final feedback report is available for download <a href="${reportUrl}">here</a>, or can be viewed via our web interface <a href="${meetingStatsLink}">here</a>.</p>`
+  }
 }
 
 
@@ -122,11 +185,10 @@ function findNewlyPublishedMeetings(delta: DeltaSnapshot): Meeting[] {
     if (meeting.val().published == true) {
       if (meeting.previous.exists() && meeting.previous.val().published == false) {
         newMeetings.push(parseMeeting({ ...meeting.val(), id: meeting.key }));
-
       }
     }
     return false; //keep iterating
-  })
+  });
 
   return newMeetings;
 

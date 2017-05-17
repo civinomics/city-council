@@ -94,10 +94,6 @@ export async function getComment(itemId: string,
     down: votes.filter(it => it.value == -1).length
   };
 
-  if (votes.length > 0) {
-    console.log('yee');
-  }
-
   return {
     ...comment,
     author,
@@ -108,8 +104,9 @@ export async function getComment(itemId: string,
 }
 
 export async function getFollowers(type: 'meeting' | 'group' | 'item', id: string, database: admin.database.Database): Promise<string[]> {
-  const dict = await database.ref(`following/${type}/${id}`).once('value');
-  return Object.keys(dict || {}).filter(id => dict[ id ] == true)
+  const dict = await database.ref(`/following/${type}/${id}`).once('value');
+  const val = dict.val();
+  return Object.keys(val || {}).filter(id => val[ id ] == true)
 
 }
 
@@ -141,7 +138,8 @@ export async function getCommentsOn(itemId: string,
 
 
 export async function getUserEmail(id: string, database: admin.database.Database): Promise<string> {
-  return await database.ref(`/user_private/${id}/email`).once('value');
+  const ref = await database.ref(`/user_private/${id}/email`).once('value');
+  return ref.val();
 }
 
 

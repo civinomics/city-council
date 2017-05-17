@@ -1,35 +1,35 @@
 import { renderReport } from '@civ/meeting-reports';
-import { Comment } from '@civ/city-council';
+import { MeetingReportAdt } from '@civ/city-council';
 import * as functions from 'firebase-functions';
 import * as moment from 'moment';
 import { getStorageBucket, initializeAdminApp } from './_internal';
 import * as pdf from 'html-pdf';
 //import {computeMeetingStats} from './meeting-stats';
-import { Observable } from 'rxjs/Observable';
 
+import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/observable/of';
-
-import { reportData } from './dev-stats';
 import { getMeetingComments } from './meeting-comments';
+import { getOrComputeMeetingStats } from './meeting-stats';
+import { getGroup, getMeeting } from './utils';
 
 const cors = require('cors')({ origin: true });
 
 const app = initializeAdminApp();
-
+const database = app.database();
 
 export const report = functions.https.onRequest(handle);
 
 function handle(req, res) {
   const meetingId = req.query[ 'meetingId' ];
 
-  if (!!meetingId) {
-    /*cors(req, res, () => {
-     res.send(JSON.stringify({
-     success: false,
-     error: 'No meeting ID provided - please include a meetingId query param.'
-     }));
-     });
-     return;*/
+  if (!meetingId) {
+    cors(req, res, () => {
+      res.send(JSON.stringify({
+        success: false,
+        error: 'No meeting ID provided - please include a meetingId query param.'
+      }));
+    });
+    return;
   }
 
   const forDistrict = req.query[ 'forDistrict' ];
@@ -66,7 +66,7 @@ function handle(req, res) {
 function checkCached(meetingId): Promise<string | null> {
   return new Promise((resolve, reject) => {
 
-    app.database().ref(`internal/meeting_report/${meetingId}`).once('value', snapshot => {
+    database.ref(`internal/meeting_report/${meetingId}`).once('value', snapshot => {
       if (!snapshot.exists()) {
         resolve(null);
         return;
@@ -90,7 +90,7 @@ function checkCached(meetingId): Promise<string | null> {
 
 function cacheUrl(meetingId, url) {
   return new Promise((resolve, reject) => {
-    app.database().ref(`internal/meeting_report/${meetingId}`).set({
+    database.ref(`internal/meeting_report/${meetingId}`).set({
       timestamp: moment().toISOString(),
       url
     }).then(() => {
@@ -103,77 +103,105 @@ export function createMeetingReport(meetingId: string, forDistrict?: string): Pr
 
   return new Promise((resolve, reject) => {
 
-    console.log(`generating report for meeting ${meetingId}`);
+    console.info(`generating report for meeting ${meetingId}`);
 
-    const stats$: Observable<any> = Observable.of(reportData).take(1); //computeMeetingStats(meetingId);
+    Promise.all([
+      getReportData(meetingId),
+      getMeetingComments(meetingId).toPromise()
+    ]).then(([ reportData, comments ]) => {
+      renderReport(meetingId, reportData, comments, forDistrict).then(htmlString => {
 
-    let comments$: Observable<{ [id: string]: Comment[] }> = getMeetingComments(meetingId);
+        console.log(`successfully rendered report for meeting ${meetingId}`);
 
+        pdf.create(htmlString, {
+          format: 'letter',
+          orientation: 'portrait',
+          timeout: 240000
+        }).toStream(function (err, stream) {
+          if (!!err) {
+            console.error(`error in PDF generation: ${JSON.stringify(err)}`);
+            reject(err);
+            return;
+          }
 
-    Observable.forkJoin(stats$.take(1), comments$.take(1))
-      .subscribe(([ stats, comments ]) => {
+          const bucket = getStorageBucket();
 
-        renderReport(meetingId, forDistrict, stats, comments).then(htmlString => {
+          const now = moment().toISOString().split('.')[ 0 ];
 
-          console.log(htmlString);
+          const path = `meeting_reports%2f${meetingId}-${now}.pdf`;
 
+          const file = bucket.file(path);
 
-          pdf.create(htmlString, { format: 'letter', orientation: 'portrait' }).toStream(function (err, stream) {
+          const writeStream = file.createWriteStream();
 
+          stream.pipe(writeStream).on('finish', (x) => {
+            file.makePublic((err, response) => {
+              if (err) {
+                reject(err);
+              }
 
-            const bucket = getStorageBucket();
-
-            const now = moment().toISOString().split('.')[ 0 ];
-
-            const path = `meeting_reports%2f${meetingId}-${now}.pdf`;
-
-            const file = bucket.file(path);
-
-            const writeStream = file.createWriteStream();
-
-            stream.pipe(writeStream).on('finish', (x) => {
-              file.makePublic((err, response) => {
-                if (err) {
-                  reject(err);
-                }
-
-                file.getMetadata().then(resp => {
-                  let metadata = resp[ 0 ];
-                  resolve(metadata.mediaLink);
-                }, err => {
-                  reject(err);
-                })
-
-                /*              file.getSignedUrl({
-                 action: 'read',
-                 expires: moment().add(6, 'months').format('MM-DD-YYYY').toString()
-                 }, (err, url) => {
-
-                 if (err){
-                 reject(err);
-                 } else {
-                 resolve(url);
-                 }
-                 })*/
-
-              });
+              file.getMetadata().then(resp => {
+                let metadata = resp[ 0 ];
+                resolve(metadata.mediaLink);
+              }, err => {
+                reject(err);
+              })
 
             });
 
-
           });
 
-        })
+
+        });
+
+      })
 
 
-      });
-
+    });
 
   });
 
 }
+
+function getReportData(meetingId: string): Promise<MeetingReportAdt> {
+
+
+  return new Promise((resolve, reject) => {
+    getMeeting(meetingId, database).then(meeting => {
+      Promise.all([
+        getOrComputeMeetingStats(meetingId),
+        getGroup(meeting.groupId, database)
+      ]).then(([ stats, group ]) => {
+        resolve({
+          group,
+          meeting,
+          stats
+        })
+      }).catch(err => {
+        reject(err);
+      })
+    })
+  })
+}
+
+
 /************ TEST  *************/
 
 /*
  handle({query:{meetingId:'id_meeting_511'}} as any, {} as any);
+ */
+
+
+/*
+
+ renderReport('id_meeting_511', require('../devStats').reportData, JSON.parse(fs.readFileSync('./comments.json').toString())).then(htmlString => {
+
+ pdf.create(htmlString, { format: 'letter', orientation: 'portrait', timeout: 180000 }).toStream(function (err, stream) {
+ stream.pipe(fs.createWriteStream('testreport.pdf')).on('finish', ()=> {
+ console.log('done');
+ });
+
+ });
+
+ });
  */

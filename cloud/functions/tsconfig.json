@@ -1,8 +1,9 @@
 {
   "compileOnSave": false,
   "include": [
-    "src",
-    "index.ts"
+    "index.ts",
+    "src/**/*",
+    "./tests.ts"
   ],
   "compilerOptions": {
     "baseUrl": "src",

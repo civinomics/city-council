@@ -13,7 +13,7 @@ import 'rxjs/add/operator/map';
 
 import 'rxjs/add/operator/reduce';
 import { DeltaSnapshot } from 'firebase-functions/lib/providers/database';
-import { getComment, getFollowers, getItem, getUserEmail } from './notification-utils';
+import { getComment, getFollowers, getItem, getUserEmail } from './utils';
 
 let args = process.argv;
 
@@ -31,8 +31,6 @@ const database: admin.database.Database = app.database();
 export const newCommentNotifications = functions.database.ref(`/comment`).onWrite((event: Event<DeltaSnapshot>) => {
   handleNewComment(event);
 });
-
-export const meetingClosedNotifications = functions.https
 
 function handleNewComment(event: Event<DeltaSnapshot>) {
   let delta = event.data;

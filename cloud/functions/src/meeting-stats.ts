@@ -34,10 +34,10 @@ export const stats = functions.https.onRequest((req, res) => {
   getOrComputeMeetingStats(meetingId).then(result => {
     cors(req, res, () => {
       res.send(200, JSON.stringify(result));
+    })
     }).catch(err => {
-      cors(req, res, () => {
-        res.send(500, JSON.stringify(err));
-      })
+    cors(req, res, () => {
+      res.send(500, JSON.stringify(err));
     })
   });
 });

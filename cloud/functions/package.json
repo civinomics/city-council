@@ -6,11 +6,12 @@
     "deploy": "tsc -p tsconfig.json && firebase deploy --only functions",
     "build": "rimraf dist && webpack",
     "gen": "npm run build && node dist/genreport.js",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "up-civ": "npm un @civ/city-council -S && npm i @civ/city-council -S  && npm un @civ/meeting-reports -S && npm i @civ/meeting-reports -S "
   },
   "dependencies": {
-    "@civ/city-council": "^1.0.0-alpha.0",
-    "@civ/meeting-reports": "^1.0.0-alpha.2",
+    "@civ/city-council": "^1.0.0-alpha.13",
+    "@civ/meeting-reports": "^1.0.0-alpha.14",
     "@google-cloud/storage": "^1.1.0",
     "cors": "^2.8.3",
     "firebase": "^3.7.6",
@@ -24,7 +25,8 @@
     "nodemailer": "^4.0.1",
     "point-in-polygon": "^1.0.1",
     "rxjs": "^5.3.0",
-    "sinon": "^2.2.0"
+    "sinon": "^2.2.0",
+    "typescript": "^2.3.2"
   },
   "private": true,
   "devDependencies": {
@@ -41,12 +43,12 @@
     "css-loader": "^0.28.0",
     "node-sass": "^4.5.2",
     "raw-loader": "^0.5.1",
+    "rxjs": "^5.4.0",
     "sass-loader": "^6.0.3",
     "sinon": "^2.2.0",
     "to-string-loader": "^1.1.5",
     "ts-node": "~2.0.0",
     "tslint": "~4.5.0",
-    "typescript": "~2.2.0",
     "webpack": "^2.3.3"
   }
 }
