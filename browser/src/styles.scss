@@ -18,6 +18,15 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+
+  @include mq($until: tablet) {
+    font-size: 14px;
+  }
+
+  @include mq($from: tablet, $until: desktop) {
+    font-size: 16px;
+  }
+
 }
 
 a.button{

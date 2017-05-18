@@ -15,7 +15,7 @@ import { Title } from '@angular/platform-browser';
   template: `
     <div fxLayout="row" fxLayoutAlign="space-around stretch" *ngIf="group$ | async as group">
           <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="10px">
-            <img class="flag" [src]="group.icon" class.xs="mini">
+            <img class="flag" [src]="group.icon">
               <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="5px">
                 <div class="place-title">{{group.name}}</div>
                   <div class="follow-row"
@@ -62,7 +62,6 @@ import { Title } from '@angular/platform-browser';
               <a md-tab-link
                  *ngIf="isAdmin | async"
                  routerLink="admin"
-                 [routerLinkActiveOptions]="{exact: true}"
                  routerLinkActive #rlaAdmin="routerLinkActive"
                  [active]="rlaAdmin.isActive"
               >ADMIN</a>

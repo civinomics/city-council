@@ -1,4 +1,5 @@
 @import "../shared/pages";
+@import "../../assets/style/all";
 
 .flag {
   height: 120px;
@@ -7,9 +8,8 @@
   display: block;
   align-self: center;
 
-  &.mini {
-    max-width: 20%;
-    height: auto;
+  @include mq($until: 600px) {
+    width: 200px;
   }
 
 }
