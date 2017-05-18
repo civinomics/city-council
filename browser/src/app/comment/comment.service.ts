@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { AuthService } from '../user/auth.service';
 import { AngularFireDatabase } from 'angularfire2';
 import { Observable } from 'rxjs';
-import { Comment, parseComment } from './comment.model';
+import { Comment, commentsEqual, mergeComments, parseComment } from './comment.model';
 import { parseUser, SessionUser, User } from '../user/user.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { AppState, getCommentsForSelectedItem, getSessionUser, getUserCommentForSelectedItem } from '../state';
@@ -61,7 +61,7 @@ export class CommentService {
               console.debug(`modal callback - result ${result} : casting again`);
               this.postComment(itemId, text, role);
             }
-          }, 500);
+          }, 150);
         });
         return;
       } else if (user.isVerified == false) {
@@ -142,29 +142,37 @@ export class CommentService {
   private loadCommentsForItem(itemId: string): Observable<Comment[]> {
     let processed = 0;
     return this.db.list(`/comment/${itemId}`)
-      .take(1)
       .map(arr => arr.map(comment => parseComment(comment)))
       .do(arr => console.log(`comments: ${arr.length}`))
       .flatMap(comments =>
+        Observable.from(comments as Comment[])
+          .flatMap(comment =>
 
-        Observable.combineLatest(...comments.map(comment =>
           Observable.combineLatest(
-            //      this.getUserVoteFor(comment.id),
             this.getVoteCounts(comment.id),
             this.getAuthor(comment.owner).take(1),
-            (votes, author) => {
+            (voteStats, author) => {
               console.log('loaded comment ' + comment.id);
               console.log(`processed: ${++processed}`);
             return {
               ...comment,
               author,
-              votes
-            }
+              voteStats
+            } as Comment
           })
-        ))
-      );
-
-
+            //use a dict for easy updating
+          )).scan((result, entry) => {
+        if (!result[ (entry as Comment).id ]) {
+          return { ...result, [(entry as Comment).id]: entry }
+        }
+        if (commentsEqual(result[ (entry as Comment).id ], entry as Comment)) {
+          return result;
+        }
+        return { ...result, [(entry as Comment).id]: mergeComments(result[ (entry as Comment).id ], entry as Comment) }
+      }, {})
+      //flatten into a list to return
+      .map(dict => Object.keys(dict).map(id => dict[ id ]))
+    //.debounceTime(100);
   }
 
   private loadSingleComment(itemId: string, commentId: string): Observable<Comment> {

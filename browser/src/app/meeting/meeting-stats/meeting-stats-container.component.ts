@@ -13,7 +13,7 @@ import { GroupService } from '../../group/group.service';
 @Component({
   selector: 'civ-meeting-stats',
   template: `
-    <civ-meeting-stats-view *ngIf="!!(stats$ | async) && (!!items$ | async); else loading"
+    <civ-meeting-stats-view *ngIf="!!(stats$ | async) && !!(items$ | async); else loading"
                             [stats]="stats$ | async" [meeting]="meeting$ | async"
                             [districts]="(group$ | async)?.districts" [items]="items$ | async"
                             [activeDistrict]="activeDistrict$ | async"
@@ -46,7 +46,7 @@ export class MeetingStatsContainerComponent implements OnInit {
   constructor(private meetingSvc: MeetingService, private groupSvc: GroupService) {
 
     this.group$ = this.groupSvc.getSelectedGroup();
-    this.meeting$ = Observable.timer(30000).flatMapTo(this.meetingSvc.getSelectedMeeting().filter(it => !!it));
+    this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
     this.stats$ = this.meeting$.take(1).map(it => it.id).flatMap(id => this.meetingSvc.getMeetingStats(id));
 
     this.items$ = this.meetingSvc.getAgendaItemsOfSelectedMeeting().map(arr => arr.filter(it => !!it));

@@ -12,8 +12,6 @@ import {
 import { MdInputDirective } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Comment } from '../../core/models';
-import { CommentService } from '../comment.service';
-import { VoteService } from '../../vote/vote.service';
 import { Vote } from '../../vote/vote.model';
 
 @Component({
@@ -37,11 +35,6 @@ import { Vote } from '../../vote/vote.model';
 })
 export class CommentComponent implements OnInit, OnChanges {
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes[ 'comment' ]) {
-      console.log(changes[ 'comment' ]);
-    }
-  }
 
 
   @Input() comment: Comment;
@@ -92,7 +85,10 @@ export class CommentComponent implements OnInit, OnChanges {
 
     get showReplyBtn() { return this._showReplyBtn}
 
+  @Input() userVote: Vote | null;
+
     @Output() edit: EventEmitter<{ text?: string, role?: string }> = new EventEmitter();
+  @Output() vote: EventEmitter<number> = new EventEmitter();
 
     @ViewChild('editInput', { read: MdInputDirective }) input: MdInputDirective;
 
@@ -101,8 +97,11 @@ export class CommentComponent implements OnInit, OnChanges {
     newText: string;
     originalText: string;
 
-  constructor(private commentSvc: CommentService, private voteSvc: VoteService) {
-    }
+
+  //there's a bit of a lag waiting for the user vote to update, this just prevents that from being visible
+  private _forceUserVote: number = -2;
+
+  constructor() {}
 
     ngOnInit() {
         this.newText = this.originalText = this.comment.text;
@@ -143,12 +142,38 @@ export class CommentComponent implements OnInit, OnChanges {
     return `${this.comment.author.firstName} ${this.comment.author.lastName}`
   }
 
-  get userVote(): Vote | null {
-    return this.comment.sessionUserVote;
+  castVote(value: number) {
+    if (!!this.userVote && this.userVote.value == value) {
+      this._forceUserVote = 0;
+    } else {
+      this._forceUserVote = value;
+    }
+
+    console.log('set _forceUserVote - calling cdr.dc()');
+
+    this.vote.emit(value);
+
   }
 
-  vote(value: 1 | -1) {
-    this.voteSvc.castVote(this.comment.id, value);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes[ 'comment' ]) {
+      console.log(changes[ 'comment' ]);
+    }
+    if (changes[ 'userVote' ]) {
+      this._forceUserVote = -2;
+      console.log('received updated userVote - setting _forceUserVote to -2');
+    }
   }
+
+  get userVotedUp() {
+    return this._forceUserVote == 1 || (!!this.userVote && this.userVote.value == 1);
+  }
+
+
+  get userVotedDown() {
+    return this._forceUserVote == -1 || (!!this.userVote && this.userVote.value == -1);
+  }
+
 
 }

@@ -14,7 +14,7 @@ export interface Comment extends Entity {
     voteStats?: { up?: number, down?: number },
     author?: User,
     sessionUserVote?: Vote | null;
-    //
+
 }
 
 

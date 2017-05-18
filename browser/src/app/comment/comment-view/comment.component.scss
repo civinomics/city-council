@@ -63,11 +63,21 @@
 
   }
 
+  &.selected {
+    font-weight: 600;
+    color: mat-color($mat-deep-orange, 600);
+  }
+
   &.rejected {
     opacity: 0.2;
   }
 
 }
+
+.vote-tick:hover ~ .vote-tick {
+  opacity: 0.2;
+}
+
 
 md-icon, button[md-button]:not([disabled]) {
   &.red {

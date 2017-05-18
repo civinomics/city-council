@@ -14,6 +14,7 @@ import { Item } from '../item.model';
 import { MdInputDirective } from '@angular/material';
 import { Vote } from '../../vote/vote.model';
 import { Comment } from '../../comment/comment.model';
+import { VoteService } from '../../vote/vote.service';
 
 @Component({
   selector: 'civ-item-view',
@@ -68,18 +69,17 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @Input() userComment: Comment | null;
   @Input() votes: Vote[];
 
-  @Input() showingAllComments: boolean;
-  @Output() showAllComments: EventEmitter<boolean> = new EventEmitter();
+  @Input() numCommentsShown: number;
+  @Output() showComments: EventEmitter<number> = new EventEmitter();
 
   topPro: Comment | null;
   topCon: Comment | null;
 
-
   @Input() comments: Comment[];
-
 
   @Output() follow: EventEmitter<boolean> = new EventEmitter();
   @Output() vote: EventEmitter<{ itemId: string, value: number }> = new EventEmitter();
+  @Output() commentVote: EventEmitter<{ commentId: string, value: number }> = new EventEmitter();
   @Output() comment: EventEmitter<{ itemId: string, text: string, role: string }> = new EventEmitter();
   @Output() back: EventEmitter<any> = new EventEmitter();
 
@@ -90,9 +90,9 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @ViewChild('addComment', { read: MdInputDirective }) addCommentInput: MdInputDirective;
   addCommentPlaceholder = 'why you haven\'t voted';
 
+  private _commentOrder: string[] = [];
 
-
-  constructor() { }
+  constructor(private voteSvc: VoteService) { }
 
   ngOnInit() {
   }
@@ -115,13 +115,7 @@ export class ItemViewComponent implements OnInit, OnChanges {
         no: this.votes.filter(vote => vote.value == -1).length,
       }
     }
-    if (changes[ 'comments' ] && !!this.comments) {
-      this.comments
-        .sort((x, y) => (y.voteStats.up - y.voteStats.down) - (x.voteStats.up - x.voteStats.down));
 
-      this.topPro = this.comments.filter(it => it.role == 'pro')[ 0 ];
-      this.topCon = this.comments.filter(it => it.role == 'con')[ 0 ];
-    }
   }
 
   get itemNumber() {
@@ -139,6 +133,10 @@ export class ItemViewComponent implements OnInit, OnChanges {
     return this.item.onAgendas[ this.activeMeeting ].closedSession;
   }
 
+  commentEq(idx: number, it: Comment) {
+    return it.id;
+  }
+
   castVote(value: number) {
     this.vote.emit({itemId: this.item.id, value});
   }
@@ -147,6 +145,7 @@ export class ItemViewComponent implements OnInit, OnChanges {
     let role = !this.userVote ? 'neutral' : this.userVote.value == 1 ? 'pro' : 'con';
     this.comment.emit({itemId: this.item.id, text: this.newComment, role})
   }
+
 
   editComment(edited: { text?: string, role?: string }) {
     console.log('editing comment');
@@ -158,6 +157,10 @@ export class ItemViewComponent implements OnInit, OnChanges {
     this.comment.emit(push);
   }
 
+  userVoteFor(id: string) {
+    return this.voteSvc.getSessionUserVoteFor(id);
+  }
+
   share(provider: 'facebook' | 'google' | 'twitter') {
 
   }
@@ -166,8 +169,21 @@ export class ItemViewComponent implements OnInit, OnChanges {
     return !this.userVote ? null : this.userVote.value;
   }
 
-  toggleShowAllComments() {
-    this.showAllComments.emit(!this.showingAllComments);
+  showMoreComments() {
+    this.showComments.emit(this.numCommentsShown);
+  }
+
+  visibleComments(): Comment[] {
+    if (!!this.comments && this._commentOrder.length < this.comments.length) {
+      console.log('sorting');
+      this.comments
+        .sort((x, y) => (y.voteStats.up - y.voteStats.down) - (x.voteStats.up - x.voteStats.down));
+      this._commentOrder = this.comments.map(it => it.id);
+    }
+    return this.comments
+      .sort((x, y) => this._commentOrder.indexOf(x.id) - this._commentOrder.indexOf(y.id))
+      .slice(0, this.numCommentsShown);
+
   }
 
 }

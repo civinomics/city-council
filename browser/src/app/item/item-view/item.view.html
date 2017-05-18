@@ -103,17 +103,21 @@
 </div>
 
 <div class="comment-heading">{{comments?.length}} comments</div>
-<div fxLayout="column" fxLayoutGap="10px" *ngIf="!showingAllComments" class="comment-container">
-  <civ-comment [comment]="topPro" *ngIf="!!topPro"></civ-comment>
-  <civ-comment [comment]="topCon" *ngIf="!!topCon"></civ-comment>
 
+
+<div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
+  <civ-comment *ngFor="let comment of visibleComments()"
+               [comment]="comment"
+               [userVote]="userVoteFor(comment.id) | async"
+               (vote)="commentVote.emit({itemId: comment.id, value: $event})"
+  ></civ-comment>
 </div>
 
-
-<div fxLayout="column" fxLayoutGap="10px" *ngIf="showingAllComments" class="comment-container">
-  <civ-comment *ngFor="let comment of comments" [comment]="comment"></civ-comment>
-</div>
-
-<div *ngIf="comments?.length > 2 " fxFlexAlign="center">
-  <button md-raised-button (click)="toggleShowAllComments()">SHOW {{showingAllComments ? 'LESS' : 'MORE'}}</button>
+<div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center">
+  <button md-raised-button (click)="showMoreComments()">
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+      <md-icon>expand_more</md-icon>
+      <div>SHOW MORE</div>
+    </div>
+  </button>
 </div>

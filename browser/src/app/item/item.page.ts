@@ -16,6 +16,8 @@ import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Title } from '@angular/platform-browser';
 
+export const SHOW_COMMENTS_STEP = 5;
+
 @Component({
   selector: 'civ-item-container',
   template: `
@@ -28,10 +30,15 @@ import { Title } from '@angular/platform-browser';
                    [activeMeeting]="activeMeeting$ | async"
                    [numFollows]="numFollows$ | async"
                    [isFollowing]="isFollowing$ | async"
-                   [showingAllComments]="allComments$ | async"
-                   (showAllComments)="allComments$.next($event)"
+                   [numCommentsShown]="showComments$ | async"
+                   (showComments)="showMoreComments($event)"
                    (follow)="doFollow($event)"
-                   (vote)="castVote($event)" (comment)="postComment($event)" (back)="backToAgenda()">
+                   (vote)="castVote($event)"
+                   (comment)="postComment($event)"
+                   (commentVote)="castVote($event)"
+                   (back)="backToAgenda()"
+
+    >
 
     </civ-item-view>
     <ng-template #loading>
@@ -54,7 +61,10 @@ export class ItemPageComponent implements OnInit {
   numFollows$: Observable<number>;
   isFollowing$: Observable<boolean>;
 
-  allComments$: Subject<boolean> = new BehaviorSubject(false);
+
+  _showComments$: Subject<number> = new BehaviorSubject(SHOW_COMMENTS_STEP);
+
+  showComments$: Observable<number>;
 
   constructor(private store: Store<AppState>,
               private router: Router,
@@ -90,10 +100,15 @@ export class ItemPageComponent implements OnInit {
     this.votes$ = this.item$.take(1)//get the initial page rendered before loading votes
       .flatMapTo(this.voteSvc.getVotesForSelectedItem());
 
-    this.userComment$ = Observable.timer(250).flatMapTo(this.commentSvc.getUserCommentForSelectedItem());
+    this.userComment$ = this.commentSvc.getUserCommentForSelectedItem();
 
-    this.comments$ = Observable.timer(1000).flatMapTo(this.commentSvc.getCommentsForSelectedItem());
+    this.comments$ = this.commentSvc.getCommentsForSelectedItem().startWith([]);
 
+
+    this.showComments$ = this._showComments$
+      .withLatestFrom(this.comments$.startWith([]), (max, comments) => {
+        return Math.min(max + SHOW_COMMENTS_STEP, comments && comments.length || SHOW_COMMENTS_STEP)
+      }).startWith(SHOW_COMMENTS_STEP);
 
 
     this.activeMeeting$ = this.route.params.map(params => params['meetingId']);
@@ -102,6 +117,10 @@ export class ItemPageComponent implements OnInit {
 
     this.isFollowing$ = itemId$.flatMap(id => this.followSvc.isFollowing('item', id));
 
+  }
+
+  showMoreComments(current) {
+    this._showComments$.next(current);
   }
 
 
@@ -113,6 +132,7 @@ export class ItemPageComponent implements OnInit {
     console.log('casting');
     this.voteSvc.castVote(it.itemId, it.value);
   }
+
 
   postComment(it: { itemId: string, text: string, role: string }) {
     this.commentSvc.postComment(it.itemId, it.text, it.role);

@@ -30,14 +30,18 @@
 
     <div *ngIf="showVoteBtn" fxLayout="row" fxLayoutAlign="start center">
       <button md-icon-button
-              (click)="vote(1)"
-              class="vote-tick up">
+              (click)="castVote(1)"
+              class="vote-tick up"
+              [class.rejected]="userVotedDown"
+              [class.selected]="userVotedUp">
         <md-icon>expand_less</md-icon>
       </button>
       <div class="vote-count">{{comment.voteStats.up - comment.voteStats.down}}</div>
       <button md-icon-button
-              (click)="vote(-1)"
-              class="vote-tick down">
+              (click)="castVote(-1)"
+              class="vote-tick down"
+              [class.rejected]="userVotedUp"
+              [class.selected]="userVotedDown">
         <md-icon>expand_more</md-icon>
       </button>
     </div>
