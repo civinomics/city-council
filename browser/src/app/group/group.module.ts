@@ -8,12 +8,11 @@ import { GroupService } from './group.service';
 import { CommentModule } from '../comment/comment.module';
 
 export const GROUP_ROUTES = [
-
-    {
-        path: '',
-        pathMatch: 'full',
-        component: GroupMeetingsPage
-    }
+  {
+    path: '',
+    pathMatch: 'full',
+    component: GroupMeetingsPage
+  }
 
 ];
 
@@ -26,7 +25,7 @@ export const GROUP_ROUTES = [
     declarations: [
         GroupPage,
         GroupMeetingsPage,
-        GroupMeetingsView
+      GroupMeetingsView
     ],
     providers: [
         GroupService

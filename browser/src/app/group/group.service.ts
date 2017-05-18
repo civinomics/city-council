@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Group, Meeting, parseGroup, RawGroup } from '../core/models';
-import { AngularFireDatabase } from 'angularfire2';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { AppState, getFocusedGroup, getLoadedGroupIds, getMeetingsOfSelectedGroup } from '../state';

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase } from 'angularfire2';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { Observable } from 'rxjs';
 import { Item, ItemStatsAdt, parseItem } from './item.model';
 import { Actions, Effect, toPayload } from '@ngrx/effects';

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { AuthService } from '../user/auth.service';
-import { AngularFireDatabase } from 'angularfire2';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { Observable } from 'rxjs';
 import { Comment, commentsEqual, mergeComments, parseComment } from './comment.model';
 import { parseUser, SessionUser, User } from '../user/user.model';

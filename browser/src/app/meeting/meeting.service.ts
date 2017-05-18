@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Meeting, MeetingStats, parseMeeting, PartialMeeting, RawMeeting } from './meeting.model';
-import { AngularFireDatabase } from 'angularfire2';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { Item } from '../item/item.model';
 import { ItemService } from '../item/item.service';
 import { Actions, Effect, toPayload } from '@ngrx/effects';

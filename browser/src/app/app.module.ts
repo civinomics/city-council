@@ -10,6 +10,8 @@ import { rootReducer } from './state';
 import 'hammerjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
@@ -43,8 +45,10 @@ import { FollowService } from './shared/services/follow.service';
 
     AppRoutingModule,
 
-
     AngularFireModule.initializeApp(environment.firebase),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
+
     StoreModule.provideStore(rootReducer),
     StoreDevtoolsModule.instrumentOnlyWithExtension(),
 

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth, AngularFireDatabase, AuthMethods, AuthProviders, FirebaseAuthState } from 'angularfire2';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireAuth } from 'angularfire2/auth';
 import { BehaviorSubject, Observable, Observer, Subject } from 'rxjs';
 import { EmailSignupData, parseSessionUser, SessionUser, UserAddress } from './user.model';
 import { FirebaseError } from 'firebase/app';
 import * as firebase from 'firebase';
-
 import {
   AUTH_STATE_CHANGED,
   AuthStateChangedAction,
@@ -24,8 +24,8 @@ export type SocialAuthProvider = 'facebook' | 'twitter' | 'google';
 export type AuthModalRequestOutcome = 'logged-in' | 'signed-up' | 'none';
 export type AuthModalRequest = { message?: string, callback?: (outcome: AuthResult) => any }
 export type AuthResult =
-  { success: true, extantAccount: boolean, resultantState: FirebaseAuthState }
-  | { success: false, error: FirebaseError, resultantState: FirebaseAuthState };
+  { success: true, extantAccount: boolean, resultantState: any }
+  | { success: false, error: FirebaseError, resultantState: any };
 
 @Injectable()
 export class AuthService {
@@ -66,6 +66,7 @@ export class AuthService {
   private emailSigninRequest$: Subject<{ email: string, password: string }> = new BehaviorSubject(null);
   private logoutRequest$: Subject<any> = new BehaviorSubject(null);
 
+  private backendState$: Observable<firebase.User>;
 
   constructor(private authBackend: AngularFireAuth,
               private db: AngularFireDatabase,
@@ -73,7 +74,9 @@ export class AuthService {
               private actions: Actions) {
 
 
-    this.authBackend
+    this.backendState$ = this.authBackend.authState;
+
+    this.backendState$
       .distinctUntilChanged()
       .subscribe(state => {
         console.log(state);
@@ -94,16 +97,15 @@ export class AuthService {
       this.logoutRequest$.skip(1).map(() => ({ type: SIGN_OUT }))
     );
 
-    authRequests$.withLatestFrom(this.authBackend);
 
 
     //whenever the auth state changes, check our user record and u
-    this.authBackend
-      .filter(it => !!it && !!it.auth)
+    this.backendState$
+      .filter(it => !!it)
       .distinctUntilChanged()
       .flatMap(authState => this.db.object(`/user_private/${authState.uid}`).map(userData => ({ authState, userData })))
       .subscribe(it => {
-        if (it.authState.auth.emailVerified && !it.userData.isVerified) {
+        if (it.authState.emailVerified && !it.userData.isVerified) {
           console.log(`User ${it.authState.uid} has verified their email, updating record accordingly`);
           this.db.object(`/user_private/${it.authState.uid}`).update({ isVerified: true }).then(res => {
             console.info(`successfully updated isVerified for user ${it.authState.uid}`);
@@ -122,13 +124,13 @@ export class AuthService {
   }
 
   public logout() {
-    this.authBackend.logout();
+    this.authBackend.auth.signOut();
   }
 
   public emailLogin(email: string, password: string): Observable<AuthResult> {
     return Observable.create((observer: Observer<AuthResult>) => {
-      this.authBackend.login({ email, password }, { method: AuthMethods.Password })
-        .then((state: FirebaseAuthState) => {
+      this.authBackend.auth.signInWithEmailAndPassword(email, password)
+        .then((state: firebase.User) => {
           observer.next({
             success: true,
             extantAccount: true,
@@ -150,8 +152,8 @@ export class AuthService {
   public emailSignup(data: EmailSignupData): Observable<AuthResult> {
     return Observable.create((observer: Observer<AuthResult>) => {
 
-      this.authBackend.createUser({ email: data.email, password: data.password })
-        .then((state: FirebaseAuthState) => {
+      this.authBackend.auth.createUserWithEmailAndPassword(data.email, data.password)
+        .then((state: firebase.User) => {
           let id = state.uid;
           console.info(`created ${id}`);
           //can't push undefined values
@@ -206,7 +208,7 @@ export class AuthService {
             observer.complete();
           });
 
-          state.auth.sendEmailVerification().then((res) => {
+          state.sendEmailVerification().then((res) => {
             console.debug(`sent email`);
             console.debug(res);
           })
@@ -274,11 +276,11 @@ export class AuthService {
 
   public resendVerificationEmail(): Observable<'success'> {
     return Observable.create((observer: Observer<'success'>) => {
-      this.authBackend.take(1).subscribe(state => {
-        if (!state || !state.auth) {
+      this.backendState$.take(1).subscribe(state => {
+        if (!state) {
           throw new Error(`Cannot resend activation email with no signed-in user`)
         }
-        state.auth.sendEmailVerification().then(() => {
+        state.sendEmailVerification().then(() => {
           observer.next('success');
           observer.complete()
         }).catch(err => {
@@ -293,15 +295,14 @@ export class AuthService {
     return Observable.create((observer: Observer<AuthResult>) => {
 
       let arg = provider == 'facebook' ? {
-        provider: providerMap[ provider ],
-        method: AuthMethods.Popup,
+        providerId: 'Facebook',
+
         scope: [ 'email' ]
       } : {
-        provider: providerMap[ provider ],
-        method: AuthMethods.Popup,
+        providerId: 'Google'
       };
 
-      this.authBackend.login(arg).then((resultantState: FirebaseAuthState) => {
+      this.authBackend.auth.signInWithPopup(arg).then((resultantState: firebase.User) => {
         setTimeout(() => {
           this.db.object(`/user_private/${resultantState.uid}/address`).take(1).subscribe(val => {
             if (val.$exists()) {
@@ -333,9 +334,3 @@ export class AuthService {
 
 }
 
-
-const providerMap: { [x: string]: AuthProviders } = {
-  'facebook': AuthProviders.Facebook,
-  'twitter': AuthProviders.Twitter,
-  'google': AuthProviders.Google,
-};

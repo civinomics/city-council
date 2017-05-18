@@ -15,6 +15,8 @@ import { MdInputDirective } from '@angular/material';
 import { Vote } from '../../vote/vote.model';
 import { Comment } from '../../comment/comment.model';
 import { VoteService } from '../../vote/vote.service';
+import { Observable } from 'rxjs/Observable';
+let _dontRemoveImport: Observable<any>;
 
 @Component({
   selector: 'civ-item-view',

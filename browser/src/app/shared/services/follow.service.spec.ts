@@ -1,7 +1,7 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { FollowService } from './follow.service';
-import { AngularFireDatabase } from 'angularfire2';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { Observable } from 'rxjs/Rx';
 
 

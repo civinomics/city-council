@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as moment from 'moment';
 import { values } from 'lodash';
 import { AuthService } from '../user/auth.service';
-import { AngularFireDatabase } from 'angularfire2';
+import { AngularFireDatabase } from 'angularfire2/database';
 import { Observable } from 'rxjs';
 import { parseVote, Vote } from './vote.model';
 import { SessionUser } from '../user/user.model';
