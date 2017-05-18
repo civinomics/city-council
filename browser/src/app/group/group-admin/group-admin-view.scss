@@ -1,0 +1,49 @@
+@import "../../../assets/style/all";
+@import "../../shared/admin-pages";
+
+.meeting-row {
+  padding: 10px 5px;
+  border-bottom: 1px solid mat-color($mat-grey, 400);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  .title {
+    text-align: center; //only has effect when row is wrapped
+  }
+
+  .published {
+    &.no {
+      color: mat-color($mat-blue, 700)
+    }
+    &.yes {
+      color: mat-color($mat-orange, 700)
+    }
+  }
+
+  .status {
+    &.open {
+      color: mat-color($mat-green, 700);
+    }
+
+    &.closed {
+      color: mat-color($mat-red, 700);
+    }
+  }
+
+  .title, .status, .published {
+    padding: 5px 0;
+  }
+
+}
+
+.meetings.section .body {
+  border-radius: 2px;
+  border: 1px solid mat-color($mat-grey, 400);
+}
+
+.add-meeting-row {
+  text-align: center;
+  margin: 20px 0;
+}

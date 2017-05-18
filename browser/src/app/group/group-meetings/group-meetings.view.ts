@@ -25,19 +25,19 @@ export class GroupMeetingsView implements OnInit {
     get upcomingMeetings() {
       return this.meetings
         .filter(meeting => meeting.published && meeting.startTime.isAfter(this.now))
-        .sort((x, y) => x.startTime.isBefore(y.startTime) ? -1 : y.startTime.isBefore(x.startTime) ? 1 : 0);
+        .sort((x, y) => y.startTime.isBefore(x.startTime) ? -1 : x.startTime.isBefore(y.startTime) ? 1 : 0);
     }
 
     get recentMeetings() {
       return this
         .meetings
         .filter(meeting => meeting.published && meeting.startTime.isBefore(this.now))
-        .sort((x, y) => x.startTime.isBefore(y.startTime) ? -1 : y.startTime.isBefore(x.startTime) ? 1 : 0);
+        .sort((x, y) => y.startTime.isBefore(x.startTime) ? -1 : x.startTime.isBefore(y.startTime) ? 1 : 0);
     }
 
     get draftMeetings() {
       return this.meetings.filter(meeting => !meeting.published)
-        .sort((x, y) => x.startTime.isBefore(y.startTime) ? -1 : y.startTime.isBefore(x.startTime) ? 1 : 0);
+        .sort((x, y) => y.startTime.isBefore(x.startTime) ? -1 : x.startTime.isBefore(y.startTime) ? 1 : 0);
     }
 
   status(meeting: Meeting) {

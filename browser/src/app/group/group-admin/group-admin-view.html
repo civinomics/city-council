@@ -1,0 +1,29 @@
+<div class="section meetings">
+  <div class="heading">MEETINGS</div>
+  <div fxLayout="column" fxLayoutGap="10px" class="body">
+    <div *ngFor="let meeting of meetings"
+         fxLayout="row"
+         fxLayoutAlign="space-between center"
+         class="meeting-row"
+         fxLayoutGap="20px"
+         fxLayoutWrap="wrap">
+      <div class="title">{{meeting.title}}: {{meeting.startTime | amDateFormat: 'M/D/YY'}}</div>
+      <div class="published {{meeting.published ? 'yes' : 'no'}}">
+        {{meeting.published ? 'PUBLISHED' : 'UNPUBLISHED'}}
+      </div>
+      <div class="status {{isAfterNow(meeting.feedbackDeadline) ? 'open' : 'closed'}}">
+        {{isAfterNow(meeting.feedbackDeadline) ? 'OPEN' : 'CLOSED'}}
+      </div>
+      <div class="title">
+        <button md-raised-button color="primary" (click)="gotoMeeting.emit(meeting.id)">
+          EDIT
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="add-meeting-row">
+    <button md-raised-button color="primary">Add a new meeting</button>
+  </div>
+
+</div>

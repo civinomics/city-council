@@ -6,8 +6,14 @@ import { GroupMeetingsPage } from './group-meetings/group-meetings.page';
 import { GroupMeetingsView } from './group-meetings/group-meetings.view';
 import { GroupService } from './group.service';
 import { CommentModule } from '../comment/comment.module';
+import { GroupAdminViewComponent } from './group-admin/group-admin-view';
+import { GroupAdminPageComponent } from './group-admin/group-admin-page';
 
 export const GROUP_ROUTES = [
+  {
+    path: 'admin',
+    component: GroupAdminPageComponent
+  },
   {
     path: '',
     pathMatch: 'full',
@@ -25,7 +31,9 @@ export const GROUP_ROUTES = [
     declarations: [
         GroupPage,
         GroupMeetingsPage,
-      GroupMeetingsView
+      GroupMeetingsView,
+      GroupAdminViewComponent,
+      GroupAdminPageComponent
     ],
     providers: [
         GroupService
