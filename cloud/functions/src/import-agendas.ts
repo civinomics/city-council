@@ -216,7 +216,7 @@ function processPayload(payload: SocrataItem[], instanceData: InstanceData)/*: s
                 function parseItem(it: SocrataItem): RawItem {
                   return {
                     text: it.postinglanguage,
-                    sireLink: it.sirelinkwithdraftbackup,
+                    resourceLinks: [it.sirelinkwithdraftbackup],
                     posted,
                     owner,
                     editors,

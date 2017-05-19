@@ -150,7 +150,7 @@ export function mockItem(input?: MockItemInput): Item {
     onAgendas: input.agendas.reduce((result, next) => ({...result, [next.meetingId]: next}), {}),
     id: randId('item'),
     feedbackDeadline: input && input.deadline || randTime(),
-    sireLink: `https://austin.siretechnologies.com/sirepub/agdocs.aspx?doctype=agenda&itemid=${67000 + random()}`,
+    resourceLinks: [ `https://austin.siretechnologies.com/sirepub/agdocs.aspx?doctype=agenda&itemid=${67000 + random()}` ],
     owner: input && input.owner || randId('user'),
   }
 }

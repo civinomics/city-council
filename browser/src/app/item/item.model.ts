@@ -43,7 +43,7 @@ export type ItemStatsAdt = {
 }
 export interface Item extends Entity {
   text: string;
-  sireLink: string;
+  resourceLinks: string[];
   feedbackDeadline: Moment;
   activity?: ItemStatsAdt;
   onAgendas: {
@@ -52,7 +52,7 @@ export interface Item extends Entity {
 }
 
 export type RawItem = RawEntity & {
-    [P in 'text' | 'sireLink']: Item[P];
+  [P in 'text' | 'resourceLinks']: Item[P];
   } & {
   activity?: ItemStatsAdt;
 } & {
@@ -128,7 +128,7 @@ const equalityChecks = [
     }
   },
 
-  (x: Item, y: Item) => x.sireLink == y.sireLink
+  (x: Item, y: Item) => x.resourceLinks.join('_') == y.resourceLinks.join('_')
 ];
 
 export const itemsEqual: (x: Item, y: Item) => boolean = (x, y) => {
