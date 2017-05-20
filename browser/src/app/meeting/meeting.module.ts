@@ -12,6 +12,7 @@ import { MeetingStatsContainerComponent } from './meeting-stats/meeting-stats-co
 import { MeetingStatsComponent } from './meeting-stats/meeting-stats.component';
 import { CommentModule } from '../comment/comment.module';
 import { ActivityPipe } from './meeting-stats/activity.pipe';
+import { ReactiveFormsModule } from '@angular/forms';
 
 export const MEETING_ROUTES = [
     {
@@ -33,6 +34,7 @@ export const MEETING_ROUTES = [
     imports: [
         RouterModule.forChild(MEETING_ROUTES),
         SharedModule,
+      ReactiveFormsModule,
         CommentModule
     ],
     declarations: [
@@ -44,7 +46,7 @@ export const MEETING_ROUTES = [
         MeetingAgendaViewComponent,
         DistrictInputTableComponent,
       MeetingPage,
-      ActivityPipe
+      ActivityPipe,
     ],
     providers: [
         MeetingService

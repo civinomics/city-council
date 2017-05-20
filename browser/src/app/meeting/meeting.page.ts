@@ -127,7 +127,10 @@ export class MeetingPage implements OnInit {
         .filter(it => !!it)
         .take(1).subscribe(meeting => this.title.setTitle(meeting.title));
 
-      this.isAdmin$ = this.authSvc.sessionUser$.withLatestFrom(this.meeting$, (user, meeting) => !!user && ((user.superuser || meeting.owner == user.id)));
+
+      this.isAdmin$ = Observable.combineLatest(this.authSvc.sessionUser$, this.meeting$,
+        (user, meeting) => !!user && (user.superuser || meeting.owner == user.id));
+
 
       Observable.forkJoin(this.meeting$.take(1), this.isAdmin$.take(1)).subscribe(([ meeting, isAdmin ]) => {
         if (isAdmin && !meeting.published) {

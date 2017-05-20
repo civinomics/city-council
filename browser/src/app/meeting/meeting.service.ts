@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Meeting, MeetingStats, parseMeeting, PartialMeeting, RawMeeting } from './meeting.model';
+import { Meeting, MeetingCreateAdt, MeetingStats, parseMeeting, PartialMeeting, RawMeeting } from './meeting.model';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Item } from '../item/item.model';
 import { ItemService } from '../item/item.service';
@@ -10,6 +10,9 @@ import { Store } from '@ngrx/store';
 import { AppState, getFocusedMeeting, getGroups, getItemsOnSelectedMeetingAgenda, getLoadedMeetingIds } from '../state';
 import { Http } from '@angular/http';
 import { MeetingLoadedAction } from './meeting.reducer';
+import * as moment from 'moment';
+import { AuthService } from '../user/auth.service';
+import Moment = moment.Moment;
 
 const LOAD_MEETING = '[MeetingSvcInternal] loadMeeting';
 const REPORT_GENERATOR_URL = 'https://us-central1-civ-cc.cloudfunctions.net/report';
@@ -40,7 +43,7 @@ export class MeetingService {
 
   private statsCache$: { [id: string]: MeetingStats } = {};
 
-  constructor(private db: AngularFireDatabase, private itemSvc: ItemService, private actions: Actions, private store: Store<AppState>, private http: Http) {
+  constructor(private db: AngularFireDatabase, private itemSvc: ItemService, private authSvc: AuthService, private actions: Actions, private store: Store<AppState>, private http: Http) {
   }
 
 
@@ -83,6 +86,85 @@ export class MeetingService {
     });
 
   }
+
+  public async createMeeting(input: MeetingCreateAdt) {
+    /*  This method is being erroneously called (with an Event arg) when the datepicker in the create meeting interface is clicked.
+     *  I suspect this is a bug in ng-material and/or has something to do with the function being async.
+     *  TODO diagnose
+     *  */
+    if (!!input && !!input.startTime) {
+      const userId = await this.authSvc.sessionUserId$.take(1).toPromise();
+
+      //create meeting without agenda => meeting id
+      const meetingId = await this.createEmptyMeeting(input, userId);
+
+      console.info(`created meeting: ${meetingId}`);
+
+      //create each item with onAgenda field set => list of item ids
+      const itemIds = await Promise.all(input.agenda.map(item =>
+        this.createItem(item, meetingId, input.groupId, userId)
+      ));
+
+      //add agenda field to item with item IDs
+      console.info(`created items: ${JSON.stringify(itemIds)}`);
+      const addAgenda = await this.addMeetingAgenda(meetingId, itemIds);
+
+      console.info(`updated agenda. `);
+
+      return true;
+
+    } else {
+
+      console.debug('MeetingService.createMeeting() called with unrecognizable argument: ');
+      console.debug(input);
+    }
+
+  };
+
+  private async addMeetingAgenda(meetingId: string, itemIds: string[]) {
+    return await this.db.object(`/meeting/${meetingId}`)
+      .update({ agenda: itemIds.reduce((result, id) => ({ ...result, [id]: true }), {}) })
+  }
+
+  private async createItem(item: { text: string, itemNumber: number, resourceLinks: string[] }, meetingId: string, groupId: string, userId: string): Promise<string> {
+    let toPush: any =
+      {
+        text: item.text,
+        onAgendas: {
+          [meetingId]: {
+            meetingId,
+            groupId,
+            itemNumber: item.itemNumber,
+            closedSession: false
+          }
+        },
+        owner: userId
+
+      };
+    if ((item.resourceLinks || []).length > 0) {
+      toPush.resourceLinks = item.resourceLinks
+    }
+
+    let pushResult = await this.db.list('item').push(toPush);
+
+    return pushResult.key;
+  }
+
+  private async createEmptyMeeting(input: MeetingCreateAdt, userId: string): Promise<string> {
+    const pushResult = await this.db.list('meeting').push({
+      title: input.title,
+      groupId: input.groupId,
+      startTime: input.startTime.toISOString(),
+      endTime: input.endTime.toISOString(),
+      published: true,
+      feedbackDeadline: input.feedbackDeadline.toISOString(),
+      owner: userId
+    });
+
+    return pushResult.key;
+
+  }
+
 
   public getPDFReport(meetingId: string, forDistrict?: string): Observable<{ success: boolean, url: string, error?: string, fromCache: boolean }> {
     let url = `${REPORT_GENERATOR_URL}?meetingId=${meetingId}`;

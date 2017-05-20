@@ -54,6 +54,7 @@ export interface Item extends Entity {
 export type RawItem = RawEntity & {
   [P in 'text' | 'resourceLinks']: Item[P];
   } & {
+  sireLink?: string; //deprecated - TODO remove after dev model update
   activity?: ItemStatsAdt;
 } & {
   posted: string;
@@ -81,8 +82,11 @@ export const parseItem: (it: RawItem | any) => Item = (it) => {
     }
   }), {});
 
+  let resourceLinks = it.resourceLinks ? it.resourceLinks : it.sireLink ? [ it.sireLink ] : [];
+
   return {
     ...it,
+    resourceLinks,
     id: it.$key || it.id,
     feedbackDeadline: moment(it.feedbackDeadline),
     onAgendas,

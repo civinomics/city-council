@@ -1,39 +1,9 @@
 @import "../../../assets/style/all";
-
-:host {
-  display: block;
-  max-width: 900px;
-  margin: 20px auto;
-}
-
+@import "../../shared/admin-pages";
 .meeting-status {
   .current {
     text-transform: uppercase;
     font-weight: 600;
-  }
-}
-
-.section {
-  margin-bottom: 25px;
-
-  .heading {
-    text-transform: uppercase;
-    font-size: 1.25em;
-    margin-bottom: 10px;
-  }
-  .body {
-    margin: 5px 10px;
-    @include mq-gt-sm {
-      margin: 5px 20px;
-    }
-    .key {
-      text-transform: uppercase;
-    }
-
-    .row {
-      margin-bottom: 10px;
-    }
-
   }
 }
 

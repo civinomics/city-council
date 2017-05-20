@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { keys } from 'lodash';
 import { ItemStatsAdt } from '../item/item.model';
 import { Group, RawGroup } from '../group/group.model';
-import { CommentWithAuthor, DenormalizedComment, RawCommentWithAuthor } from '../comment/comment.model';
+import { DenormalizedComment } from '../comment/comment.model';
 import Moment = moment.Moment;
 
 export type MeetingStatus = 'open' | 'closed' | 'draft'
@@ -32,6 +32,7 @@ export type RawMeeting = RawEntity & {
 }
 
 export const MeetingFields = [ 'title', 'startTime', 'endTime', 'feedbackDeadline', 'published', 'agenda', 'groupId' ];
+
 
 
 export type MeetingStats = {
@@ -106,3 +107,16 @@ export const mergeMeetings: (prev: Meeting, next: Meeting) => Meeting = (prev, n
     ...prev, ...next
   }
 };
+
+export type MeetingCreateAdt = {
+  title: string;
+  groupId: string;
+  startTime: Moment;
+  endTime: Moment;
+  feedbackDeadline: Moment;
+  agenda: {
+    itemNumber: number;
+    text: string;
+    resourceLinks: string[]
+  }[]
+}
