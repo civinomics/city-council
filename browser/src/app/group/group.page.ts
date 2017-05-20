@@ -61,6 +61,7 @@ import { Title } from '@angular/platform-browser';
 
               <a md-tab-link
                  *ngIf="isAdmin | async"
+                 class="admin-tab"
                  routerLink="admin"
                  routerLinkActive #rlaAdmin="routerLinkActive"
                  [active]="rlaAdmin.isActive"
@@ -111,9 +112,7 @@ export class GroupPage implements OnInit {
 
     const groupId$ = this.route.params.map(params => params['groupId']);
 
-
     groupId$.subscribe(id => this.focusSvc.selectGroup(id));
-
 
     this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
 
@@ -122,7 +121,9 @@ export class GroupPage implements OnInit {
       .take(1).subscribe(group => this.title.setTitle(group.name));
 
 
-    this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.group$, (user, group) => !!user && ((user.superuser || group.owner == user.id)));
+    this.isAdmin = Observable.combineLatest(this.authSvc.sessionUser$, this.group$,
+      (user, group) => !!user && (user.superuser || group.owner == user.id));
+
 
     this.numFollows$ = groupId$.flatMap(id => this.followSvc.getFollowCount('group', id));
 

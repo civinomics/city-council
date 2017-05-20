@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
                             [group]="group"
                             [meetings]="meetings"
                             (gotoMeeting)="showMeetingAdmin($event)"
+                            (newMeeting)="showNewMeeting()"
       >
       </civ-group-admin-view>
 
@@ -42,7 +43,12 @@ export class GroupAdminPageComponent implements OnInit {
   }
 
   showMeetingAdmin(meetingId: string) {
-    this.router.navigate([ '../', 'meeting', meetingId, 'admin' ], { relativeTo: this.route });
+    debugger;
+    this.router.navigate([ 'meeting', meetingId, 'admin' ], { relativeTo: this.route.parent.parent });
+  }
+
+  showNewMeeting() {
+    this.router.navigate([ 'new-meeting' ], { relativeTo: this.route });
   }
 
 }

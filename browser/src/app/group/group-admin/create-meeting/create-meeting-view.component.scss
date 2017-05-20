@@ -1,0 +1,63 @@
+@import "../../../../assets/style/all";
+
+:host {
+  display: block;
+  max-width: 900px;
+  padding: 30px 0;
+  margin: auto;
+
+  @include mq($until: 840px) {
+    padding: 30px 20px;
+  }
+
+}
+
+.outer-form {
+
+  & > .input, & > .time-row {
+    width: 100%;
+
+    &.title {
+      font-size: 1.5em;
+    }
+
+  }
+
+}
+
+.agenda {
+  .heading {
+    font-size: 1.25em;
+    padding: 2px 10%;
+    margin: 10px 0;
+    border-bottom: 1px solid mat-color($mat-grey, 400);
+  }
+
+  .item-wrapper {
+    margin: 10px 0;
+    padding: 10px 30px;
+
+    @include mq($until: 820px) {
+      padding: 10px;
+    }
+
+    border-bottom: 1px solid mat-color($mat-grey, 500);
+
+    .remove-item-btn {
+      opacity: 0;
+      color: mat-color($mat-red, 700);
+      transition: 150ms ease-in opacity;
+    }
+
+    &:hover .remove-item-btn {
+      opacity: 1;
+      transition: 150ms 350ms ease-in opacity;
+    }
+
+  }
+
+  .add-item-btn {
+    margin-top: 20px;
+  }
+
+}

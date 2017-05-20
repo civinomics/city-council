@@ -9,7 +9,7 @@
          fxLayoutWrap="wrap">
       <div class="title">{{meeting.title}}: {{meeting.startTime | amDateFormat: 'M/D/YY'}}</div>
       <div class="published {{meeting.published ? 'yes' : 'no'}}">
-        {{meeting.published ? 'PUBLISHED' : 'UNPUBLISHED'}}
+        {{meeting.published ? 'PUBLISHED' : 'DRAFT'}}
       </div>
       <div class="status {{isAfterNow(meeting.feedbackDeadline) ? 'open' : 'closed'}}">
         {{isAfterNow(meeting.feedbackDeadline) ? 'OPEN' : 'CLOSED'}}
@@ -23,7 +23,30 @@
   </div>
 
   <div class="add-meeting-row">
-    <button md-raised-button color="primary">Add a new meeting</button>
+    <button md-raised-button color="primary" (click)="newMeeting.emit()">CREATE NEW MEETING</button>
   </div>
+</div>
 
+<div class="section districts">
+  <div class="heading">Districts</div>
+  <div *ngFor="let district of group.districts">
+
+  </div>
+</div>
+
+<div class="section members">
+  <div class="heading">Officials</div>
+  <div class="body">
+    TODO: list of city counselors with edit options
+  </div>
+</div>
+
+<div class="section constituency">
+  <div class="heading">Constituency</div>
+  <div class="body">
+    TODO: stats
+    - total number of users with addresses in group constituency
+    - users per-district
+    - notification options
+  </div>
 </div>

@@ -2,12 +2,12 @@ import { Entity, RawEntity } from '../core/models';
 
 export interface Office extends Entity {
   name: string;
-  incumbentId: string;
+  representative: string;
 }
 
 export type RawOffice = RawEntity & {
   name: string;
-  incumbent: string;
+  representative: string;
 }
 
 export function parseOffice(data: RawOffice): Office {
@@ -17,6 +17,6 @@ export function parseOffice(data: RawOffice): Office {
     id: data.$key,
     owner: data.owner,
     editors: data.editors,
-    incumbentId: data.incumbent
+    representative: data.representative
   }
 }

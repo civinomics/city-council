@@ -1,0 +1,49 @@
+<form [formGroup]="form" class="outer-form" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="30px">
+
+  <md-input-container class="title input">
+    <input mdInput type="text" placeholder="Meeting Title" formControlName="title">
+  </md-input-container>
+
+  <md-input-container class="date input">
+    <input mdInput [mdDatepicker]="dp" placeholder="Meeting Date" formControlName="date">
+    <button mdSuffix [mdDatepickerToggle]="dp"></button>
+  </md-input-container>
+  <md-datepicker #dp></md-datepicker>
+
+  <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="20px" class="time-row">
+    <md-input-container class="start-time input ">
+      <input mdInput type="time" placeholder="Start Time" formControlName="startTime">
+    </md-input-container>
+
+    <md-input-container class="end-time input ">
+      <input mdInput type="time" placeholder="End Time" formControlName="endTime">
+    </md-input-container>
+  </div>
+
+  <div class="agenda" fxLayout="column" fxLayoutAlign="start center">
+    <div class="heading">Agenda</div>
+    <div class="items" formArrayName="agenda" fxFlexAlign="stretch">
+      <div *ngFor="let item of agenda.controls; let i = index"
+           class="item-wrapper"
+           fxLayout="row"
+           fxLayoutAlign="start center"
+           fxLayoutGap="10px">
+        <civ-create-item [form]="item" fxFlex="1 1"></civ-create-item>
+        <div class="remove-row" fxFlex="0 0 20px">
+          <button md-icon-button class="remove-item-btn" (click)="removeItem(i)">
+            <md-icon>close</md-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button md-raised-button color="primary" (click)="addAgendaItem()" class="add-item-btn">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px">
+        <md-icon>add</md-icon>
+        <div>Add Another</div>
+      </div>
+    </button>
+
+  </div>
+
+</form>

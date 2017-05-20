@@ -15,6 +15,7 @@ export class GroupAdminViewComponent implements OnInit {
   @Input() meetings: Meeting[];
 
   @Output() gotoMeeting: EventEmitter<string> = new EventEmitter();
+  @Output() newMeeting: EventEmitter<any> = new EventEmitter();
 
   private now = moment();
 
