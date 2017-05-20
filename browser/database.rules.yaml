@@ -1,6 +1,7 @@
 functions:
-  - userExists(id): root.user_public[id].exists()
+  - userExists(id): root.user_private[id].exists()
   - itemExists(id): root.item[id].exists()
+  - groupExists(id): root.group[id].exists()
   - commentExists(itemId, commId): root.comment[itemId][commId].exists()
   - voteExists(itemId, voteId): root.vote[itemId][voteId].exists()
   - userHasVotedOn(id): root.user_private[auth.uid].votes.exists() && root.user_private[auth.uid].votes[id].exists()
@@ -8,15 +9,17 @@ functions:
   - itemOrCommentExists(id): root.item[id].exists() || root.comment[id].exists()
   - isSuperuser: auth != null && root.user_private[auth.uid].superuser == true
   - isCurrentUser(id): auth != null && auth.uid == id
+  - isGroupOwner(id): auth != null && root.group[id].owner == auth.uid
 
 root:
   user:
     .read: true
     $id:
-      .write: auth != null && auth.uid == $id
+      .write: isSuperuser() || isCurrentUser($id) || (data.admin != null && isCurrentUser(data.admin))
       firstName: required string
       lastName: required string
       icon: string
+      admin: string
 
   user_private:
     $id:
@@ -43,14 +46,16 @@ root:
     $id:
       .write: (!data.exists()) || data.owner == auth.uid
       text: string
-      feedbackDeadline: string
-      owner: userExists(newData.owner)
+      owner: userExists(next)
+      resourceLinks:
+        $url:
+          .value: boolean
 
       onAgendas:
         $meetingId:
           groupId: string
           meetingId: string
-          itemNumber: string
+          itemNumber: number
           closedSession: boolean
 
   group:
@@ -81,17 +86,19 @@ root:
     .write: isSuperuser()
 
     $id:
-      .write: (!data.exists()) || data.owner == auth.uid
-      owner: userExists(newData.owner)
+      .write: isSuperuser() || isGroupOwner(next.groupId)
+      owner: userExists(next)
       startTime: required string
       endTime: required string
+      groupId: groupExists(next)
+
       title: required string
       published: boolean
       feedbackDeadline: required string
 
       agenda:
         $itemId:
-          .value: number
+          .value: boolean
 
   comment:
     .read: true
@@ -121,7 +128,7 @@ root:
       $voteId:
         .write: auth != null && ((!data.exists() && !userHasVotedOn($itemId)) || (data.exists() && data.owner == auth.uid))
         value: oneOf(1, -1)
-        owner: newData.isString() && newData == auth.uid
+        owner: next.isString() && next == auth.uid
         posted: required string
         userDistrict: string
 
