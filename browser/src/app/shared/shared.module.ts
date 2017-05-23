@@ -4,10 +4,12 @@ import {
   MdAutocompleteModule,
   MdButtonModule,
   MdCheckboxModule,
+  MdDatepickerModule,
   MdDialogModule,
   MdIconModule,
   MdInputModule,
   MdMenuModule,
+  MdNativeDateModule,
   MdProgressSpinnerModule,
   MdSelectModule,
   MdTabsModule,
@@ -22,6 +24,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxErrorsModule } from '@ultimate/ngxerrors';
 import { LimitPipe } from './pipes/limit.pipe';
 import { LoadingComponent } from './components/loading/loading.component';
+import { AutosizeDirective } from './directives/autosize.directive';
 
 const VIEW_PROVIDERS = [
     CommonModule,
@@ -29,6 +32,8 @@ const VIEW_PROVIDERS = [
     ReactiveFormsModule,
     MdSelectModule,
     MdButtonModule,
+  MdDatepickerModule,
+  MdNativeDateModule,
     MdIconModule,
     MdToolbarModule,
     MdAutocompleteModule,
@@ -47,9 +52,9 @@ const VIEW_PROVIDERS = [
 ];
 
 @NgModule({
-  declarations: [ LimitPipe, LoadingComponent ],
+  declarations: [ LimitPipe, LoadingComponent, AutosizeDirective ],
     imports: VIEW_PROVIDERS,
-  exports: [ ...VIEW_PROVIDERS, LimitPipe, LoadingComponent ],
+  exports: [ ...VIEW_PROVIDERS, LimitPipe, LoadingComponent, AutosizeDirective ],
 })
 export class SharedModule {
 }
