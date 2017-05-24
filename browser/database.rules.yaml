@@ -60,7 +60,19 @@ root:
 
   group:
     .read: true
-
+    $id:
+      .write: isSuperuser() || isGroupOwner($id)
+      name: string
+      owner: userExists(next)
+      icon: string
+      districts:
+        $districtId:
+          name: string
+          owner: string
+          representative: userExists(next)
+      meetings:
+        $meetingId:
+          .value: boolean
 
   following:
     .read: true

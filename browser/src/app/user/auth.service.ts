@@ -16,6 +16,8 @@ import { AppState, getSessionUser, getSessionUserId } from '../state';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 
 import AuthProvider = firebase.auth.AuthProvider;
+import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
+import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 
 const DEFAULT_ICON = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/User_font_awesome.svg/500px-User_font_awesome.svg.png';
 
@@ -294,15 +296,7 @@ export class AuthService {
   private doSocialLogin(provider: SocialAuthProvider): Observable<AuthResult> {
     return Observable.create((observer: Observer<AuthResult>) => {
 
-      let arg = provider == 'facebook' ? {
-        providerId: 'Facebook',
-
-        scope: [ 'email' ]
-      } : {
-        providerId: 'Google'
-      };
-
-      this.authBackend.auth.signInWithPopup(arg).then((resultantState: firebase.User) => {
+      this.authBackend.auth.signInWithPopup(provider == 'facebook' ? new firebase.auth.FacebookAuthProvider() : new firebase.auth.GoogleAuthProvider()).then((resultantState: firebase.User) => {
         setTimeout(() => {
           this.db.object(`/user_private/${resultantState.uid}/address`).take(1).subscribe(val => {
             if (val.$exists()) {

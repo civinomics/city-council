@@ -30,7 +30,14 @@ export class CreateMeetingPageComponent implements OnInit {
   }
 
   submit(data: MeetingCreateAdt) {
-    this.meetingSvc.createMeeting(data);
+    this.meetingSvc.createMeeting(data).then(result => {
+      if (result) {
+        console.info(`successfully created meeting - redirecting to admin page`);
+        this.router.navigate([ '../' ], { relativeTo: this.route });
+      }
+    }).catch(err => {
+      console.error(err);
+    })
   }
 
 }

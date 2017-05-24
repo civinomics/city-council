@@ -111,6 +111,10 @@ export class MeetingService {
 
       console.info(`updated agenda. `);
 
+      await this.addToGroupMeetings(input.groupId, meetingId);
+
+      console.info(`added to group meetings `);
+
       return true;
 
     } else {
@@ -120,6 +124,10 @@ export class MeetingService {
     }
 
   };
+
+  private async addToGroupMeetings(groupId: string, meetingId: string) {
+    return await this.db.object(`/group/${groupId}/meetings`).update({ [meetingId]: true });
+  }
 
   private async addMeetingAgenda(meetingId: string, itemIds: string[]) {
     return await this.db.object(`/meeting/${meetingId}`)
@@ -156,7 +164,7 @@ export class MeetingService {
       groupId: input.groupId,
       startTime: input.startTime.toISOString(),
       endTime: input.endTime.toISOString(),
-      published: true,
+      published: false,
       feedbackDeadline: input.feedbackDeadline.toISOString(),
       owner: userId
     });

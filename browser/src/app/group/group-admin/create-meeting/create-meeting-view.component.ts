@@ -23,6 +23,7 @@ export class CreateMeetingViewComponent implements OnInit {
     date: new FormControl('', [ Validators.required ]),
     startTime: new FormControl('', [ Validators.required ]),
     endTime: new FormControl(''),
+    feedbackDeadline: new FormControl(24, [ Validators.required ]),
     title: new FormControl('', [ Validators.required ]),
     agenda: this.agenda
   });
@@ -92,7 +93,11 @@ export class CreateMeetingViewComponent implements OnInit {
     }
 
     return date.set('hours', hours).set('minutes', minutes).utcOffset(TIME_ZONE)
+  }
 
+  private getFeedbackDeadline(): Moment {
+    let diff = parseInt(this.form.controls.feedbackDeadline.value);
+    return this.getStartTime().subtract(diff, 'hours');
   }
 
   private getItem(form: FormGroup): { text: string, itemNumber: number, resourceLinks: string[] } {
@@ -108,7 +113,7 @@ export class CreateMeetingViewComponent implements OnInit {
       title: this.form.controls[ 'title' ].value,
       groupId: this.group.id,
       startTime: this.getStartTime(),
-      feedbackDeadline: this.getStartTime().subtract(1, 'day'),
+      feedbackDeadline: this.getFeedbackDeadline(),
       endTime: this.getEndTime(),
       agenda: this.agenda.controls.map(ctrl => this.getItem(ctrl as FormGroup))
     }

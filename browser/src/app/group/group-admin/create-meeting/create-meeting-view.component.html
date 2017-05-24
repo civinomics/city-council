@@ -4,13 +4,14 @@
     <input mdInput type="text" placeholder="Meeting Title" formControlName="title">
   </md-input-container>
 
-  <md-input-container class="date input">
-    <input mdInput [mdDatepicker]="dp" placeholder="Meeting Date" formControlName="date">
-    <button mdSuffix [mdDatepickerToggle]="dp"></button>
-  </md-input-container>
-  <md-datepicker #dp></md-datepicker>
 
   <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="20px" class="time-row">
+    <md-input-container class="date input" fxFlex="1 1" fxLayoutWrap="wrap">
+      <input mdInput [mdDatepicker]="dp" placeholder="Meeting Date" formControlName="date">
+      <button mdSuffix [mdDatepickerToggle]="dp"></button>
+    </md-input-container>
+    <md-datepicker #dp></md-datepicker>
+
     <md-input-container class="start-time input ">
       <input mdInput type="time" placeholder="Start Time" formControlName="startTime">
     </md-input-container>
@@ -20,8 +21,17 @@
     </md-input-container>
   </div>
 
+  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+    <div class="label">Feedback Deadline:</div>
+    <md-input-container class="input feedback">
+      <input mdInput type="number" formControlName="feedbackDeadline" maxlength="3">
+      <div md-suffix> hours prior to start of meeting.</div>
+    </md-input-container>
+
+  </div>
+
   <div class="agenda" fxLayout="column" fxLayoutAlign="start center">
-    <div class="heading">Agenda</div>
+    <div class="heading">Agenda Items</div>
     <div class="items" formArrayName="agenda" fxFlexAlign="stretch">
       <div *ngFor="let item of agenda.controls; let i = index"
            class="item-wrapper"
@@ -46,6 +56,8 @@
 
   </div>
 
-</form>
 
-<button md-raised-button color="accent" [disabled]="!form.valid" (click)="doSubmit()">CREATE</button>
+  <button md-raised-button color="accent" [disabled]="!form.valid" (click)="doSubmit()" fxFlexAlign="center">CREATE
+  </button>
+
+</form>
