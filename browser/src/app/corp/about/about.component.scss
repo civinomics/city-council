@@ -45,8 +45,19 @@ md-card-header{
 	text-align:center;
 }
 
+md-card-actions{
+	display: block;
+
+}
+
 .team-header{
-	text-align:left;
+	text-align:center;
+	display:block;
+
+	md-card-subtitle{
+		display:block;
+		color:grey;
+	}
 }
 
 .mat-card-header-text{
