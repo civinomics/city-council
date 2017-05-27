@@ -7,6 +7,10 @@
 /* app style assets */
 @import "assets/style/all";
 @import "~sass-mq";
+
+@include mat-core();
+
+
 html, body {
   margin: 0;
   display: block;
