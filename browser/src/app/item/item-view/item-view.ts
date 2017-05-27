@@ -90,7 +90,7 @@ export class ItemViewComponent implements OnInit, OnChanges {
   voteStats: { yes: number, no: number };
 
   @ViewChild('addComment', { read: MdInputDirective }) addCommentInput: MdInputDirective;
-  addCommentPlaceholder = 'why you haven\'t voted';
+  addCommentPlaceholder = 'add your statement';
 
   private _commentOrder: string[] = [];
 

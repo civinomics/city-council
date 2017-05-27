@@ -2,12 +2,15 @@
 
   <div class="actions">
     <div class="follow row" fxLayout="row" fxJustifyContent="flex-end" fxLayoutGap="10px">
+      <div><md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon></div>
+      <div><md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon></div>
       <div *ngIf="numFollows > 0" class="follower-count">
         <span class="follow-text">{{numFollows}} follower{{numFollows == 1 ? '' : 's'}}</span>
       </div>
       <button md-raised-button [color]="isFollowing ? 'primary' : 'accent' " (click)="addOrRemoveFollow()">{{isFollowing ?
         'UNFOLLOW' : 'FOLLOW'}}
       </button>
+      <button md-raised-button>EDIT</button>
     </div>
   </div>
 
@@ -20,13 +23,14 @@
     </div>
   </div>
 
-  <div class="actions-table" fxLayout="column">
-    <div class="row vote" fxLayout="row" fxLayoutAlign="start center" *ngIf="!isClosedSession">
-      <div class="key row-label" [class.focused]="!userVote">vote</div>
-      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+  <hr>
+
+  <div class="actions-table" fxLayout="column" fxLayoutAlign="center center">
+    <div class="row vote" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
+      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
         
         <div class="vote-count">{{voteStats?.yes}}</div>
-        <button md-button
+        <button md-raised-button
                 class="vote-button yes"
                 [class.rejected]="userVoteVal == -1"
                 (click)="castVote(1)"
@@ -35,7 +39,7 @@
                 yes
         </button>
 
-        <button md-button
+        <button md-raised-button
                 class="vote-button no"
                 [class.rejected]="userVoteVal == 1"
                 (click)="castVote(-1)"
@@ -47,9 +51,7 @@
 
       </div>
     </div>
-    <div class="row explain" fxLayout="row" *ngIf="!isClosedSession">
-      <div class="key row-label" [class.focused]="!userComment && !!userVote">Comment</div>
-
+    <div class="row explain" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
 
       <div *ngIf="!userComment" fxLayout="column" class="value">
         <md-input-container>
@@ -84,51 +86,57 @@
       This item is closed session and is not open to public feedback.
     </div>
 
-    <div class="row share" fxLayout="row" fxLayoutAlign="start center" [class.highlighted]="!!userVote && !!userComment">
-      <div class="key row-label" [class.focused]="!!userVote && !!userComment">share</div>
-      <div class="value" fxLayout="row" fxLayoutGap="10px">
-        <button md-icon-button>
-          <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
-        </button>
-        <button md-icon-button>
-          <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
-        </button>
-        <button md-icon-button>
-          <md-icon fontSet="fa" fontIcon="fa-google-plus-square"></md-icon>
-        </button>
+    <div class="row share" fxLayout="row" fxLayoutAlign="center center" [class.highlighted]="!!userVote && !!userComment">
+
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <div class="key row-label" [class.focused]="!!userVote && !!userComment">share</div>
+        <div class="value" fxLayout="row" fxLayoutGap="10px">
+          <button md-icon-button>
+            <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
+          </button>
+          <button md-icon-button>
+            <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
+          </button>
+          <button md-icon-button>
+            <md-icon fontSet="fa" fontIcon="fa-google-plus-square"></md-icon>
+          </button>
+        </div>
       </div>
     </div>
 
-  </div>
-
-  <div class="back-to-agenda">
-    <button md-button (click)="back.emit()">
-      <span fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
-        <md-icon>chevron_left</md-icon>
-        <span>BACK TO AGENDA</span>
-      </span>
-    </button>
-  </div>
-
-  <div class="comment-heading">{{comments?.length}} comments</div>
+    <hr>
+    <div class="comment-heading">{{comments?.length}} comments</div>
 
 
-</div><!-- container -->
-
-
-<div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
-  <civ-comment *ngFor="let comment of visibleComments()"
-               [comment]="comment"
-               [userVote]="userVoteFor(comment.id) | async"
-               (vote)="commentVote.emit({itemId: comment.id, value: $event})"
-  ></civ-comment>
-</div>
-
-<div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center">
-  <button md-raised-button (click)="showMoreComments()">
-    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
-      <md-icon>expand_more</md-icon>
-      <div>SHOW MORE</div>
+    <div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
+      <civ-comment *ngFor="let comment of visibleComments()"
+                   [comment]="comment"
+                   [userVote]="userVoteFor(comment.id) | async"
+                   (vote)="commentVote.emit({itemId: comment.id, value: $event})"
+      ></civ-comment>
     </div>
-  </button>
-</div>
+
+    <div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center">
+      <button md-raised-button (click)="showMoreComments()">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+          <md-icon>expand_more</md-icon>
+          <div>SHOW MORE</div>
+        </div>
+      </button>
+    </div>
+
+    <hr style="margin-top: 40px;">
+
+    <div class="back-to-agenda">
+      <button md-raised-button (click)="back.emit()">
+        <span fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+          <md-icon>chevron_left</md-icon>
+          <span>BACK TO AGENDA</span>
+        </span>
+      </button>
+    </div>
+
+
+
+  </div><!-- actions-table -->
+</div><!-- container -->
