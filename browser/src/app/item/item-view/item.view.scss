@@ -18,6 +18,12 @@ hr{
   width: 100%;
 }
 
+.rep-avatar {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+  }
+
 .item-container{
   max-width: 900px;
   padding: 0 10px;
@@ -53,10 +59,12 @@ hr{
 
 
 .item-text {
-  font-size: 1.33em;
+  font-size: 1.35em;
   font-family: 'Open Sans', sans-serif;
   line-height: 1.55em;
-  padding-bottom: 15px;
+  padding-top: 10px;
+  padding-bottom: 30px;
+
   /*cursor: pointer;*/
 
   & > div {
@@ -183,6 +191,14 @@ hr{
 .row.explain{
     width:100%;
   }
+
+.key {
+    margin-right: 50px;
+  }
+
+.title{
+  color: grey;
+}
 
 .actions-table {
   .row {
