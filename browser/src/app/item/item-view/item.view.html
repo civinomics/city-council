@@ -10,13 +10,21 @@
       <button md-raised-button [color]="isFollowing ? 'primary' : 'accent' " (click)="addOrRemoveFollow()">{{isFollowing ?
         'UNFOLLOW' : 'FOLLOW'}}
       </button>
+      <button md-raised-button>FORK</button>
       <button md-raised-button>EDIT</button>
     </div>
   </div>
 
   <div class="item-content">
     <div class="item-text">
-      <div>{{itemNumber}}. {{item.text}}</div>
+      <div class="item-title">{{itemNumber}}. {{item.text}}</div>
+      <div>
+        <p>Whereas this might be a longer law for people to consider; and</p>
+        <p>Whereas the full legal text of the proposal should be easy for people to find and read; and</p>
+        <p>Whereas Civinomics is a site that strives to increase the civic literacy of users.</p>
+        <p>Now therefore:</p>
+        <p>The full text of the item should be visible on the item page.</p>
+        <p style="text-align:center; cursor: pointer; font-size:2em;">...</p>
     </div>
     <div>
       <a target="_blank" [href]="item.resourceLinks[0]">Attachments</a>
@@ -39,9 +47,33 @@
 
   <hr>
 
+  <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">comments<strong style="padding-left:10px;">({{comments?.length}})</strong></div>
+
   <div class="actions-table" fxLayout="column" fxLayoutAlign="center center">
+
+    <div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
+      <civ-comment *ngFor="let comment of visibleComments()"
+                   [comment]="comment"
+                   [userVote]="userVoteFor(comment.id) | async"
+                   (vote)="commentVote.emit({itemId: comment.id, value: $event})"
+      ></civ-comment>
+    </div>
+
+    <div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center" style="margin:20px;">
+      <button md-raised-button (click)="showMoreComments()">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+          <md-icon>expand_more</md-icon>
+          <div>SHOW MORE</div>
+        </div>
+      </button>
+    </div>
+
+    <hr>
+
+    <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">Take Action</div>
+
     <div class="row vote" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
-      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center"> 
         
         <div class="vote-count">{{voteStats?.yes}}</div>
         <button md-raised-button
@@ -103,7 +135,6 @@
     <div class="row share" fxLayout="row" fxLayoutAlign="center center" [class.highlighted]="!!userVote && !!userComment">
 
       <div fxLayout="row" fxLayoutAlign="center center">
-        <div class="key row-label" [class.focused]="!!userVote && !!userComment">share</div>
         <div class="value" fxLayout="row" fxLayoutGap="10px">
           <button md-icon-button>
             <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
@@ -116,28 +147,7 @@
           </button>
         </div>
       </div>
-    </div>
-
-    <hr>
-    <div class="comment-heading">{{comments?.length}} comments</div>
-
-
-    <div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
-      <civ-comment *ngFor="let comment of visibleComments()"
-                   [comment]="comment"
-                   [userVote]="userVoteFor(comment.id) | async"
-                   (vote)="commentVote.emit({itemId: comment.id, value: $event})"
-      ></civ-comment>
-    </div>
-
-    <div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center">
-      <button md-raised-button (click)="showMoreComments()">
-        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
-          <md-icon>expand_more</md-icon>
-          <div>SHOW MORE</div>
-        </div>
-      </button>
-    </div>
+    </div> 
 
     <hr style="margin-top: 40px;">
 
@@ -149,8 +159,5 @@
         </span>
       </button>
     </div>
-
-
-
   </div><!-- actions-table -->
 </div><!-- container -->

@@ -26,16 +26,22 @@ hr{
 
 .item-container{
   max-width: 900px;
-  padding: 0 10px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+  background-color:#ffffff;
+  margin-top:-20px;
 }
 
 .item-content{
-  padding-bottom: 50px;
+  padding: 40px 60px 60px;
+  @include mq-xs {
+      padding: 40px 20px 60px;
+    }
 }
 
+
 .vote-button{
-  height: 50px;
-  width: 108px;
+  height: 60px;
+  width: 180px;
   font-size: 1.2em;
 }
 
@@ -43,6 +49,7 @@ hr{
   display: flex;
 
   .follow.row{
+    padding: 10px 15px 0 0;
     align-items: center;
     color:grey;
 
@@ -59,11 +66,12 @@ hr{
 
 
 .item-text {
-  font-size: 1.35em;
-  font-family: 'Open Sans', sans-serif;
+  font-size: 1.2em;
+  font-family: 'Roboto', sans-serif;
   line-height: 1.55em;
   padding-top: 10px;
-  padding-bottom: 30px;
+  padding-bottom: 40px;
+  font-weight: 300;
 
   /*cursor: pointer;*/
 
@@ -71,8 +79,19 @@ hr{
     margin-bottom: 10px;
   }
 
+  .item-title {
+    color: #373737;
+    margin-bottom: 40px;
+    font-size: 1.4em;
+    font-weight: 700;
+  }
+
 }
 
+.row.row-label.focused{
+  margin: 40px 0 40px 0;
+}
+  
 .user-comment-text {
   line-height: 1.5em;
   margin: 15px;
@@ -181,11 +200,10 @@ hr{
   width:100%;
   display:flex;
   justify-content: flex-end;
-  padding-bottom: 30px;
 }
 
 .back-to-agenda, .comment-heading{
-  padding: 20px 0;
+  padding: 20px 0 0;
 }
 
 .row.explain{
@@ -193,6 +211,7 @@ hr{
   }
 
 .key {
+    margin-left:10px;
     margin-right: 50px;
   }
 
