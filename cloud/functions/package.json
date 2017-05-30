@@ -10,8 +10,8 @@
     "up-civ": "npm un @civ/city-council -S && npm i @civ/city-council -S  && npm un @civ/meeting-reports -S && npm i @civ/meeting-reports -S "
   },
   "dependencies": {
-    "@civ/city-council": "^1.0.0-alpha.13",
-    "@civ/meeting-reports": "^1.0.0-alpha.14",
+    "@civ/city-council": "^1.0.0-alpha.14",
+    "@civ/meeting-reports": "^1.0.0-alpha.15",
     "@google-cloud/storage": "^1.1.0",
     "cors": "^2.8.3",
     "firebase": "^3.7.6",

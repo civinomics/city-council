@@ -4,8 +4,6 @@ import * as functions from 'firebase-functions';
 import * as moment from 'moment';
 import { getStorageBucket, initializeAdminApp } from './_internal';
 import * as pdf from 'html-pdf';
-//import {computeMeetingStats} from './meeting-stats';
-
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/observable/of';
 import { getMeetingComments } from './meeting-comments';

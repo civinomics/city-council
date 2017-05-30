@@ -12,3 +12,4 @@ export { newMeetingNotifications, closedMeetingNotifications } from './src/meeti
 
 export { importAgendas } from './src/import-agendas';
 
+export {createRepresentativeAccount} from './src/create-representative'
