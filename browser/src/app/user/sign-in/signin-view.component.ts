@@ -16,6 +16,7 @@ import { EmailSignupData, UserAddress } from '../user.model';
 import { MapsAPILoader } from '@agm/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MdInputDirective } from '@angular/material';
+import { EMAIL_REGEX, ZIP_REGEX } from '../../shared/constants';
 
 @Component({
   selector: 'civ-sign-in-view',
@@ -224,8 +225,6 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
 
 }
 
-export const EMAIL_REGEX = /^[\w\d_.-~+^$%&*()]+@[\w\d_.-~+^$%&*()]+?\.[a-zA-Z]{2,5}$/;
-export const ZIP_REGEX = /\d{5}/;
 
 export type AddressComponentType = 'street_number'|'route'|'neighborhood'|'sublocality_level_1'|'sublocality'|'administrative_area_level_2'|''
 

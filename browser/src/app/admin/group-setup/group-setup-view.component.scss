@@ -1,0 +1,64 @@
+@import "../../../assets/style/all";
+
+:host {
+  display: block;
+  max-width: 900px;
+  margin: auto;
+  padding: 20px 0;
+  @include mq($until: 860px) {
+    padding: 20px;
+  }
+
+  & > * {
+    margin-bottom: 30px;
+  }
+
+}
+
+.title-input {
+  font-size: 1.5em;
+}
+
+.heading {
+  color: mat-color($mat-grey, 600);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.districts {
+  padding: 0 20px;
+}
+
+.icon-preview img {
+  height: 75px;
+  border-radius: 2px;
+  border: 1px solid mat-color($mat-grey, 600);
+}
+
+.district-info {
+  padding: 0 20px;
+
+  .district-box {
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 10px;
+  }
+}
+
+.add-district-row {
+  text-align: center;
+}
+
+.admin-result {
+  &.true {
+    color: mat-color($mat-green, 700);
+  }
+
+  &.pristine {
+    color: mat-color($mat-grey, 400);
+  }
+
+  &.false {
+    color: mat-color($mat-red, 700);
+  }
+}

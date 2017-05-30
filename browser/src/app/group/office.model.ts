@@ -10,6 +10,17 @@ export type RawOffice = RawEntity & {
   representative: string;
 }
 
+export type OfficeCreateInput = {
+  name: string;
+  shapefileIdentifier?: string;
+  representative: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    icon: string
+  }
+}
+
 export function parseOffice(data: RawOffice): Office {
   console.log(data);
   return {

@@ -33,6 +33,7 @@ import { CorpModule } from './corp/corp.module';
 import { BrowseContainerComponent } from './core/browse/browse-container.component';
 import { AppFocusService } from './core/focus.service';
 import { FollowService } from './shared/services/follow.service';
+import { AdminModule } from './admin/admin.module';
 
 @NgModule({
 
@@ -64,6 +65,7 @@ import { FollowService } from './shared/services/follow.service';
     UserComponentsModule,
     VoteModule,
     CorpModule,
+    AdminModule,
     EffectsModule,
     EffectsModule.run(AuthService),
     EffectsModule.run(MeetingService),

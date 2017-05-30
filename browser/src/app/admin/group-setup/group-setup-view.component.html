@@ -1,0 +1,90 @@
+<div fxLayout="column" fxLayoutAlign="start stretch" class="section" [formGroup]="groupForm" fxLayoutGap="30px">
+
+  <md-input-container class="title-input">
+    <input mdInput placeholder="Group Title" mdInputDirective="focused" #nameInput formControlName="name">
+  </md-input-container>
+
+  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+
+    <md-input-container class="icon input" fxFlex="1 1">
+      <input mdInput type="url" #iconUrlInput placeholder="Icon URL" formControlName="icon">
+    </md-input-container>
+
+    <div class="icon-preview" fxFlex="0 0 100px">
+      <img [src]="iconUrlInput.value" *ngIf="!!iconUrlInput.value">
+    </div>
+
+  </div>
+
+  <md-slide-toggle (change)="setHasDistricts($event)">Does the group have districts?</md-slide-toggle>
+
+  <div *ngIf="hasDistricts" formArrayName="districts" class="district-info" fxLayout="column" fxLayoutGap="20px">
+    <div class="heading">district information</div>
+    <div class="shapefile row">
+      <label for="shapefileInput">Shapefile: </label>
+      <input type="file" id="shapefileInput">
+    </div>
+
+    <div *ngFor="let district of districts.controls; let i = index"
+         [formGroupName]="i"
+         class="district-box"
+         fxLayout="column">
+      <md-input-container>
+        <input mdInput placeholder="District Name" formControlName="name">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Shapefile Identifier" formControlName="shapefileIdentifier">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Representative Name" formControlName="repName">
+      </md-input-container>
+
+      <md-input-container>
+        <input mdInput placeholder="Representative Email Address" formControlName="repEmail">
+      </md-input-container>
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+        <md-input-container class="icon input" fxFlex="1 1">
+          <input mdInput type="url" #repImgUrl placeholder="Icon URL" formControlName="repIcon">
+        </md-input-container>
+        <div class="icon-preview" fxFlex="0 0 100px">
+          <img [src]="repImgUrl.value" *ngIf="!!repImgUrl.value">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="add-district-row">
+      <button md-raised-button color="primary" (click)="addDistrict()">Add District</button>
+    </div>
+
+  </div>
+
+</div>
+
+
+<md-slide-toggle [(ngModel)]="adminExtant">Does the group administrator already have an account?</md-slide-toggle>
+
+<div [formGroup]="adminForm" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+
+  <md-input-container>
+    <input mdInput type="email" formControlName="email" placeholder="Admin Email Address" #adminEmail>
+  </md-input-container>
+
+  <md-icon class="admin-result {{!!adminSearchResult ? 'true' : !!adminEmail.value ? 'false' : 'pristine'}}">
+    {{!!adminSearchResult ? 'check' : 'close'}}
+  </md-icon>
+
+  <div class="admin-name" *ngIf="!!adminSearchResult">{{adminSearchResult.firstName}} {{adminSearchResult.lastName}}
+  </div>
+
+</div>
+
+<div class="centered row">
+  <button md-raised-button color="primary" [disabled]="!groupForm.valid || !adminSearchResult" (click)="doSubmit()">
+    CREATE GROUP
+  </button>
+</div>
+
+<div class="centered row error" *ngIf="!!error">
+  Error: {{error}}
+</div>

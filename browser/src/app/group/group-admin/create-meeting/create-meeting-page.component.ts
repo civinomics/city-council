@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { GroupService } from 'app/group/group.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Group } from '../../group.model';
 import { MeetingService } from '../../../meeting/meeting.service';
 import { MeetingCreateAdt } from '../../../meeting/meeting.model';
+import { GroupService } from '../../group.service';
 
 @Component({
   selector: 'civ-create-meeting-page',

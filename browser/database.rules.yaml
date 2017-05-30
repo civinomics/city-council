@@ -22,8 +22,9 @@ root:
       admin: string
 
   user_private:
+    .read: isSuperuser()
     $id:
-      .read/write: auth != null && auth.uid == $id
+      .read/write: auth != null && auth.uid == $id #superuser has auth because of
       isVerified: boolean
       email: string
       superuser: isSuperuser()
@@ -61,15 +62,18 @@ root:
   group:
     .read: true
     $id:
-      .write: isSuperuser() || isGroupOwner($id)
+      #allow anonymous users
+      .write: (!prev.exists()) || isSuperuser() || isGroupOwner($id)
       name: string
       owner: userExists(next)
+      editors:
+        $idx: string
       icon: string
       districts:
         $districtId:
           name: string
           owner: string
-          representative: userExists(next)
+          representative: string
       meetings:
         $meetingId:
           .value: boolean

@@ -11,6 +11,9 @@ import { MeetingModule } from './meeting/meeting.module';
 import { GroupModule } from './group/group.module';
 import { GroupPage } from './group/group.page';
 import { MeetingPage } from './meeting/meeting.page';
+import { GroupCreatePageComponent } from './group/group-create/group-create-page.component';
+import { IsSuperuserGuard } from './admin/is-superuser.guard';
+import { AppAdminPageComponent } from './admin/app-admin-page.component';
 
 //these need to be named and exported for the AoT compiler
 export function getMeetingModule() { return MeetingModule }
@@ -20,6 +23,16 @@ export const APP_ROUTES: Routes = [
   {
     path: 'sign-in',
     component: SignInContainerComponent
+  },
+  {
+    path: 'create-group',
+    component: GroupCreatePageComponent
+  },
+  {
+    path: 'app-admin',
+    component: AppAdminPageComponent,
+    loadChildren: './admin/admin.module#AdminModule',
+    canActivate: [ IsSuperuserGuard ]
   },
 
   {

@@ -54,7 +54,7 @@ export interface Item extends Entity {
 export type RawItem = RawEntity & {
   [P in 'text' | 'resourceLinks']: Item[P];
   } & {
-  sireLink?: string; //deprecated - TODO remove after dev model update
+  resourceLinks: string[];
   activity?: ItemStatsAdt;
 } & {
   posted: string;

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { BehaviorSubject, Observable, Observer, Subject } from 'rxjs';
-import { EmailSignupData, parseSessionUser, SessionUser, UserAddress } from './user.model';
+import { EmailSignupData, parseSessionUser, parseUser, SessionUser, User, UserAddress } from './user.model';
 import { FirebaseError } from 'firebase/app';
 import * as firebase from 'firebase';
 import {
@@ -14,10 +14,7 @@ import {
 import { Store } from '@ngrx/store';
 import { AppState, getSessionUser, getSessionUserId } from '../state';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
-
 import AuthProvider = firebase.auth.AuthProvider;
-import FacebookAuthProvider = firebase.auth.FacebookAuthProvider;
-import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 
 const DEFAULT_ICON = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/User_font_awesome.svg/500px-User_font_awesome.svg.png';
 
@@ -150,6 +147,17 @@ export class AuthService {
         })
     });
   }
+
+  public getUserByEmail(email$: Observable<string>): Observable<User | null> {
+    return this.db.list(`/user_private`, {
+      query: {
+        orderByChild: 'email',
+        equalTo: email$
+      }
+    }).map(matches => matches.length > 0 ? matches[ 0 ].$key : null)
+      .flatMap(id => id == null ? Observable.of(null) :
+        this.db.object(`/user/${id}`).map(it => parseUser(it)))
+  };
 
   public emailSignup(data: EmailSignupData): Observable<AuthResult> {
     return Observable.create((observer: Observer<AuthResult>) => {

@@ -3,6 +3,7 @@ import { AuthService } from '../../user/auth.service';
 import { MdDialog } from '@angular/material';
 import { AuthModalComponent } from '../../user/auth-modal/auth-modal.component';
 import { VerifyModalComponent } from '../../user/verify-modal/verify-modal.component';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'civ-root',
@@ -11,6 +12,9 @@ import { VerifyModalComponent } from '../../user/verify-modal/verify-modal.compo
       <button md-button routerLink="/"><img src="/assets/img/civ_logo_white.png"></button>
       <div class="filler" fxFlex="1 1 auto"></div>
       <civ-auth-widget></civ-auth-widget>
+      <button md-icon-button *ngIf="isSuperuser$ | async" routerLink="/app-admin">
+        <md-icon>settings</md-icon>
+      </button>
     </md-toolbar>
 
     <div class="stage">
@@ -21,9 +25,11 @@ import { VerifyModalComponent } from '../../user/verify-modal/verify-modal.compo
   styleUrls: [ './app-root.page.scss' ]
 })
 export class AppRootComponent implements OnInit {
+  isSuperuser$: Observable<boolean>;
 
-  constructor(private authService: AuthService, private dialog: MdDialog) {
+  constructor(private authService: AuthService, private dialog: MdDialog, private authSvc: AuthService) {
 
+    this.isSuperuser$ = this.authSvc.sessionUser$.map(it => !!it && it.superuser == true);
 
   }
 

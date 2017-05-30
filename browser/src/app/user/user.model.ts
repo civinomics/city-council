@@ -10,7 +10,7 @@ export interface User extends Entity {
   lastOn: Moment;
 
   //map of group IDs to the ID of the district they're a constituent of
-  districts: { [id: string]: {id: string, name: string} }
+  districts: { [id: string]: { id: string, name: string } }
 }
 
 export type UserAddress = {
@@ -27,7 +27,7 @@ export interface SessionUser extends User {
   votes: { [id: string]: string }
   comments: { [id: string]: string }
   following: string[];
-    superuser: boolean;
+  superuser: boolean;
   isVerified: boolean;
 }
 
@@ -44,20 +44,20 @@ export type RawSessionUser = {
   }
 
 export type EmailSignupData = {
-    [P in 'firstName' | 'lastName' | 'address' | 'email' | 'superuser']: SessionUser[P]
+  [P in 'firstName' | 'lastName' | 'address' | 'email' | 'superuser']: SessionUser[P]
   } & {
   password: string;
 }
 
-export function parseUser(data: RawUser|any): User {
+export function parseUser(data: RawUser | any): User {
   return {
-      ...parseEntity(data),
+    ...parseEntity(data),
     firstName: data.firstName,
     lastName: data.lastName,
     joined: moment(data.joined),
     lastOn: moment(data.lastOn),
     icon: data.icon,
-      districts: data.districts||{},
+    districts: data.districts || {},
 
   }
 }
@@ -77,10 +77,10 @@ export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) =>
   }
 };
 
-export function userDistrict(user: User, groupId: string){
-  if (!user || !user.districts[groupId]){
+export function userDistrict(user: User, groupId: string) {
+  if (!user || !user.districts[ groupId ]) {
     return null;
   }
 
-  return user.districts[groupId].id;
+  return user.districts[ groupId ].id;
 }

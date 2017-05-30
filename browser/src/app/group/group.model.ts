@@ -1,6 +1,6 @@
 import { keys } from 'lodash';
 import { Entity, RawEntity } from '../core/models';
-import { Office, RawOffice } from './office.model';
+import { Office, OfficeCreateInput, RawOffice } from './office.model';
 
 export interface Group extends Entity {
   name: string;
@@ -14,6 +14,14 @@ export type RawGroup = RawEntity & {
   } & {
   meetings: {[key:string]:true}
   districts: RawOffice[]
+}
+
+export type GroupCreateInput = {
+  name: string;
+  icon: string;
+  shapefilePath?: string;
+  districts: OfficeCreateInput[];
+  adminId: string;
 }
 
 export function parseGroup(data: RawGroup | Group | any): Group {

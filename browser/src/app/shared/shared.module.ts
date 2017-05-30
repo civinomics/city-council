@@ -12,6 +12,7 @@ import {
   MdNativeDateModule,
   MdProgressSpinnerModule,
   MdSelectModule,
+  MdSlideToggleModule,
   MdTabsModule,
   MdToolbarModule,
   MdTooltipModule
@@ -42,6 +43,7 @@ const VIEW_PROVIDERS = [
     MdTooltipModule,
     MdMenuModule,
     MdDialogModule,
+  MdSlideToggleModule,
     MdTabsModule,
   MdProgressSpinnerModule,
     FlexLayoutModule,

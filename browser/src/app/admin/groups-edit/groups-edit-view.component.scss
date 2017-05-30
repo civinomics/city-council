@@ -1,0 +1,40 @@
+@import "../../../assets/style/all";
+
+:host {
+  display: block;
+  max-width: 900px;
+  margin: 20px auto;
+  @include mq($until: 860px) {
+    margin: 20px;
+  }
+
+}
+
+.section {
+  margin: 30px 0;
+  padding: 5px;
+}
+
+.heading {
+  color: mat-color($mat-grey, 600);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.group-row {
+  border-bottom: 1px solid mat-color($mat-grey, 400);
+  font-size: 1.25em;
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  .group-icon {
+    border-radius: 2px;
+    border: 1px solid mat-color($mat-grey, 400);
+    img {
+      height: 1.25em;
+    }
+  }
+
+}
+
