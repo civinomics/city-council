@@ -1,3 +1,17 @@
+<div class="section drafts" *ngIf="isAdmin">
+    <div class="section-title">Drafts</div>
+    <div *ngFor="let meeting of draftMeetings" class="meeting-row" fxLayout="row" fxLayoutAlign="space-between center"
+         (click)="showMeeting.emit(meeting.id)">
+      <div class="date">{{meeting.startTime | amDateFormat: 'M/D/YY'}}</div>
+        <div class="title">{{meeting.title}}</div>
+      <div class="status">{{status(meeting)}}</div>
+    </div>
+    <div *ngIf="draftMeetings.length == 0" class="empty-section">
+        NONE
+    </div>
+
+</div>
+
 <div class="section">
     <div class="section-title">Upcoming</div>
     <div *ngFor="let meeting of upcomingMeetings"
@@ -25,16 +39,4 @@
     NONE
   </div>
 </div>
-<div class="section drafts" *ngIf="isAdmin">
-    <div class="section-title">Drafts</div>
-    <div *ngFor="let meeting of draftMeetings" class="meeting-row" fxLayout="row" fxLayoutAlign="space-between center"
-         (click)="showMeeting.emit(meeting.id)">
-      <div class="date">{{meeting.startTime | amDateFormat: 'M/D/YY'}}</div>
-        <div class="title">{{meeting.title}}</div>
-      <div class="status">{{status(meeting)}}</div>
-    </div>
-    <div *ngIf="draftMeetings.length == 0" class="empty-section">
-        NONE
-    </div>
 
-</div>

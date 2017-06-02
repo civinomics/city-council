@@ -13,37 +13,86 @@ $google-orange: #dd4b39;
   }
 }
 
+hr{
+  border: solid 1px #eaeaea;
+  width: 100%;
+}
+
+.rep-avatar {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+  }
+
 .item-container{
   max-width: 900px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+  background-color:#ffffff;
+  margin-top:-20px;
 }
 
 .item-content{
-  padding-bottom: 50px;
+  padding: 40px 60px 60px;
+  @include mq-xs {
+      padding: 40px 20px 60px;
+    }
 }
 
+
 .vote-button{
-  height: 50px;
-  width: 108px;
+  height: 60px;
+  width: 180px;
   font-size: 1.2em;
 }
 
-.follow-text{
-  color:grey;
+.actions{
+  display: flex;
+
+  .follow.row{
+    padding: 10px 15px 0 0;
+    align-items: center;
+    color:grey;
+
+    div md-icon{
+      font-size: 1.2em;
+      padding-top: 5px;
+    }
+  }
 }
 
+.row.vote{
+  justify-content:center;
+}
+
+
 .item-text {
-  font-size: 1.33em;
-  font-family: 'Open Sans', sans-serif;
+  font-size: 1.2em;
+  font-family: 'Roboto', sans-serif;
   line-height: 1.55em;
-  padding-bottom: 15px;
+  padding-top: 10px;
+  padding-bottom: 40px;
+  font-weight: 300;
+
   /*cursor: pointer;*/
 
   & > div {
     margin-bottom: 10px;
   }
 
+  .item-title {
+    color: #373737;
+    margin-bottom: 40px;
+    font-size: 1.4em;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+
 }
 
+.row.row-label.focused{
+  margin: 40px 0 40px 0;
+}
+  
 .user-comment-text {
   line-height: 1.5em;
   margin: 15px;
@@ -152,7 +201,23 @@ $google-orange: #dd4b39;
   width:100%;
   display:flex;
   justify-content: flex-end;
-  padding-bottom: 15px;
+}
+
+.back-to-agenda, .comment-heading{
+  padding: 20px 0 0;
+}
+
+.row.explain{
+    width:100%;
+  }
+
+.key {
+    margin-left:10px;
+    margin-right: 50px;
+  }
+
+.title{
+  color: grey;
 }
 
 .actions-table {
@@ -195,5 +260,5 @@ $google-orange: #dd4b39;
 }
 
 .comment-container {
-  max-width: 550px;
+  width: 90%;
 }

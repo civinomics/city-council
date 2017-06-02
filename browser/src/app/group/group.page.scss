@@ -3,15 +3,20 @@
 
 .flag {
   height: 120px;
-  border-radius: 2px;
-  border: 1px solid mat-color($mat-grey, 700);
+  border-radius: 5px;
+  border: 1px solid mat-color($mat-grey, 500);
   display: block;
   align-self: center;
+  margin-right:40px;
 
   @include mq($until: 600px) {
     width: 200px;
   }
 
+}
+
+.group-header{
+	margin-bottom:50px;
 }
 
 .place-title {

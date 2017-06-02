@@ -23,11 +23,10 @@
   }
 
   &.drafts {
-    background-color: mat-color($mat-orange, A100);
-    padding: 10px;
 
     .meeting-row {
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: mat-color($mat-orange, A100);
+
     }
 
   }
@@ -50,8 +49,8 @@
 
 .meeting-row {
   padding: 10px;
-  border: 1px solid mat-color($mat-grey, 700);
   cursor: pointer;
+  padding:15px;
 
   .status {
     font-style: italic;

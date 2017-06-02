@@ -6,7 +6,7 @@
     </md-select>
   </div>
 
-  <div *ngFor="let item of agendaItems" class="item-row" fxLayout="row">
+  <div *ngFor="let item of agendaItems" class="item-row item-container" fxLayout="row">
     <div class="item-no" fxFlex="0 0 30px" fxFlex.xs="0 0 30px">
       {{item.onAgendas[meeting.id].itemNumber}}
     </div>

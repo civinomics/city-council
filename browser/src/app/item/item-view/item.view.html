@@ -1,32 +1,82 @@
 <div class="item-container">
 
   <div class="actions">
-    <div class="follow row" fxLayout="row" fxJustifyContent="flex-end" fxLayoutGap="10px">
+    <div class="follow row" fxLayout="row" fxLayoutGap="10px">
+      <div><md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon></div>
+      <div><md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon></div>
       <div *ngIf="numFollows > 0" class="follower-count">
         <span class="follow-text">{{numFollows}} follower{{numFollows == 1 ? '' : 's'}}</span>
       </div>
       <button md-raised-button [color]="isFollowing ? 'primary' : 'accent' " (click)="addOrRemoveFollow()">{{isFollowing ?
         'UNFOLLOW' : 'FOLLOW'}}
       </button>
+      <!-- <button md-raised-button>FORK</button> -->
+      <button md-raised-button>EDIT</button>
     </div>
   </div>
 
   <div class="item-content">
     <div class="item-text">
-      <div>{{itemNumber}}. {{item.text}}</div>
-    </div>
+      <div class="item-title">{{itemNumber}}. {{item.text}}</div>
+      <!-- <div>
+        <p>Whereas this might be a longer law for people to consider; and</p>
+        <p>Whereas the full legal text of the proposal should be easy for people to find and read; and</p>
+        <p>Whereas Civinomics is a site that strives to increase the civic literacy of users.</p>
+        <p>Now therefore:</p>
+        <p>The full text of the item should be visible on the item page.</p>
+        <p style="text-align:center; cursor: pointer; font-size:2em;">...</p>
+      </div> -->
     <div>
       <a target="_blank" [href]="item.resourceLinks[0]">Attachments</a>
     </div>
   </div>
 
-  <div class="actions-table" fxLayout="column">
-    <div class="row vote" fxLayout="row" fxLayoutAlign="start center" *ngIf="!isClosedSession">
-      <div class="key row-label" [class.focused]="!userVote">vote</div>
-      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+  <hr>
+
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <div class="key row-label focused">Your Representative</div>
+    <div class="value" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+      <img class="rep-avatar" src="https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAUyAAAAJGQzOTgwMThlLTJmZTAtNDkwYy1hZDQ1LWQ4NjIzNjA5YWQ1ZA.jpg">
+      <div style="padding-bottom:4px;">
+        <span class="name">Zach Friend</span>
+        <span class="title">County Supervisor, 2nd District</span>
+      </div>
+    </div>
+  </div>
+
+
+  <hr>
+
+  <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">comments<strong style="padding-left:10px;">({{comments?.length}})</strong></div>
+
+  <div class="actions-table" fxLayout="column" fxLayoutAlign="center center">
+
+    <div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
+      <civ-comment *ngFor="let comment of visibleComments()"
+                   [comment]="comment"
+                   [userVote]="userVoteFor(comment.id) | async"
+                   (vote)="commentVote.emit({itemId: comment.id, value: $event})"
+      ></civ-comment>
+    </div>
+
+    <div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center" style="margin:20px;">
+      <button md-raised-button (click)="showMoreComments()">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+          <md-icon>expand_more</md-icon>
+          <div>SHOW MORE</div>
+        </div>
+      </button>
+    </div>
+
+    <hr>
+
+    <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">Take Action</div>
+
+    <div class="row vote" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
+      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center"> 
         
         <div class="vote-count">{{voteStats?.yes}}</div>
-        <button md-button
+        <button md-raised-button
                 class="vote-button yes"
                 [class.rejected]="userVoteVal == -1"
                 (click)="castVote(1)"
@@ -35,7 +85,7 @@
                 yes
         </button>
 
-        <button md-button
+        <button md-raised-button
                 class="vote-button no"
                 [class.rejected]="userVoteVal == 1"
                 (click)="castVote(-1)"
@@ -47,9 +97,7 @@
 
       </div>
     </div>
-    <div class="row explain" fxLayout="row" *ngIf="!isClosedSession">
-      <div class="key row-label" [class.focused]="!userComment && !!userVote">Comment</div>
-
+    <div class="row explain" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
 
       <div *ngIf="!userComment" fxLayout="column" class="value">
         <md-input-container>
@@ -84,51 +132,32 @@
       This item is closed session and is not open to public feedback.
     </div>
 
-    <div class="row share" fxLayout="row" fxLayoutAlign="start center" [class.highlighted]="!!userVote && !!userComment">
-      <div class="key row-label" [class.focused]="!!userVote && !!userComment">share</div>
-      <div class="value" fxLayout="row" fxLayoutGap="10px">
-        <button md-icon-button>
-          <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
-        </button>
-        <button md-icon-button>
-          <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
-        </button>
-        <button md-icon-button>
-          <md-icon fontSet="fa" fontIcon="fa-google-plus-square"></md-icon>
-        </button>
+    <div class="row share" fxLayout="row" fxLayoutAlign="center center" [class.highlighted]="!!userVote && !!userComment">
+
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <div class="value" fxLayout="row" fxLayoutGap="10px">
+          <button md-icon-button>
+            <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
+          </button>
+          <button md-icon-button>
+            <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
+          </button>
+          <button md-icon-button>
+            <md-icon fontSet="fa" fontIcon="fa-google-plus-square"></md-icon>
+          </button>
+        </div>
       </div>
+    </div> 
+
+    <hr style="margin-top: 40px;">
+
+    <div class="back-to-agenda">
+      <button md-raised-button (click)="back.emit()">
+        <span fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+          <md-icon>chevron_left</md-icon>
+          <span>BACK TO AGENDA</span>
+        </span>
+      </button>
     </div>
-
-  </div>
-
-  <div class="back-to-agenda">
-    <button md-button (click)="back.emit()">
-      <span fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
-        <md-icon>chevron_left</md-icon>
-        <span>BACK TO AGENDA</span>
-      </span>
-    </button>
-  </div>
-
-  <div class="comment-heading">{{comments?.length}} comments</div>
-
-
+  </div><!-- actions-table -->
 </div><!-- container -->
-
-
-<div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
-  <civ-comment *ngFor="let comment of visibleComments()"
-               [comment]="comment"
-               [userVote]="userVoteFor(comment.id) | async"
-               (vote)="commentVote.emit({itemId: comment.id, value: $event})"
-  ></civ-comment>
-</div>
-
-<div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center">
-  <button md-raised-button (click)="showMoreComments()">
-    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
-      <md-icon>expand_more</md-icon>
-      <div>SHOW MORE</div>
-    </div>
-  </button>
-</div>
