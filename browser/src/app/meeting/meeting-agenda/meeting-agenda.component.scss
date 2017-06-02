@@ -10,6 +10,10 @@
   padding: 10px;
 }
 
+nav.md-tab-nav-bar{
+  margin:0 30px;
+}
+
 .section-title {
   font-size: 1.25em;
   font-weight: 500;
@@ -21,10 +25,18 @@
 
 }
 
+.title{
+  transform:uppercase;
+}
+
+
+.sort-by{
+  margin-left:20px;
+}
+
 .item-row {
   margin: 20px;
-  border: 1px solid mat-color($mat-grey, 800);
-  padding: 10px;
+  padding: 15px;
 
   .item-text {
     transition: 100ms 50ms linear color;

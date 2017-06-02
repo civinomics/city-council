@@ -8,6 +8,7 @@
 @import "assets/style/all";
 @import "~sass-mq";
 html, body {
+  background-color: #eff2f4;
   margin: 0;
   display: block;
   height: 100%;
@@ -88,6 +89,30 @@ div.footer{
 
 .no-bullet, ul.no-bullet li{
   list-style-type: none;
+}
+
+.item-container, .meeting-row, {
+  max-width: 900px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+  background-color:#ffffff;
+}
+
+.focus-title.title, .place-title{
+  font-family: 'Roboto', sans-serif;
+  color: #373737;
+  font-weight: 700;
+}
+
+.meeting-title{
+  line-height: .8em;
+}
+
+
+civ-meeting-container{
+  margin:0 auto;
+  max-width: 900px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+  background-color:#ffffff;
 }
 
 

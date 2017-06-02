@@ -1,7 +1,7 @@
 <div class="item-container">
 
   <div class="actions">
-    <div class="follow row" fxLayout="row" fxJustifyContent="flex-end" fxLayoutGap="10px">
+    <div class="follow row" fxLayout="row" fxLayoutGap="10px">
       <div><md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon></div>
       <div><md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon></div>
       <div *ngIf="numFollows > 0" class="follower-count">
@@ -10,7 +10,7 @@
       <button md-raised-button [color]="isFollowing ? 'primary' : 'accent' " (click)="addOrRemoveFollow()">{{isFollowing ?
         'UNFOLLOW' : 'FOLLOW'}}
       </button>
-      <button md-raised-button>FORK</button>
+      <!-- <button md-raised-button>FORK</button> -->
       <button md-raised-button>EDIT</button>
     </div>
   </div>
@@ -18,14 +18,14 @@
   <div class="item-content">
     <div class="item-text">
       <div class="item-title">{{itemNumber}}. {{item.text}}</div>
-      <div>
+      <!-- <div>
         <p>Whereas this might be a longer law for people to consider; and</p>
         <p>Whereas the full legal text of the proposal should be easy for people to find and read; and</p>
         <p>Whereas Civinomics is a site that strives to increase the civic literacy of users.</p>
         <p>Now therefore:</p>
         <p>The full text of the item should be visible on the item page.</p>
         <p style="text-align:center; cursor: pointer; font-size:2em;">...</p>
-    </div>
+      </div> -->
     <div>
       <a target="_blank" [href]="item.resourceLinks[0]">Attachments</a>
     </div>

@@ -13,11 +13,11 @@ import { Title } from '@angular/platform-browser';
 @Component({
   selector: 'civ-group',
   template: `
-    <div fxLayout="row" fxLayoutAlign="space-around stretch" *ngIf="group$ | async as group">
-          <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="10px">
+    <div fxLayout="row" class="group-header" fxLayoutAlign="space-around stretch" *ngIf="group$ | async as group">
+          <div fxLayout="row" fxLayoutAlign="start stretch">
             <img class="flag" [src]="group.icon">
               <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="5px">
-                <div class="place-title">{{group.name}}</div>
+                <h1 class="place-title">{{group.name}}</h1>
                   <div class="follow-row"
                        fxLayout="row"
                        fxLayoutAlign="space-around center"

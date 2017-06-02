@@ -14,9 +14,10 @@ import { Title } from '@angular/platform-browser';
     selector: 'civ-meeting-container',
     template: `
       <div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="15px" *ngIf="meeting$ | async as meeting">
-        <div class="focus-title">{{meeting.title}}:
+        <h2 class="focus-title title meeting-title">{{meeting.title}}<br><br>
           {{meeting.startTime | amDateFormat: 'M/DD/YY'}}
-        </div>
+        </h2>
+        <!--
         <div class="follow-row"
              fxLayout="row"
              fxLayoutAlign="start center"
@@ -38,7 +39,7 @@ import { Title } from '@angular/platform-browser';
                   (click)="unfollow()"
                   *ngIf="isFollowing$ | async">UNFOLLOW
           </button>
-        </div>
+        </div> -->
       </div>
 
       <div class="content-wrapper">
