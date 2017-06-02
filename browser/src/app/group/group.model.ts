@@ -1,5 +1,4 @@
 import { Entity, parseEntity } from '../core/models';
-import { OfficeCreateInput } from './office.model';
 import { parseUser, User, usersEqual } from '../user/user.model';
 
 export interface District extends Entity {
@@ -21,11 +20,20 @@ export interface Group extends Entity {
   districts?: District[]
 }
 
+export type RepresentativeCreateInput = {
+  id: string; //it'll be temporary, just used to pair with district
+  firstName: string;
+  lastName: string;
+  icon: string;
+  email: string;
+  title: string;
+}
+
 export type GroupCreateInput = {
   name: string;
   icon: string;
-  shapefilePath?: string;
-  districts?: OfficeCreateInput[];
+  districts?: { name: string, representative: string }[];
+  representatives: RepresentativeCreateInput[]
   adminId: string;
 }
 

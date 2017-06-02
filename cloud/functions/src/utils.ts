@@ -152,3 +152,13 @@ export async function getFollowersWithEmailAddresses(type: 'meeting' | 'group' |
 
 }
 
+
+export function createRandomString(chars: number = 20) {
+  let text = '',
+    possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~_-$';
+
+  for (let i = 0; i < chars; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}

@@ -1,6 +1,7 @@
 import { getEmailTransport, initializeAdminApp } from './_internal';
 import * as functions from 'firebase-functions';
-import { getGroup } from './utils';
+import { createRandomString, getGroup } from './utils';
+import { Group } from '@civ/city-council';
 
 
 export type ResultAdt = {
@@ -58,8 +59,12 @@ export const createRepresentativeAccount = functions.https.onRequest((request, r
 
 
 async function doCreate(input: InputAdt){
-  let password = createRandomPassword(),
-    userId: string;
+  let password = createRandomString(),
+    userId: string,
+    group: Group;
+
+  group = await getGroup(input.groupId, db);
+
   try {
     userId = await createAuthAccount(input.email, password);
   } catch (err){
@@ -74,7 +79,7 @@ async function doCreate(input: InputAdt){
 
 
   try {
-    await createUserPublicEntry(userId, input.name, input.icon);
+    await createUserPublicEntry(userId, input.name, input.icon, group.owner);
   } catch (err){
     throw new Error(`Error creating userPublic entry: ${JSON.stringify(err)}`);
   }
@@ -96,16 +101,6 @@ async function doCreate(input: InputAdt){
   return userId;
 }
 
-function createRandomPassword(){
-  let text = "",
-      possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~_-$";
-
-  for( let i=0; i < 20; i++ )
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
-}
-
 
 async function updateDistrictRepInfo(groupId: string, districtId: string, repId: string){
   return await db.ref(`/group/${groupId}/districts/${districtId}`).update({representative: repId})
@@ -124,11 +119,11 @@ async function createUserPrivateEntry(id: string, email: string){
   });
 }
 
-async function createUserPublicEntry(id: string, name: string, icon: string) {
+async function createUserPublicEntry(id: string, name: string, icon: string, admin: string) {
   return await db.ref(`/user/${id}`).set({
     firstName: name.split(' ')[0],
     lastName: name.split(' ')[1],
-    icon
+    admin
   })
 }
 

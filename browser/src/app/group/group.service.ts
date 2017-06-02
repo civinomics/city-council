@@ -7,13 +7,13 @@ import { Store } from '@ngrx/store';
 import { AppState, getFocusedGroup, getGroups, getLoadedGroupIds, getMeetingsOfSelectedGroup } from '../state';
 import { SELECT_GROUP } from '../core/focus.reducer';
 import { GroupLoadedAction } from './group.reducer';
-import { Headers, Http, RequestOptions } from '@angular/http';
+import { Http } from '@angular/http';
 import { parseUser } from '../user/user.model';
 
 let _ignore: Meeting;//so IDEA won't remove above import, which is needed for tsc to compile with declarations
 
 const LOAD_GROUP = '[GroupSvcInternal] loadGroup';
-const CREATE_REP_ENDPOINT = `https://us-central1-civ-cc.cloudfunctions.net/createRepresentativeAccount`;
+const GROUP_CREATE_ENDPOINT = `https://us-central1-civ-cc.cloudfunctions.net/createGroup`;
 
 
 @Injectable()
@@ -79,54 +79,21 @@ export class GroupService {
       )
   }
 
-  public async createGroup(input: GroupCreateInput): Promise<string> {
-    let groupPushResult;
+  public async createGroup(input: GroupCreateInput): Promise<{ success: true, groupId: string } | { success: false, error: string }> {
 
     try {
-      groupPushResult = await this.db.list(`/group`).push({
-        name: input.name,
-        icon: input.icon,
-        owner: input.adminId,
-        editors: [ input.adminId ]
-      });
+      const result = await this.http.post(GROUP_CREATE_ENDPOINT, input).toPromise();
+
+      return {
+        success: true,
+        groupId: result.json().groupId
+      }
     } catch (err) {
-      throw new Error(`Error pushing group: ${JSON.stringify(err)}`);
+      return {
+        success: false,
+        error: err.message
+      }
     }
-
-    const groupId = groupPushResult.key;
-    console.debug(`Created group: ${groupId}`);
-    if (input.districts.length > 0) {
-      console.debug(`Creating ${input.districts.length} districts: `);
-      await Promise.all(input.districts.map(district => new Promise((resolve, reject) => {
-        this.db.list(`/group/${groupId}/districts`).push({ name: district.name }).then(res => {
-          let districtId = res.key;
-          const pass = {
-              name: `${district.representative.firstName} ${district.representative.lastName}`,
-              email: district.representative.email,
-              icon: district.representative.icon,
-              groupId,
-              districtId
-            }, headers = new Headers({ 'Content-Type': 'application/json' }),
-            options = new RequestOptions({ headers: headers });
-          this.http.post(CREATE_REP_ENDPOINT, pass, options).take(1)
-            .map(resp => resp.json())
-            .do((result) => console.debug(`successfully pushed rep ${result.userId}`))
-            .subscribe(resolve, reject);
-        }).catch(err => {
-          throw new Error(`Error creating districts: ${JSON.stringify(err)}`)
-        })
-      })));
-    } else {
-      console.debug(`No districts to create.`)
-    }
-
-    console.debug(`Successfully created group ${groupId}`);
-
-    return groupId;
-
-  }
-
-  private createRepresentativeAccount() {
 
   }
 

@@ -13,8 +13,7 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { EMAIL_REGEX } from '../../shared/constants';
 import { MdInputDirective } from '@angular/material';
 import { User } from '../../user/user.model';
-import { District, Group, GroupCreateInput, Representative } from '../../group/group.model';
-import { OfficeCreateInput } from '../../group/office.model';
+import { District, Group, GroupCreateInput, Representative, RepresentativeCreateInput } from '../../group/group.model';
 import { Observable } from 'rxjs/Observable';
 import { animate, style, transition, trigger } from '@angular/animations';
 
@@ -292,38 +291,43 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
     });
   }
 
+  private parseDistrict(form: FormGroup) {
+    return {
+      name: form.controls[ 'name' ].value,
+      representative: form.controls[ 'representative' ].value
+    }
+  }
+
+  private parseRep(form: FormGroup): RepresentativeCreateInput {
+    return {
+      firstName: this.groupForm.controls[ 'firstName' ].value,
+      lastName: this.groupForm.controls[ 'lastName' ].value,
+      icon: this.groupForm.controls[ 'icon' ].value,
+      email: this.groupForm.controls[ 'email' ].value,
+      title: this.groupForm.controls[ 'title' ].value,
+      id: this.groupForm.controls[ 'id' ].value,
+    }
+  }
+
   doSubmit() {
 
     let data: GroupCreateInput = {
       name: this.groupForm.controls[ 'name' ].value,
       icon: this.groupForm.controls[ 'icon' ].value,
       districts: [],
+      representatives: [],
       adminId: this.adminSearchResult.id
     };
 
-    if (this.hasDistricts) {
-      let districtsArr = this.groupForm.controls[ 'districts' ] as FormArray;
-      for (let i = 0; i < districtsArr.controls.length; i++) {
-        data.districts.push(parseDistrict(districtsArr.controls[ i ] as FormGroup))
-      }
-    }
+
+    this.districts.controls.forEach((form: FormGroup) => data.districts.push(this.parseDistrict(form)));
+
+    this.representatives.controls.forEach((form: FormGroup) => data.representatives.push(this.parseRep(form)));
+
+
+
 
     this.submit.emit(data);
-
-    function parseDistrict(form: FormGroup): OfficeCreateInput {
-      let name = form.controls[ 'repName' ].value;
-
-      return {
-        name: form.controls[ 'name' ].value,
-        shapefileIdentifier: form.controls[ 'shapefileIdentifier' ].value,
-        representative: {
-          firstName: name.split(' ')[ 0 ],
-          lastName: name.split(' ')[ 1 ],
-          icon: form.controls[ 'repIcon' ].value,
-          email: form.controls[ 'repEmail' ].value,
-        }
-      }
-    }
 
 
   }
