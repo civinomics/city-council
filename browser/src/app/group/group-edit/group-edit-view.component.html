@@ -65,7 +65,7 @@
     <md-slide-toggle (change)="setHasDistricts($event)">Does the group have districts?</md-slide-toggle>
   -->
 
-  <div formArrayName="districts" class="district-info" fxLayout="column" fxLayoutGap="20px">
+  <div formArrayName="districts" class="district-info" fxLayout="column">
     <div class="heading">districts</div>
 
 
@@ -83,7 +83,7 @@
       <div>
 
         <md-select formControlName="representative" placeholder="Select Representative">
-          <md-option *ngFor="let opt of repSelectOptions" [value]="opt.index">{{opt.text}}</md-option>
+          <md-option *ngFor="let opt of repSelectOptions" [value]="opt.id">{{opt.text}}</md-option>
         </md-select>
 
 
@@ -101,6 +101,9 @@
 
 </div>
 
+<button md-fab class="save-btn" *ngIf="hasChanges()" color="accent" [@saveBtn]>
+  SAVE
+</button>
 
 <md-slide-toggle [(ngModel)]="adminExtant">Does the group administrator already have an account?</md-slide-toggle>
 

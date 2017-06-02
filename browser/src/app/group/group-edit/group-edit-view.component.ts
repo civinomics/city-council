@@ -1,5 +1,6 @@
 import {
   AfterContentInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -12,14 +13,27 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { EMAIL_REGEX } from '../../shared/constants';
 import { MdInputDirective } from '@angular/material';
 import { User } from '../../user/user.model';
-import { Group, GroupCreateInput } from '../../group/group.model';
+import { District, Group, GroupCreateInput, Representative } from '../../group/group.model';
 import { OfficeCreateInput } from '../../group/office.model';
 import { Observable } from 'rxjs/Observable';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'civ-group-edit-view',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './group-edit-view.component.html',
-  styleUrls: [ './group-edit-view.component.scss' ]
+  styleUrls: [ './group-edit-view.component.scss' ],
+  animations: [
+    trigger('saveBtn', [
+      transition(':enter', [
+        style({ transform: 'translateY(20vh)scale(0)' }),
+        animate('300ms ease-in', style({ transform: 'translateY(0)scale(1)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ transform: 'scale(0)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class GroupEditViewComponent implements OnInit, AfterContentInit {
 
@@ -28,13 +42,21 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
   @Output() adminEmailChanged: EventEmitter<string> = new EventEmitter();
   @Output() submit: EventEmitter<GroupCreateInput> = new EventEmitter();
 
+  private _nextId: number = 0;
 
   private _extantGroup: Group | undefined;
+  private _repMap: { [id: string]: Representative } = {};
+  private _distMap: { [id: string]: District } = {};
   private _initialized: boolean = false;
 
   @Input()
   set extantGroup(it: Group) {
     this._extantGroup = it;
+    this._repMap = (this._extantGroup.representatives || []).reduce((result, rep) => ({
+      ...result,
+      [rep.id]: rep
+    }), {});
+    this._distMap = (this._extantGroup.districts || []).reduce((result, dist) => ({ ...result, [dist.id]: dist }), {});
     if (!!it && !this._initialized) {
       this.updateFormWithExtantData();
       this._initialized = true;
@@ -63,7 +85,7 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
   adminEmailQueryLoading: boolean = false;
 
 
-  repSelectOptions: { id?: string, index: number, text: string }[] = [];
+  repSelectOptions: { id: string, text: string }[] = [];
 
 
 
@@ -103,21 +125,9 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
 
       this.extantGroup.representatives
         .sort((x, y) => x.title.localeCompare(y.title))
-        .forEach(rep => {
-          let form = this.addRep();
-          form.controls[ 'firstName' ].setValue(rep.firstName);
-          form.controls[ 'lastName' ].setValue(rep.lastName);
-          form.controls[ 'icon' ].setValue(rep.icon);
-          form.controls[ 'title' ].setValue(rep.title);
-          form.controls[ 'email' ].disable();
-
-          this.repSelectOptions.push({
-            id: rep.id,
-            index: this.representatives.length - 1,
-            text: `${rep.firstName} ${rep.lastName}`
-          })
-
-        });
+        .forEach(rep =>
+          this.addRep(rep)
+        );
     }
 
     if (this.extantGroup.districts && this.extantGroup.districts.length > 0) {
@@ -128,19 +138,66 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
       }
 
       this.extantGroup.districts.forEach(district => {
-        let form = this.addDistrict();
-
-        let reps = this.repSelectOptions.filter(it => it.id == district.representative);
-        if (reps.length !== 1) {
-          throw new Error(`Expected a single rep entry to match, found: ${JSON.stringify(reps)}`) //todo remove in production
-        }
-
-        form.controls[ 'name' ].setValue(district.name);
-        form.controls[ 'representative' ].setValue(reps[ 0 ].index);
+        this.addDistrict(district);
       });
     }
 
     this.cdr.detectChanges();
+  }
+
+  repHasChanges(): boolean {
+
+    return false
+  }
+
+  hasChanges(): boolean {
+    if (!this.extantGroup) {
+      return false;
+    }
+    if (
+      this.groupForm.controls[ 'name' ].value != this.extantGroup.name ||
+      this.groupForm.controls[ 'icon' ].value != this.extantGroup.icon
+    ) {
+      return true;
+    }
+
+
+    for (let i = 0; i < this.representatives.length; i++) {
+      let form = this.representatives.at(i) as FormGroup,
+        data = this._repMap[ form.controls[ 'id' ].value ];
+
+      if (!data) {
+        debugger;
+      }
+
+      if (
+        form.controls[ 'firstName' ].value != data.firstName ||
+        form.controls[ 'lastName' ].value != data.lastName ||
+        form.controls[ 'icon' ].value != data.icon ||
+        form.controls[ 'title' ].value != data.title
+      ) {
+        return true;
+      }
+
+    }
+
+    for (let i = 0; i < this.districts.length; i++) {
+      let form = this.districts.at(i) as FormGroup,
+        data = this._distMap[ form.controls[ 'id' ].value ];
+
+      if (!data) {
+        debugger;
+      }
+      if (
+        form.controls[ 'name' ].value != data.name ||
+        form.controls[ 'representative' ].value != data.representative
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+
   }
 
 
@@ -175,28 +232,29 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
       })
     }*/
 
-  addDistrict(): FormGroup {
-    this.districts.push(this.newDistrict());
+  addDistrict(dist?: District): FormGroup {
+    this.districts.push(this.newDistrict(dist));
 
     return this.districts.at(this.districts.length - 1) as FormGroup;
-
-
 
   };
 
 
-  addRep(): FormGroup {
-    this.representatives.push(this.newRep());
+  addRep(rep?: Representative): FormGroup {
+    this.representatives.push(this.newRep(rep));
     let idx = this.representatives.length - 1;
 
     let it = this.representatives.at(idx) as FormGroup;
 
     this.repSelectOptions.push({
-      index: idx,
-      text: ''
+      id: rep && rep.id || `new_rep_${++this._nextId}`,
+      text: rep && `${rep.firstName} ${rep.lastName}` || ''
     });
 
-    Observable.combineLatest(it.controls[ 'firstName' ].valueChanges.startWith(''), it.controls[ 'lastName' ].valueChanges.startWith(''))
+    Observable.combineLatest(
+      it.controls[ 'firstName' ].valueChanges.startWith(rep && rep.firstName || ''),
+      it.controls[ 'lastName' ].valueChanges.startWith(rep && rep.lastName || '')
+    )
       .debounceTime(250)
       .subscribe(([ fname, lname ]) => {
         this.repSelectOptions[ idx ].text = `${fname} ${lname}`
@@ -206,20 +264,22 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
 
   };
 
-  private newRep(): FormGroup {
+  private newRep(rep?: Representative): FormGroup {
     return new FormGroup({
-      firstName: new FormControl('', [ Validators.required ]),
-      lastName: new FormControl('', [ Validators.required ]),
-      email: new FormControl('', [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
-      icon: new FormControl('', [ Validators.required ]),
-      title: new FormControl('', [ Validators.required ])
+      firstName: new FormControl(rep && rep.firstName || '', [ Validators.required ]),
+      lastName: new FormControl(rep && rep.lastName || '', [ Validators.required ]),
+      email: new FormControl(rep && rep.email || '', [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
+      icon: new FormControl(rep && rep.icon || '', [ Validators.required ]),
+      title: new FormControl(rep && rep.title || '', [ Validators.required ]),
+      id: new FormControl(rep && rep.id || undefined)
     });
   }
 
-  private newDistrict(): FormGroup {
+  private newDistrict(district?: District): FormGroup {
     return new FormGroup({
-      name: new FormControl('', [ Validators.required ]),
-      representative: new FormControl('', [ Validators.required ])
+      name: new FormControl(district && district.name || '', [ Validators.required ]),
+      representative: new FormControl(district && district.representative || '', [ Validators.required ]),
+      id: new FormControl(district && district.id || undefined)
     });
   }
 
