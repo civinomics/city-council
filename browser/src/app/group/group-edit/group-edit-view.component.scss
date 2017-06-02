@@ -59,15 +59,21 @@
   }
 }
 
-.section.reps {
+.rep-box {
+  padding: 20px 10px;
+  border-radius: 2px;
+  border: 1px solid mat-color($mat-grey, 500);
+}
 
-  .row {
-    padding: 20px 10px;
-    border-radius: 2px;
-    border: 1px solid mat-color($mat-grey, 500);
+.remove-btn {
+  color: mat-color($mat-grey, 500);
+  transition: 250ms linear color;
+  &:hover {
+    color: mat-color($mat-red, 600);
   }
 
 }
+
 
 .save-btn {
   position: fixed;

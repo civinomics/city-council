@@ -161,6 +161,9 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
       return true;
     }
 
+    if (this.representatives.length !== this.extantGroup.representatives.length) {
+      return true;
+    }
 
     for (let i = 0; i < this.representatives.length; i++) {
       let form = this.representatives.at(i) as FormGroup,
@@ -179,6 +182,11 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
         return true;
       }
 
+    }
+
+
+    if (this.districts.length !== this.extantGroup.districts.length) {
+      return true;
     }
 
     for (let i = 0; i < this.districts.length; i++) {
@@ -271,7 +279,8 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
       email: new FormControl(rep && rep.email || '', [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
       icon: new FormControl(rep && rep.icon || '', [ Validators.required ]),
       title: new FormControl(rep && rep.title || '', [ Validators.required ]),
-      id: new FormControl(rep && rep.id || undefined)
+      id: new FormControl(rep && rep.id || undefined),
+      district: new FormControl(rep && rep.district || undefined)
     });
   }
 
@@ -320,4 +329,36 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
   }
 
 
+  removeRep(idx: number) {
+    let removeId = (this.representatives.at(idx) as FormGroup).controls[ 'id' ].value;
+    this.repSelectOptions = this.repSelectOptions.filter(it => it.id !== removeId);
+    this._repMap = Object.keys(this._repMap)
+      .filter(id => id !== removeId)
+      .reduce((result, id) => ({ ...result, [id]: this._repMap[ id ] }), {});
+    this.representatives.removeAt(idx);
+  }
+
+  removeDistrict(idx: number) {
+    let removeId = (this.districts.at(idx) as FormGroup).controls[ 'id' ].value;
+
+    //remove district from corresponding representative, if any
+    if (this._distMap[ removeId ].representative) {
+      let forms = this.representatives.controls
+        .filter((form: FormGroup) => form.controls[ 'id' ].value == this._distMap[ removeId ].representative);
+
+      if (forms.length !== 1) {
+        console.error(`Could not find representative for removed district`);
+      } else {
+        let form = forms[ 0 ] as FormGroup;
+        form.controls[ 'district' ].setValue(undefined);
+      }
+    }
+
+    this._distMap = Object.keys(this._distMap)
+      .filter(id => id !== removeId)
+      .reduce((result, id) => ({ ...result, [id]: this._distMap[ id ] }), {});
+
+    this.districts.removeAt(idx);
+
+  }
 }

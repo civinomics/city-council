@@ -25,35 +25,43 @@
     <div class="body" formArrayName="representatives" fxLayout="column" fxLayoutGap="20px">
       <div *ngFor="let rep of representatives.controls; let i = index"
            [formGroupName]="i"
-           class="row rep"
-           fxLayout="column">
-        <div fxLayout="row"
-             fxLayoutAlign="space-between center"
-             fxLayoutGap="20px"
-             fxLayoutGap.gt-sm="10%"
-             class="names">
-          <md-input-container class="input name" fxFlex="1 1">
-            <input mdInput placeholder="First Name" formControlName="firstName">
-          </md-input-container>
-          <md-input-container class="input name" fxFlex="1 1">
-            <input mdInput placeholder="Last Name" formControlName="lastName">
-          </md-input-container>
-        </div>
+           class="row"
+           fxLayout="row"
+           fxLayoutAlign="start center"
+           fxLayoutGap="10px"
+      >
+        <div fxLayout="column" fxFlex="1 1" class="rep-box">
+          <div fxLayout="row"
+               fxLayoutAlign="space-between center"
+               fxLayoutGap="20px"
+               fxLayoutGap.gt-sm="10%"
+               class="names">
+            <md-input-container class="input name" fxFlex="1 1">
+              <input mdInput placeholder="First Name" formControlName="firstName">
+            </md-input-container>
+            <md-input-container class="input name" fxFlex="1 1">
+              <input mdInput placeholder="Last Name" formControlName="lastName">
+            </md-input-container>
+          </div>
 
-        <md-input-container class="input name" class.gt-lg="title">
-          <input mdInput placeholder="Title" formControlName="title">
-        </md-input-container>
-
-        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px" class="icon">
-
-          <md-input-container class="icon input" fxFlex="1 1">
-            <input mdInput type="url" #repIconInput placeholder="Icon URL" formControlName="icon">
+          <md-input-container class="input name" class.gt-lg="title">
+            <input mdInput placeholder="Title" formControlName="title">
           </md-input-container>
 
-          <div class="icon-preview" fxFlex="0 0 auto">
-            <img [src]="repIconInput.value" *ngIf="!!repIconInput.value">
+          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px" class="icon">
+
+            <md-input-container class="icon input" fxFlex="1 1">
+              <input mdInput type="url" #repIconInput placeholder="Icon URL" formControlName="icon">
+            </md-input-container>
+
+            <div class="icon-preview" fxFlex="0 0 auto">
+              <img [src]="repIconInput.value" *ngIf="!!repIconInput.value">
+            </div>
           </div>
         </div>
+        <button md-icon-button (click)="removeRep(i)" class="remove-btn">
+          <md-icon>close</md-icon>
+        </button>
       </div>
     </div>
     <div class="centered">
@@ -70,24 +78,29 @@
 
 
     <div *ngFor="let district of districts.controls; let i = index"
-         [formGroupName]="i"
-         class="district-box">
+         [formGroupName]="i" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
 
-      <div>
+      <div class="district-box" fxFlex="1 1">
+        <div>
+          <md-input-container>
+            <input mdInput placeholder="District Name" formControlName="name">
+          </md-input-container>
+        </div>
 
-        <md-input-container>
-          <input mdInput placeholder="District Name" formControlName="name">
-        </md-input-container>
+        <div>
+
+          <md-select formControlName="representative" placeholder="Select Representative">
+            <md-option *ngFor="let opt of repSelectOptions" [value]="opt.id">{{opt.text}}</md-option>
+          </md-select>
+
+
+        </div>
+
       </div>
 
-      <div>
-
-        <md-select formControlName="representative" placeholder="Select Representative">
-          <md-option *ngFor="let opt of repSelectOptions" [value]="opt.id">{{opt.text}}</md-option>
-        </md-select>
-
-
-      </div>
+      <button md-icon-button (click)="removeDistrict(i)" class="remove-btn">
+        <md-icon>close</md-icon>
+      </button>
 
 
     </div>
