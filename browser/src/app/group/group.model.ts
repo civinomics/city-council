@@ -1,59 +1,124 @@
-import { keys } from 'lodash';
-import { Entity, RawEntity } from '../core/models';
-import { Office, OfficeCreateInput, RawOffice } from './office.model';
+import { Entity, parseEntity } from '../core/models';
+import { OfficeCreateInput } from './office.model';
+import { parseUser, User, usersEqual } from '../user/user.model';
+
+export interface District extends Entity {
+  name: string;
+  representative: string;
+}
+
+export interface Representative extends User {
+  title: string;
+  district?: string;
+  email?: string;
+}
 
 export interface Group extends Entity {
   name: string;
   icon: string;
-  meetingIds: string[];
-  districts: Office[]
-}
-
-export type RawGroup = RawEntity & {
-  [P in 'name' | 'icon']: Group[P]
-  } & {
-  meetings: {[key:string]:true}
-  districts: RawOffice[]
+  meetings: string[];
+  representatives: Representative[];
+  districts?: District[]
 }
 
 export type GroupCreateInput = {
   name: string;
   icon: string;
   shapefilePath?: string;
-  districts: OfficeCreateInput[];
+  districts?: OfficeCreateInput[];
   adminId: string;
 }
 
-export function parseGroup(data: RawGroup | Group | any): Group {
-
-  let districts;
-  if (Array.isArray(data.districts)) {
-    districts = data.districts;
-  } else {
-    districts = Object.keys(data.districts).map(id => ({ ...data.districts[ id ], id }));
+export function parseDistrict(data: Partial<District> | any) {
+  let id = data.id || data.$key;
+  if (!id) {
+    throw new Error(`District missing id: ${JSON.stringify(data)}`);
   }
-
   return {
-    id: data.$key || data.id,
-    owner: data.owner,
-    editors: data.editors || [data.owner],
+    id,
     name: data.name,
-    icon: data.icon,
-    meetingIds: keys(data.meetings),
-    districts
+    representative: data.representative
   }
 }
+
+export function parseRepresentative(data: Partial<Representative> | any): Representative {
+  return {
+    ...parseUser(data),
+    title: data.title,
+    district: data.district
+  }
+}
+
+export function parseGroup(data: Partial<Group> | any): Group {
+
+  let meetings = !data.meetings ? [] : Array.isArray(data.meetings) ? data.meetings : Object.keys(data.meetings);
+  let representatives = !data.representatives ? [] :
+    Array.isArray(data.representatives) ? data.representatives.map(rep => parseRepresentative(rep)) :
+      Object.keys(data.representatives)
+        .map(id => ({ ...data.representatives[ id ], id }))
+        .map(rep => parseRepresentative(rep));
+
+  let districts = !data.districts ? [] :
+    Array.isArray(data.districts) ? data.districts.map(district => parseDistrict(district)) :
+      Object.keys(data.districts)
+        .map(id => ({ ...data.districts[ id ], id }))
+        .map(district => parseDistrict(district));
+
+  return {
+    ...parseEntity(data),
+    name: data.name,
+    icon: data.icon,
+    meetings,
+    representatives,
+    districts
+  };
+
+
+}
+
+export function districtsEqual(x: District, y: District): boolean {
+  return x.id == y.id && x.name == y.name && x.representative == y.representative
+}
+
+export function representativesEqual(x: Representative, y: Representative): boolean {
+  return usersEqual(x, y) && x.district == y.district && x.title == y.title;
+}
+
 
 export function groupsEqual(x: Group, y: Group): boolean {
   if (x.id != y.id || x.icon != y.icon) {
     return false;
   }
-  if (x.meetingIds.join('_') != y.meetingIds.join('_')) {
+  if (x.meetings.join('_') != y.meetings.join('_')) {
     return false;
   }
-  if (x.districts.map(it => it.id).join('_') != y.districts.map(it => it.id).join('_')) {
+
+  let xDistricts = x.districts.sort((x, y) => x.id.localeCompare(y.id));
+  let yDistricts = x.districts.sort((x, y) => x.id.localeCompare(y.id));
+
+  if (xDistricts.length != yDistricts.length) {
     return false;
   }
+
+  for (let i = 0; i < xDistricts.length; i++) {
+    if (!districtsEqual(xDistricts[ i ], yDistricts[ i ])) {
+      return false;
+    }
+  }
+
+  let xReps = x.representatives.sort((x, y) => x.id.localeCompare(y.id));
+  let yReps = x.representatives.sort((x, y) => x.id.localeCompare(y.id));
+
+  if (xReps.length != yReps.length) {
+    return false;
+  }
+
+  for (let i = 0; i < xReps.length; i++) {
+    if (!representativesEqual(xReps[ i ], yReps[ i ])) {
+      return false;
+    }
+  }
+
   return true;
 }
 

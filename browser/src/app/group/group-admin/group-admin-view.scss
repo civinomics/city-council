@@ -38,8 +38,14 @@
 
 }
 
-
 .add-meeting-row {
   text-align: center;
   margin: 20px 0;
+}
+
+.empty-note {
+  text-align: center;
+  text-transform: uppercase;
+  font-style: italic;
+  padding: 10px;
 }

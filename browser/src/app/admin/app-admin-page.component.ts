@@ -15,9 +15,9 @@ import { Component, OnInit } from '@angular/core';
       >EDIT GROUPS</a>
       <a md-tab-link
          routerLink="setup-group"
-         routerLinkActive #rlaFeed="routerLinkActive"
+         routerLinkActive #rlaSetup="routerLinkActive"
          [routerLinkActiveOptions]="{exact: true}"
-         [active]="rlaFeed.isActive"
+         [active]="rlaSetup.isActive"
       >SETUP NEW GROUP</a>
     </nav>
     <div class="stage">

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Group } from '../../group/group.model';
 
 @Component({
@@ -9,6 +9,7 @@ import { Group } from '../../group/group.model';
 export class GroupsEditViewComponent implements OnInit {
 
   @Input() groups: Group[];
+  @Output() edit: EventEmitter<string> = new EventEmitter();
 
   constructor() { }
 

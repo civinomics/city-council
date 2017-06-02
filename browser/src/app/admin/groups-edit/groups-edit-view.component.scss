@@ -23,6 +23,9 @@
 
 .group-row {
   border-bottom: 1px solid mat-color($mat-grey, 400);
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
   font-size: 1.25em;
   &:last-of-type {
     border-bottom: none;

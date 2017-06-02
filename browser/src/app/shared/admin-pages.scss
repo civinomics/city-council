@@ -3,25 +3,31 @@
 :host {
   display: block;
   max-width: 900px;
+  margin: 10px auto;
+
+  @include mq($until: 860px) {
+    margin: 10px 20px;
+  }
+
 }
 
 .section {
   margin: 35px 10px;
 
   .heading {
+    color: mat-color($mat-grey, 600);
+    text-align: center;
     text-transform: uppercase;
-    font-size: 1.25em;
-    margin-bottom: 10px;
-    padding-right: 10%;
-    border-bottom: 1px solid mat-color($mat-grey, 400);
-    display: inline-block;
-
+    font-size: 1.1em;
+    padding-bottom: 15px;
   }
   .body {
-    margin: 5px 10px;
-    @include mq-gt-sm {
-      margin: 5px 20px;
+    padding: 10px 20px;
+
+    @include mq($until: tablet) {
+      padding: 10px;
     }
+
     .key {
       text-transform: uppercase;
     }

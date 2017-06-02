@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Group, Meeting, parseGroup, RawGroup } from '../core/models';
+import { Group, GroupCreateInput, Meeting, parseGroup } from '../core/models';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Actions, Effect, toPayload } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { AppState, getFocusedGroup, getGroups, getLoadedGroupIds, getMeetingsOfSelectedGroup } from '../state';
 import { SELECT_GROUP } from '../core/focus.reducer';
 import { GroupLoadedAction } from './group.reducer';
-import { GroupCreateInput } from './group.model';
 import { Headers, Http, RequestOptions } from '@angular/http';
+import { parseUser } from '../user/user.model';
 
 let _ignore: Meeting;//so IDEA won't remove above import, which is needed for tsc to compile with declarations
 
@@ -39,7 +39,7 @@ export class GroupService {
     console.log(`GroupService getting ${groupId}`);
 
     return this.db.object(`/group/${groupId}`)
-      .map((it: RawGroup) => parseGroup(it));
+      .map((it: Partial<Group>) => parseGroup(it));
   }
 
   public getSelectedGroup() {
@@ -65,7 +65,18 @@ export class GroupService {
   public get(groupId: string): Observable<Group> {
     console.log(`GroupService getting ${groupId}`);
     return this.db.object(`/group/${groupId}`)
-      .map((it: RawGroup) => parseGroup(it));
+      .map((it: Partial<Group>) => parseGroup(it));
+  }
+
+  public getGroupRepresentatives(groupId: string) {
+    return this.db.list(`/group/${groupId}/districts`)
+      .flatMap(districts =>
+        Observable.merge(...districts.map(district =>
+          this.db.object(`/user/${district.representative}`)
+            .map(userData => ({ districtId: district.$key, user: parseUser(userData) }))
+        )).take(1)
+          .reduce((result, entry) => ({ ...result, [(entry as any).districtId]: (entry as any).user }), {})
+      )
   }
 
   public async createGroup(input: GroupCreateInput): Promise<string> {

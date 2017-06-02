@@ -1,7 +1,7 @@
 <div class="section meetings">
   <div class="heading">MEETINGS</div>
-  <div fxLayout="column" fxLayoutGap="10px" class="body">
-    <div *ngFor="let meeting of meetings"
+  <div fxLayout="column" fxLayoutGap="10px" class="body" *ngIf="meetings.length > 0">
+    <div *ngFor="let meeting of meetings | limit: 1"
          fxLayout="row"
          fxLayoutAlign="space-between center"
          class="meeting-row"
@@ -21,34 +21,14 @@
       </div>
     </div>
   </div>
-  <div class="empty-note">
-
+  <div class="empty-note" *ngIf="meetings.length == 0">
+    NONE
   </div>
   <div class="add-meeting-row">
     <button md-raised-button color="primary" (click)="newMeeting.emit()">CREATE NEW MEETING</button>
   </div>
 </div>
 
-<div class="section districts">
-  <div class="heading">Districts</div>
-  <div *ngFor="let district of group.districts">
+<civ-group-edit-view [extantGroup]="group">
 
-  </div>
-</div>
-
-<div class="section members">
-  <div class="heading">Officials</div>
-  <div class="body">
-    TODO: list of city counselors with edit options
-  </div>
-</div>
-
-<div class="section constituency">
-  <div class="heading">Constituency</div>
-  <div class="body">
-    TODO: stats
-    - total number of users with addresses in group constituency
-    - users per-district
-    - notification options
-  </div>
-</div>
+</civ-group-edit-view>

@@ -69,10 +69,18 @@ root:
       editors:
         $idx: string
       icon: string
+
+      representatives:
+        $repId:
+          firstName: required string
+          lastName: required string
+          icon: string
+          title: string
+          district: string
+
       districts:
         $districtId:
           name: string
-          owner: string
           representative: string
       meetings:
         $meetingId:

@@ -12,7 +12,7 @@ import { Observable } from 'rxjs/Observable';
       <button md-button routerLink="/"><img src="/assets/img/civ_logo_white.png"></button>
       <div class="filler" fxFlex="1 1 auto"></div>
       <civ-auth-widget></civ-auth-widget>
-      <button md-icon-button *ngIf="isSuperuser$ | async" routerLink="/app-admin">
+      <button md-icon-button *ngIf="isSuperuser$ | async" routerLink="/app-admin/groups">
         <md-icon>settings</md-icon>
       </button>
     </md-toolbar>

@@ -10,9 +10,7 @@ import { Store } from '@ngrx/store';
 import { AppState, getFocusedMeeting, getGroups, getItemsOnSelectedMeetingAgenda, getLoadedMeetingIds } from '../state';
 import { Http } from '@angular/http';
 import { MeetingLoadedAction } from './meeting.reducer';
-import * as moment from 'moment';
 import { AuthService } from '../user/auth.service';
-import Moment = moment.Moment;
 
 const LOAD_MEETING = '[MeetingSvcInternal] loadMeeting';
 const REPORT_GENERATOR_URL = 'https://us-central1-civ-cc.cloudfunctions.net/report';
@@ -31,7 +29,7 @@ export class MeetingService {
   @Effect() loadMeetingsForSelectedGroupEffect =
     this.store.select(getGroups)
       .withLatestFrom(this.actions.ofType(SELECT_GROUP).map(toPayload).filter(it => !!it))
-      .map(([ groups, selectedGroupId ]) => groups[ selectedGroupId ].meetingIds)
+      .map(([ groups, selectedGroupId ]) => groups[ selectedGroupId ].meetings)
       .mergeMap(meetingIds => Observable.from(meetingIds.map(id => ({ type: LOAD_MEETING, payload: id }))));
 
 

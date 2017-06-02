@@ -11,6 +11,7 @@ import { ActionReducer, combineReducers } from '@ngrx/store';
 import { compose } from '@ngrx/core';
 import { environment } from '../environments/environment';
 import { createSelector } from 'reselect';
+
 let _ignore: Vote | Group | Item | Comment | Meeting | User | SessionUser; //so IDEA won't remove above import, which is needed for tsc to compile with declarations
 
 export interface AppState {
@@ -97,7 +98,7 @@ export const getMeetingsOfSelectedGroup = createSelector(getFocusedGroup, getMee
   if (group == null) {
     return undefined;
   }
-  return group.meetingIds.map(id => meetings[id]);
+  return group.meetings.map(id => meetings[ id ]);
 });
 
 export const getItemsOnSelectedMeetingAgenda = createSelector(getFocusedMeeting, getItems, (meeting, items) => {

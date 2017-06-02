@@ -4,6 +4,7 @@ import { Meeting } from '../../meeting/meeting.model';
 import { Group } from '../group.model';
 import { GroupService } from '../group.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { User } from '../../user/user.model';
 
 @Component({
   selector: 'civ-group-admin',
@@ -28,7 +29,7 @@ export class GroupAdminPageComponent implements OnInit {
 
   meetings$: Observable<Meeting[]>;
   group$: Observable<Group>;
-
+  reps$: Observable<{ [id: string]: User }>;
 
   constructor(private groupSvc: GroupService, private router: Router, private route: ActivatedRoute) {
     this.meetings$ = this.groupSvc.getMeetingsOfSelectedGroup()
@@ -36,7 +37,6 @@ export class GroupAdminPageComponent implements OnInit {
       .map(arr => arr.filter(it => !!it));
 
     this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
-
   }
 
   ngOnInit() {

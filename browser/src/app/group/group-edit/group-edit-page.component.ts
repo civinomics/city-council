@@ -9,7 +9,7 @@ import { GroupService } from '../../group/group.service';
 import { GroupCreateInput } from '../../group/group.model';
 
 @Component({
-  selector: 'civ-group-setup-page',
+  selector: 'civ-group-edit-page',
   template: `
     <civ-group-edit-view [adminSearchResult]="adminSearchResult$ | async"
                          (adminEmailChanged)="adminEmailQuery$.next($event)"
@@ -19,7 +19,7 @@ import { GroupCreateInput } from '../../group/group.model';
   `,
   styles: []
 })
-export class GroupSetupPageComponent implements OnInit {
+export class GroupEditPageComponent implements OnInit {
 
   adminEmailQuery$: Subject<string> = new BehaviorSubject('');
   adminSearchResult$: Observable<User | null>;

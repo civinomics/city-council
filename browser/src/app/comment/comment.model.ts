@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import { Entity, parseEntity, RawEntity } from '../core/models';
-import { parseUser, RawUser, User } from '../user/user.model';
+import { parseUser, User } from '../user/user.model';
 import { Vote } from '../vote/vote.model';
 import Moment = moment.Moment;
 export type CommentRole = 'pro' | 'con' | 'neutral';
@@ -33,7 +33,7 @@ export type RawComment = RawEntity & {
         replies?: string[]
     } &
     {
-        author?: RawUser|User,
+      author?: Partial<User>,
         posted: string
     }
 
@@ -42,7 +42,7 @@ export type CommentWithAuthor = Comment & {
 }
 
 export type RawCommentWithAuthor = RawComment & {
-    author: RawUser
+  author: Partial<User>
 }
 
 export type NewCommentData = {

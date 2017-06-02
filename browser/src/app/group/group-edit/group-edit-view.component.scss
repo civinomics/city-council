@@ -1,5 +1,5 @@
 @import "../../../assets/style/all";
-
+@import "../../shared/admin-pages";
 :host {
   display: block;
   max-width: 900px;
@@ -15,15 +15,11 @@
 
 }
 
-.title-input {
+.title.input {
   font-size: 1.5em;
 }
 
-.heading {
-  color: mat-color($mat-grey, 600);
-  text-align: center;
-  text-transform: uppercase;
-}
+
 
 .districts {
   padding: 0 20px;
@@ -45,7 +41,7 @@
   }
 }
 
-.add-district-row {
+.centered {
   text-align: center;
 }
 
@@ -61,4 +57,14 @@
   &.false {
     color: mat-color($mat-red, 700);
   }
+}
+
+.section.reps {
+
+  .row {
+    padding: 20px 10px;
+    border-radius: 2px;
+    border: 1px solid mat-color($mat-grey, 500);
+  }
+
 }

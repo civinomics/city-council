@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GroupSetupViewComponent } from './group-setup-view.component';
+import { GroupEditPageComponent } from './group-edit-page.component';
 
-describe('GroupSetupViewComponent', () => {
-  let component: GroupSetupViewComponent;
-  let fixture: ComponentFixture<GroupSetupViewComponent>;
+describe('GroupEditPageComponent', () => {
+  let component: GroupEditPageComponent;
+  let fixture: ComponentFixture<GroupEditPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GroupSetupViewComponent ]
+      declarations: [ GroupEditPageComponent ]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GroupSetupViewComponent);
+    fixture = TestBed.createComponent(GroupEditPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

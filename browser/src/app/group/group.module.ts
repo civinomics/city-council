@@ -11,6 +11,9 @@ import { GroupAdminPageComponent } from './group-admin/group-admin-page';
 import { CreateMeetingPageComponent } from './group-admin/create-meeting/create-meeting-page.component';
 import { CreateMeetingViewComponent } from './group-admin/create-meeting/create-meeting-view.component';
 import { CreateItemComponent } from './group-admin/create-meeting/create-item.component';
+import { DistrictEditComponent } from './group-admin/district-edit/district-edit.component';
+import { GroupEditPageComponent } from './group-edit/group-edit-page.component';
+import { GroupEditViewComponent } from './group-edit/group-edit-view.component';
 
 export const GROUP_ROUTES = [
 
@@ -48,14 +51,20 @@ export const GROUP_ROUTES = [
       GroupMeetingsView,
       GroupAdminViewComponent,
       GroupAdminPageComponent,
-
+      GroupEditPageComponent,
+      GroupEditViewComponent,
       CreateMeetingViewComponent,
       CreateMeetingPageComponent,
-      CreateItemComponent
+      CreateItemComponent,
+      DistrictEditComponent
     ],
     providers: [
         GroupService
-    ]
+    ],
+
+  exports: [
+    GroupEditViewComponent
+  ]
 })
 export class GroupModule {
 }

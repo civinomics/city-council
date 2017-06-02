@@ -1,0 +1,130 @@
+<div fxLayout="column" fxLayoutAlign="start stretch" class="section" [formGroup]="groupForm" fxLayoutGap="30px">
+
+  <div class="section basic-info" fxLayout="column">
+    <div class="heading">Basic Info</div>
+    <md-input-container class="input title">
+      <input mdInput placeholder="Group Title" mdInputDirective="focused" #nameInput formControlName="name">
+    </md-input-container>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+
+      <div class="icon-preview" fxFlex="0 0 auto">
+        <img [src]="iconUrlInput.value" *ngIf="!!iconUrlInput.value">
+      </div>
+
+      <md-input-container class="icon input" fxFlex="1 1">
+        <input mdInput type="url" #iconUrlInput placeholder="Icon URL" formControlName="icon">
+      </md-input-container>
+
+
+    </div>
+  </div>
+
+  <div class="section reps" fxLayout="column">
+    <div class="heading">Representatives</div>
+    <div class="body" formArrayName="representatives" fxLayout="column" fxLayoutGap="20px">
+      <div *ngFor="let rep of representatives.controls; let i = index"
+           [formGroupName]="i"
+           class="row rep"
+           fxLayout="column">
+        <div fxLayout="row"
+             fxLayoutAlign="space-between center"
+             fxLayoutGap="20px"
+             fxLayoutGap.gt-sm="10%"
+             class="names">
+          <md-input-container class="input name" fxFlex="1 1">
+            <input mdInput placeholder="First Name" formControlName="firstName">
+          </md-input-container>
+          <md-input-container class="input name" fxFlex="1 1">
+            <input mdInput placeholder="Last Name" formControlName="lastName">
+          </md-input-container>
+        </div>
+
+        <md-input-container class="input name" class.gt-lg="title">
+          <input mdInput placeholder="Title" formControlName="title">
+        </md-input-container>
+
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px" class="icon">
+
+          <md-input-container class="icon input" fxFlex="1 1">
+            <input mdInput type="url" #repIconInput placeholder="Icon URL" formControlName="icon">
+          </md-input-container>
+
+          <div class="icon-preview" fxFlex="0 0 auto">
+            <img [src]="repIconInput.value" *ngIf="!!repIconInput.value">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="centered">
+      <button md-raised-button color="primary" (click)="addRep()">Add Representative</button>
+    </div>
+  </div>
+  <!--
+
+    <md-slide-toggle (change)="setHasDistricts($event)">Does the group have districts?</md-slide-toggle>
+  -->
+
+  <div formArrayName="districts" class="district-info" fxLayout="column" fxLayoutGap="20px">
+    <div class="heading">districts</div>
+
+
+    <div *ngFor="let district of districts.controls; let i = index"
+         [formGroupName]="i"
+         class="district-box">
+
+      <div>
+
+        <md-input-container>
+          <input mdInput placeholder="District Name" formControlName="name">
+        </md-input-container>
+      </div>
+
+      <div>
+
+        <md-select formControlName="representative" placeholder="Select Representative">
+          <md-option *ngFor="let opt of repSelectOptions" [value]="opt.index">{{opt.text}}</md-option>
+        </md-select>
+
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+  <div class="centered">
+    <button md-raised-button color="primary" (click)="addDistrict()">Add District</button>
+  </div>
+
+
+</div>
+
+
+<md-slide-toggle [(ngModel)]="adminExtant">Does the group administrator already have an account?</md-slide-toggle>
+
+<div [formGroup]="adminForm" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+
+  <md-input-container>
+    <input mdInput type="email" formControlName="email" placeholder="Admin Email Address" #adminEmail>
+  </md-input-container>
+
+  <md-icon class="admin-result {{!!adminSearchResult ? 'true' : !!adminEmail.value ? 'false' : 'pristine'}}">
+    {{!!adminSearchResult ? 'check' : 'close'}}
+  </md-icon>
+
+  <div class="admin-name" *ngIf="!!adminSearchResult">{{adminSearchResult.firstName}} {{adminSearchResult.lastName}}
+  </div>
+
+</div>
+
+<div class="centered row">
+  <button md-raised-button color="primary" [disabled]="!groupForm.valid || !adminSearchResult" (click)="doSubmit()">
+    CREATE GROUP
+  </button>
+</div>
+
+<div class="centered row error" *ngIf="!!error">
+  Error: {{error}}
+</div>

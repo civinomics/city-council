@@ -2,7 +2,7 @@ import { Entity, parseEntity, RawEntity } from '../core/models';
 import * as moment from 'moment';
 import { keys } from 'lodash';
 import { ItemStatsAdt } from '../item/item.model';
-import { Group, RawGroup } from '../group/group.model';
+import { Group } from '../group/group.model';
 import { DenormalizedComment } from '../comment/comment.model';
 import Moment = moment.Moment;
 
@@ -63,7 +63,7 @@ export type MeetingStats = {
 
 export type MeetingReportAdt = {
   meeting: Meeting | RawMeeting,
-  group: Group | RawGroup,
+  group: Partial<Group>,
   stats: MeetingStats
 }
 

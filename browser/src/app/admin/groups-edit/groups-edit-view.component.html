@@ -1,4 +1,9 @@
-<div *ngFor="let group of groups" class="group-row" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+<div *ngFor="let group of groups"
+     class="group-row"
+     fxLayout="row"
+     fxLayoutGap="10px"
+     fxLayoutAlign="start center"
+     (click)="edit.emit(group.id)">
   <div class="group-icon"><img [src]="group.icon"></div>
   <div class="group-name">{{group.name}}</div>
 </div>

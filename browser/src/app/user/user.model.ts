@@ -1,4 +1,4 @@
-import { Entity, parseEntity, RawEntity } from '../core/models';
+import { Entity, parseEntity } from '../core/models';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -31,17 +31,6 @@ export interface SessionUser extends User {
   isVerified: boolean;
 }
 
-export type RawUser = RawEntity & {
-  [P in 'firstName' | 'lastName' | 'icon' | 'districts']: User[P]
-  } & {
-  [P in 'joined' | 'lastOn']: string
-  }
-
-export type RawSessionUser = {
-  [P in keyof RawUser]: RawUser[P]
-  } & {
-  [P in keyof SessionUser]: SessionUser[P]
-  }
 
 export type EmailSignupData = {
   [P in 'firstName' | 'lastName' | 'address' | 'email' | 'superuser']: SessionUser[P]
@@ -49,7 +38,7 @@ export type EmailSignupData = {
   password: string;
 }
 
-export function parseUser(data: RawUser | any): User {
+export function parseUser(data: Partial<User> | any): User {
   return {
     ...parseEntity(data),
     firstName: data.firstName,
@@ -62,11 +51,10 @@ export function parseUser(data: RawUser | any): User {
   }
 }
 
-export const parseSessionUser: (data: RawSessionUser) => SessionUser = (data) => {
+export const parseSessionUser: (data: Partial<SessionUser> | any) => SessionUser = (data) => {
 
   return {
     ...parseUser(data),
-    id: data.$key,
     email: data.email,
     address: data.address,
     superuser: data.superuser || false,
@@ -83,4 +71,15 @@ export function userDistrict(user: User, groupId: string) {
   }
 
   return user.districts[ groupId ].id;
+}
+
+export function usersEqual(x: User, y: User): boolean {
+
+  return x.id == y.id &&
+    x.firstName == y.firstName &&
+    x.lastName == y.lastName &&
+    x.icon == y.icon &&
+    x.joined == y.joined &&
+    x.lastOn == y.lastOn
+
 }
