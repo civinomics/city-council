@@ -11,34 +11,31 @@ const auth = app.auth();
 const cors = require('cors')({ origin: true });
 
 export const createGroup = functions.https.onRequest((request, response) => {
-  console.info(`Creating group for input: \n ${JSON.stringify(request.body)}`);
-  /*
-    //TODO input validation
-    const input = request.body,
-      fields = ['name', 'email', 'icon', 'groupId', 'districtId'],
-      emptyFields = fields.filter(key => !input[key]);
 
-    if (emptyFields.length > 0){
-      return cors(request, response, () => {
-        response.send(400, {
-          success: false,
-          error:`Missing the following required input fields: ${JSON.stringify(emptyFields)}`
-        });
-      });
-    }*/
+  cors(request, response, () => {
 
-  doCreateGroup(request.body as GroupCreateInput).then(groupId => {
-    return cors(request, response, () => {
-      response.send(201, {
+    console.info(`Creating group for input:`);
+    console.info(request.body);
+
+
+    doCreateGroup(request.body as GroupCreateInput).then(groupId => {
+      console.info(`Successfully created group ${groupId}`);
+      response.status(201).send({
+        success: true,
         groupId
       });
-    });
-  }).catch(error => {
-    response.send(500, {
-      success: false,
-      error
-    });
-  })
+    }).catch(error => {
+      console.error(`Error creating group: ${JSON.stringify(error)}`);
+      console.error(error);
+      response.status(500).send({
+        success: false,
+        error
+      });
+    })
+  });
+
+
+
 
 });
 
@@ -46,9 +43,11 @@ export const createGroup = functions.https.onRequest((request, response) => {
 export async function doCreateGroup(input: GroupCreateInput) {
 
   const groupId = await pushBasicInfo(input.name, input.icon, input.adminId);
+  console.info(`pushed basic info - new group id: ${groupId}`);
 
   const repDataMap = input.representatives.reduce((result, repData) => ({ ...result, [repData.id]: repData }), {});
 
+  console.info(`creating rep user accounts`);
   //create user accounts for each representative,
   const repPushes: Promise<{ inputId: string, outputId: string }[]> =
     Promise.all(
@@ -64,12 +63,13 @@ export async function doCreateGroup(input: GroupCreateInput) {
     (result, entry: any) => ({ ...result, [entry.inputId]: entry.outputId }),
     {});
 
-
+  console.info(`adding rep info to group`);
   //push representative objects (keyed by user id) to group
   await Promise.all(Object.keys(repIdMap)
     .map(inputId => addRepresentativeInfoToGroup(repIdMap[ inputId ], repDataMap[ inputId ], groupId))
   );
 
+  console.info(`creating districts`);
   //create districts, linking to representatives by correct userId
   const districts = await Promise.all(input.districts.map(data =>
     createDistrict(groupId, data.name, repIdMap[ data.representative ]))
@@ -79,7 +79,7 @@ export async function doCreateGroup(input: GroupCreateInput) {
 }
 
 async function createDistrict(groupId: string, name: string, representative: string) {
-  const result = await db.ref(`/group/districts`).push({
+  const result = await db.ref(`/group/${groupId}/districts`).push({
     name,
     representative
   });
@@ -101,7 +101,7 @@ async function addRepresentativeInfoToGroup(repId: string, repData: Representati
 
 
 async function pushBasicInfo(name: string, icon: string, owner: string): Promise<string> {
-
+  console.info(`pushing basic info: {name: ${name}, icon: ${icon}, owner: ${owner}`);
   const result = await db.ref(`/group`).push({ name, icon, owner });
 
   return result.key;
@@ -117,32 +117,44 @@ async function createUserAccountForRepresentative(input: RepresentativeCreateInp
 
   try {
     userId = await createAuthAccount(input.email, password);
+    console.info('DONE creating auth account');
   } catch (err) {
+    console.error('ERROR creating auth account');
+    console.error(err);
     throw new Error(`Error creating auth account: ${JSON.stringify(err)}`);
   }
 
   try {
     await createUserPrivateEntry(userId, input.email);
   } catch (err) {
+    console.error('ERROR creating user private entry');
     throw new Error(`Error creating userPrivate entry: ${JSON.stringify(err)}`);
   }
+  console.info('DONE creating user private entry');
 
 
   try {
     await createUserPublicEntry(userId, input.firstName, input.lastName, input.icon, adminId);
+    console.info('DONE creating user public entry');
+
   } catch (err) {
+    console.error('ERROR creating user public entry');
+    console.error(err);
     throw new Error(`Error creating userPublic entry: ${JSON.stringify(err)}`);
   }
 
   try {
     await sendRepresentativeEmail(input.email, password, input.firstName, groupName);
+    console.info(`DONE sending email to ${input.email}`);
   } catch (err) {
+    console.error(`ERROR sending email to ${input.email}`);
+    console.error(err);
     /*  if (err){
         throw new Error(`Error sending representative email: ${JSON.stringify(err)}`);
       }*/
   }
 
-
+  console.info(`DONE creating rep account for ${input.firstName} ${input.lastName}`);
   return userId;
 
   async function createAuthAccount(email: string, password: string): Promise<string> {
