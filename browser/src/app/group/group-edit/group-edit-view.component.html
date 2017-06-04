@@ -6,10 +6,10 @@
       <input mdInput placeholder="Group Title" mdInputDirective="focused" #nameInput formControlName="name">
     </md-input-container>
 
-    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+    <div fxLayout="row" fxLayoutAlign="start center">
 
-      <div class="icon-preview" fxFlex="0 0 auto">
-        <img [src]="iconUrlInput.value" *ngIf="!!iconUrlInput.value">
+      <div class="icon-preview" fxFlex="0 0 auto" *ngIf="!!iconUrlInput.value">
+        <img [src]="iconUrlInput.value">
       </div>
 
       <md-input-container class="icon input" fxFlex="1 1">
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div class="section reps" fxLayout="column">
+  <div class="reps section" fxLayout="column">
     <div class="heading">Representatives</div>
     <div class="body" formArrayName="representatives" fxLayout="column" fxLayoutGap="20px">
       <div *ngFor="let rep of representatives.controls; let i = index"
@@ -48,6 +48,10 @@
             <input mdInput placeholder="Title" formControlName="title">
           </md-input-container>
 
+          <md-input-container class="input email" class.gt-lg="title">
+            <input mdInput type="email" placeholder="Email Address" formControlName="email">
+          </md-input-container>
+
           <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px" class="icon">
 
             <md-input-container class="icon input" fxFlex="1 1">
@@ -73,42 +77,38 @@
     <md-slide-toggle (change)="setHasDistricts($event)">Does the group have districts?</md-slide-toggle>
   -->
 
-  <div formArrayName="districts" class="district-info" fxLayout="column">
+  <div class="districts section" fxLayout="column">
     <div class="heading">districts</div>
 
+    <div class="body" formArrayName="districts" fxLayout="column" fxLayoutGap="20px">
+      <div *ngFor="let district of districts.controls; let i = index"
+           [formGroupName]="i" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
 
-    <div *ngFor="let district of districts.controls; let i = index"
-         [formGroupName]="i" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
-
-      <div class="district-box" fxFlex="1 1">
-        <div>
+        <div class="district-box" fxFlex="1 1" fxLayout="column">
           <md-input-container>
             <input mdInput placeholder="District Name" formControlName="name">
           </md-input-container>
-        </div>
 
-        <div>
-
-          <md-select formControlName="representative" placeholder="Select Representative">
+          <md-select formControlName="representative" placeholder="Representative">
             <md-option *ngFor="let opt of repSelectOptions" [value]="opt.id">{{opt.text}}</md-option>
           </md-select>
 
-
         </div>
+
+        <button md-icon-button (click)="removeDistrict(i)" class="remove-btn">
+          <md-icon>close</md-icon>
+        </button>
+
 
       </div>
 
-      <button md-icon-button (click)="removeDistrict(i)" class="remove-btn">
-        <md-icon>close</md-icon>
-      </button>
-
-
     </div>
 
-  </div>
 
-  <div class="centered">
-    <button md-raised-button color="primary" (click)="addDistrict()">Add District</button>
+    <div class="centered">
+      <button md-raised-button color="primary" (click)="addDistrict()">Add District</button>
+    </div>
+
   </div>
 
 

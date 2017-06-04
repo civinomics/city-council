@@ -19,27 +19,15 @@
   font-size: 1.5em;
 }
 
-
-
-.districts {
-  padding: 0 20px;
-}
-
-.icon-preview img {
-  height: 75px;
-  border-radius: 2px;
-  border: 1px solid mat-color($mat-grey, 600);
-}
-
-.district-info {
-  padding: 0 20px;
-
-  .district-box {
+.icon-preview {
+  margin-right: 15px;
+  img {
+    height: 75px;
     border-radius: 2px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    padding: 10px;
+    border: 1px solid mat-color($mat-grey, 600);
   }
 }
+
 
 .centered {
   text-align: center;
@@ -59,10 +47,14 @@
   }
 }
 
-.rep-box {
-  padding: 20px 10px;
+.rep-box, .district-box {
+  padding: 10px;
   border-radius: 2px;
-  border: 1px solid mat-color($mat-grey, 500);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.district-box {
+  padding-bottom: 20px; //fix asymmetry btw md-select and md-input margin
 }
 
 .remove-btn {

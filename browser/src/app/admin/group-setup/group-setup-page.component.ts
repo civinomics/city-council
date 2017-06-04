@@ -38,9 +38,16 @@ export class GroupSetupPageComponent implements OnInit {
   }
 
   submit(input: GroupCreateInput) {
-    this.groupSvc.createGroup(input).then(groupId => {
-      this.router.navigate([ 'group', groupId, 'admin' ]);
-    }).catch(err => {
+    this.groupSvc.createGroup(input).subscribe(result => {
+      console.log(`RESULT`);
+      console.log(result);
+      if (result.success == true) {
+        console.info('created successfully - navigating to admin pg');
+        this.router.navigate([ 'group', result.groupId, 'admin' ]);
+      } else {
+        this.error = result.error;
+      }
+    }, err => {
       this.error = err;
     })
   }

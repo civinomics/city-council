@@ -38,10 +38,14 @@ export class GroupEditPageComponent implements OnInit {
   }
 
   submit(input: GroupCreateInput) {
-    this.groupSvc.createGroup(input).then(groupId => {
-      this.router.navigate([ 'group', groupId, 'admin' ]);
-    }).catch(err => {
-      this.error = err;
+    this.groupSvc.createGroup(input).subscribe(result => {
+      if (result.success == true) {
+        this.router.navigate([ 'group', result.groupId, 'admin' ]);
+      } else {
+        this.error = result.error;
+      }
+    }, err => {
+      this.error = err.message;
     })
   }
 

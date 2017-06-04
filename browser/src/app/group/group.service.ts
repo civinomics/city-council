@@ -7,14 +7,13 @@ import { Store } from '@ngrx/store';
 import { AppState, getFocusedGroup, getGroups, getLoadedGroupIds, getMeetingsOfSelectedGroup } from '../state';
 import { SELECT_GROUP } from '../core/focus.reducer';
 import { GroupLoadedAction } from './group.reducer';
-import { Http } from '@angular/http';
+import { Headers, Http, RequestOptions } from '@angular/http';
 import { parseUser } from '../user/user.model';
 
 let _ignore: Meeting;//so IDEA won't remove above import, which is needed for tsc to compile with declarations
 
 const LOAD_GROUP = '[GroupSvcInternal] loadGroup';
-const GROUP_CREATE_ENDPOINT = `https://us-central1-civ-cc.cloudfunctions.net/createGroup`;
-
+const GROUP_CREATE_ENDPOINT = 'https://us-central1-civ-cc.cloudfunctions.net/createGroup';
 
 @Injectable()
 export class GroupService {
@@ -22,14 +21,14 @@ export class GroupService {
   @Effect() doLoadGroupEffect = this.actions.ofType(LOAD_GROUP)
     .map(toPayload)
     .withLatestFrom(this.store.select(getLoadedGroupIds))
-    .filter(([idToLoad, loadedGroupIds]) => loadedGroupIds.indexOf(idToLoad) < 0)
-    .do(([idToLoad, loadedGroupIds]) => console.debug(`${idToLoad} does not exist in ${JSON.stringify(loadedGroupIds)}, loading.`))
-    .flatMap(([idToLoad, loadedIds]) => this.load(idToLoad))
+    .filter(([ idToLoad, loadedGroupIds ]) => loadedGroupIds.indexOf(idToLoad) < 0)
+    .do(([ idToLoad, loadedGroupIds ]) => console.debug(`${idToLoad} does not exist in ${JSON.stringify(loadedGroupIds)}, loading.`))
+    .flatMap(([ idToLoad, loadedIds ]) => this.load(idToLoad))
     .map(mtg => new GroupLoadedAction(mtg));
 
   @Effect() loadSelectedGroupEffect = this.actions.ofType(SELECT_GROUP)
     .map(toPayload)
-    .map(id => ({type: LOAD_GROUP, payload: id}));
+    .map(id => ({ type: LOAD_GROUP, payload: id }));
 
   constructor(private db: AngularFireDatabase, private actions: Actions, private store: Store<AppState>, private http: Http) {
 
@@ -79,21 +78,15 @@ export class GroupService {
       )
   }
 
-  public async createGroup(input: GroupCreateInput): Promise<{ success: true, groupId: string } | { success: false, error: string }> {
+  public createGroup(input: GroupCreateInput): Observable<{ success: true, groupId: string } | { success: false, error: string }> {
 
-    try {
-      const result = await this.http.post(GROUP_CREATE_ENDPOINT, input).toPromise();
-
-      return {
-        success: true,
-        groupId: result.json().groupId
+    return this.http.post(GROUP_CREATE_ENDPOINT, input, new RequestOptions({
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+      body: input
       }
-    } catch (err) {
-      return {
-        success: false,
-        error: err.message
-      }
-    }
+    ))
+      .take(1)
+      .map(result => result.json());
 
   }
 

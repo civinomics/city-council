@@ -1,7 +1,8 @@
 import { Entity, parseEntity } from '../core/models';
 import { parseUser, User, usersEqual } from '../user/user.model';
 
-export interface District extends Entity {
+export interface District {
+  id: string;
   name: string;
   representative: string;
 }

@@ -16,7 +16,7 @@ import { EmailSignupData, UserAddress } from '../user.model';
 import { MapsAPILoader } from '@agm/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MdInputDirective } from '@angular/material';
-import { EMAIL_REGEX, ZIP_REGEX } from '../../shared/constants';
+import { ValidEmailAddress, ZIP_REGEX } from '../../shared/constants';
 
 @Component({
   selector: 'civ-sign-in-view',
@@ -65,14 +65,14 @@ export class SignInViewComponent implements OnChanges, AfterViewInit {
     city: new FormControl('', [Validators.required]),
     state: new FormControl('', [Validators.required]),
     zip: new FormControl('', [Validators.required, Validators.pattern(ZIP_REGEX)]),
-    email: new FormControl('', [Validators.required, Validators.pattern(EMAIL_REGEX)]),
+    email: new FormControl('', [ Validators.required, ValidEmailAddress ]),
     password: new FormControl('', [Validators.required]),
     confirmAddress: new FormControl(false, [Validators.requiredTrue]),
     checkTos: new FormControl(false, [Validators.requiredTrue])
   });
 
   loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.pattern(EMAIL_REGEX)]),
+    email: new FormControl('', [ Validators.required, ValidEmailAddress ]),
     password: new FormControl('', [Validators.required]),
   });
 

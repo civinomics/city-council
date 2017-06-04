@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { EMAIL_REGEX } from '../../shared/constants';
+import { ValidEmailAddress } from '../../shared/constants';
 import { MdInputDirective } from '@angular/material';
 import { User } from '../../user/user.model';
 import { District, Group, GroupCreateInput, Representative, RepresentativeCreateInput } from '../../group/group.model';
@@ -44,7 +44,7 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
   private _nextId: number = 0;
 
   private _extantGroup: Group | undefined;
-  private _repMap: { [id: string]: Representative } = {};
+  private _repMap: { [id: string]: Partial<Representative> } = {};
   private _distMap: { [id: string]: District } = {};
   private _initialized: boolean = false;
 
@@ -76,7 +76,7 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
   });
 
   adminForm = new FormGroup({
-    email: new FormControl('', [ Validators.required, Validators.pattern(EMAIL_REGEX) ])
+    email: new FormControl('', [ Validators.required, ValidEmailAddress ])
   });
 
   hasDistricts: boolean = false;
@@ -97,13 +97,11 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
 
 
   ngOnInit() {
-    /*
 
         this.adminForm.controls[ 'email' ].valueChanges.subscribe(value => {
           this.adminEmailChanged.emit(value);
           this.adminEmailQueryLoading = true;
         });
-    */
 
   }
 
@@ -240,22 +238,30 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
     }*/
 
   addDistrict(dist?: District): FormGroup {
-    this.districts.push(this.newDistrict(dist));
+    const form = this.newDistrict(dist);
+    const id = form.controls[ 'id' ].value;
+    const name = form.controls[ 'name' ].value;
+    const representative = form.controls[ 'representative' ].value;
 
-    return this.districts.at(this.districts.length - 1) as FormGroup;
+    this._distMap[ id ] = this.parseDistrictFromForm(form);
+
+    this.districts.push(form);
+    return form
 
   };
 
 
   addRep(rep?: Representative): FormGroup {
-    this.representatives.push(this.newRep(rep));
+    const it = this.newRep(rep);
+    const id = it.controls[ 'id' ].value;
+    const text = `${it.controls[ 'firstName' ].value} ${it.controls[ 'lastName' ].value}`;
+
+    this.representatives.push(it);
     let idx = this.representatives.length - 1;
 
-    let it = this.representatives.at(idx) as FormGroup;
-
     this.repSelectOptions.push({
-      id: rep && rep.id || `new_rep_${++this._nextId}`,
-      text: rep && `${rep.firstName} ${rep.lastName}` || ''
+      id,
+      text
     });
 
     Observable.combineLatest(
@@ -267,6 +273,7 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
         this.repSelectOptions[ idx ].text = `${fname} ${lname}`
       });
 
+
     return it;
 
   };
@@ -275,10 +282,10 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
     return new FormGroup({
       firstName: new FormControl(rep && rep.firstName || '', [ Validators.required ]),
       lastName: new FormControl(rep && rep.lastName || '', [ Validators.required ]),
-      email: new FormControl(rep && rep.email || '', [ Validators.required, Validators.pattern(EMAIL_REGEX) ]),
+      email: new FormControl(rep && rep.email || '', [ Validators.required, ValidEmailAddress ]),
       icon: new FormControl(rep && rep.icon || '', [ Validators.required ]),
       title: new FormControl(rep && rep.title || '', [ Validators.required ]),
-      id: new FormControl(rep && rep.id || undefined),
+      id: new FormControl(rep && rep.id || `temp_district_id_${++this._nextId}`),
       district: new FormControl(rep && rep.district || undefined)
     });
   }
@@ -287,48 +294,43 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
     return new FormGroup({
       name: new FormControl(district && district.name || '', [ Validators.required ]),
       representative: new FormControl(district && district.representative || '', [ Validators.required ]),
-      id: new FormControl(district && district.id || undefined)
+      id: new FormControl(district && district.id || `temp_district_id_${++this._nextId}`)
     });
   }
 
-  private parseDistrict(form: FormGroup) {
+  private parseDistrictFromForm(form: FormGroup): District {
     return {
+      id: form.controls[ 'id' ].value,
       name: form.controls[ 'name' ].value,
       representative: form.controls[ 'representative' ].value
     }
   }
 
-  private parseRep(form: FormGroup): RepresentativeCreateInput {
+  private parseRepFromForm(form: FormGroup): RepresentativeCreateInput {
     return {
-      firstName: this.groupForm.controls[ 'firstName' ].value,
-      lastName: this.groupForm.controls[ 'lastName' ].value,
-      icon: this.groupForm.controls[ 'icon' ].value,
-      email: this.groupForm.controls[ 'email' ].value,
-      title: this.groupForm.controls[ 'title' ].value,
-      id: this.groupForm.controls[ 'id' ].value,
+      firstName: form.controls[ 'firstName' ].value,
+      lastName: form.controls[ 'lastName' ].value,
+      icon: form.controls[ 'icon' ].value,
+      email: form.controls[ 'email' ].value,
+      title: form.controls[ 'title' ].value,
+      id: form.controls[ 'id' ].value,
     }
   }
 
-  doSubmit() {
-
-    let data: GroupCreateInput = {
+  private parseGroupFromForm(): GroupCreateInput {
+    return {
       name: this.groupForm.controls[ 'name' ].value,
       icon: this.groupForm.controls[ 'icon' ].value,
-      districts: [],
-      representatives: [],
+      districts: this.districts.controls.map((form: FormGroup) => this.parseDistrictFromForm(form)),
+      representatives: this.representatives.controls.map((form: FormGroup) => this.parseRepFromForm(form)),
       adminId: this.adminSearchResult.id
     };
+  }
 
-
-    this.districts.controls.forEach((form: FormGroup) => data.districts.push(this.parseDistrict(form)));
-
-    this.representatives.controls.forEach((form: FormGroup) => data.representatives.push(this.parseRep(form)));
-
-
-
+  doSubmit() {
+    let data = this.parseGroupFromForm();
 
     this.submit.emit(data);
-
 
   }
 
