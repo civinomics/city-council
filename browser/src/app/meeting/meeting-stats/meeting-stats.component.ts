@@ -8,7 +8,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import { CommentWithAuthor, Item, Meeting, MeetingStats, Office, RawCommentWithAuthor, User } from '../../core/models';
+import { Item, Meeting, MeetingStats, Office, User } from '../../core/models';
 import { MeetingService } from '../meeting.service';
 
 import { schemeCategory10 } from 'd3-scale';
@@ -16,7 +16,7 @@ import { Comment } from '../../comment/comment.model';
 import { hasActivity } from './activity.pipe';
 import { userDistrict } from '../../user/user.model';
 
-let _dontRemoveImport: User | CommentWithAuthor | RawCommentWithAuthor;
+let _dontRemoveImport: User;
 
 const NO_DISTRICT = 'NO_DISTRICT';
 

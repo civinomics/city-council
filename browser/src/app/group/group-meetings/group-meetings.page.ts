@@ -31,7 +31,7 @@ export class GroupMeetingsPage implements OnInit {
         .filter(it => !!it)
         .map(arr => arr.filter(it => !!it));
 
-        this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
+      this.group$ = this.groupSvc.getActiveGroup().filter(it => !!it);
 
       this.isAdmin = this.authSvc.sessionUser$.withLatestFrom(this.group$, (user, group) => !!user && ((user.superuser || group.owner == user.id)));
 

@@ -22,7 +22,7 @@ export class CreateMeetingPageComponent implements OnInit {
 
   constructor(private groupSvc: GroupService, private meetingSvc: MeetingService, private router: Router, private route: ActivatedRoute) {
 
-    this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
+    this.group$ = this.groupSvc.getActiveGroup().filter(it => !!it);
 
   }
 

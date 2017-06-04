@@ -1,6 +1,6 @@
 {
   "name": "@civ/city-council",
-  "version": "1.0.0-alpha.16",
+  "version": "1.0.0-alpha.17",
   "license": "MIT",
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",

@@ -16,6 +16,7 @@ import { Vote } from '../../vote/vote.model';
 import { Comment } from '../../comment/comment.model';
 import { VoteService } from '../../vote/vote.service';
 import { Observable } from 'rxjs/Observable';
+
 let _dontRemoveImport: Observable<any>;
 
 @Component({
@@ -70,6 +71,7 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @Input() activeMeeting: string;
   @Input() userComment: Comment | null;
   @Input() votes: Vote[];
+  @Input() activeGroup: string;
 
   @Input() numCommentsShown: number;
   @Output() showComments: EventEmitter<number> = new EventEmitter();
@@ -80,9 +82,9 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @Input() comments: Comment[];
 
   @Output() follow: EventEmitter<boolean> = new EventEmitter();
-  @Output() vote: EventEmitter<{ itemId: string, value: number }> = new EventEmitter();
+  @Output() vote: EventEmitter<{ itemId: string, value: number, groupId: string }> = new EventEmitter();
   @Output() commentVote: EventEmitter<{ commentId: string, value: number }> = new EventEmitter();
-  @Output() comment: EventEmitter<{ itemId: string, text: string, role: string }> = new EventEmitter();
+  @Output() comment: EventEmitter<{ itemId: string, text: string, role: string, groupId: string }> = new EventEmitter();
   @Output() back: EventEmitter<any> = new EventEmitter();
 
   newComment: string;
@@ -135,17 +137,13 @@ export class ItemViewComponent implements OnInit, OnChanges {
     return this.item.onAgendas[ this.activeMeeting ].closedSession;
   }
 
-  commentEq(idx: number, it: Comment) {
-    return it.id;
-  }
-
   castVote(value: number) {
-    this.vote.emit({itemId: this.item.id, value});
+    this.vote.emit({ itemId: this.item.id, value, groupId: this.activeGroup });
   }
 
   postComment() {
     let role = !this.userVote ? 'neutral' : this.userVote.value == 1 ? 'pro' : 'con';
-    this.comment.emit({itemId: this.item.id, text: this.newComment, role})
+    this.comment.emit({ itemId: this.item.id, text: this.newComment, role, groupId: this.activeGroup })
   }
 
 
@@ -154,7 +152,8 @@ export class ItemViewComponent implements OnInit, OnChanges {
     let push = {
       itemId: this.item.id,
       role: edited.role || this.userComment.role,
-      text: edited.text || this.userComment.text
+      text: edited.text || this.userComment.text,
+      groupId: this.activeGroup
     };
     this.comment.emit(push);
   }

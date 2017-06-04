@@ -57,7 +57,7 @@ export class BrowseContainerComponent implements OnInit, OnChanges {
     }))
       .distinctUntilChanged((x, y) => x.group == y.group && x.meeting == y.meeting && x.item == y.item);
 
-    this.focusedGroup$ = groupSvc.getSelectedGroup();
+    this.focusedGroup$ = groupSvc.getActiveGroup();
     this.focusedMeeting$ = meetingSvc.getSelectedMeeting();
     this.focusedItem$ = itemSvc.getSelectedItem();
 

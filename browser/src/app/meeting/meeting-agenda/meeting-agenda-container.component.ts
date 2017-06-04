@@ -55,7 +55,7 @@ export class MeetingAgendaContainerComponent implements OnInit {
     });
 
 
-    this.group$ = this.groupSvc.getSelectedGroup();
+    this.group$ = this.groupSvc.getActiveGroup();
     this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
 
     this.items$ = this.meetingSvc.getAgendaItemsOfSelectedMeeting().map(arr => arr.filter(it => !!it));

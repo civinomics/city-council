@@ -31,6 +31,7 @@ export const SHOW_COMMENTS_STEP = 5;
                    [numFollows]="numFollows$ | async"
                    [isFollowing]="isFollowing$ | async"
                    [numCommentsShown]="showComments$ | async"
+                   [activeGroup]="groupId$ | async"
                    (showComments)="showMoreComments($event)"
                    (follow)="doFollow($event)"
                    (vote)="castVote($event)"
@@ -60,6 +61,8 @@ export class ItemPageComponent implements OnInit {
 
   numFollows$: Observable<number>;
   isFollowing$: Observable<boolean>;
+
+  groupId$: Observable<string>;
 
 
   _showComments$: Subject<number> = new BehaviorSubject(SHOW_COMMENTS_STEP);
@@ -110,6 +113,7 @@ export class ItemPageComponent implements OnInit {
         return Math.min(max + SHOW_COMMENTS_STEP, comments && comments.length || SHOW_COMMENTS_STEP)
       }).startWith(SHOW_COMMENTS_STEP);
 
+    this.groupId$ = this.route.params.map(params => params[ 'groupId' ]);
 
     this.activeMeeting$ = this.route.params.map(params => params['meetingId']);
 
@@ -128,14 +132,14 @@ export class ItemPageComponent implements OnInit {
 
   }
 
-  castVote(it: { itemId: string, value: 1 | -1 }) {
+  castVote(it: { itemId: string, value: 1 | -1, groupId: string }) {
     console.log('casting');
-    this.voteSvc.castVote(it.itemId, it.value);
+    this.voteSvc.castVote(it.itemId, it.value, it.groupId);
   }
 
 
-  postComment(it: { itemId: string, text: string, role: string }) {
-    this.commentSvc.postComment(it.itemId, it.text, it.role);
+  postComment(it: { itemId: string, text: string, role: string, groupId: string }) {
+    this.commentSvc.postComment(it.itemId, it.text, it.role, it.groupId);
   }
 
   backToAgenda() {

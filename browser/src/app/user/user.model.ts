@@ -2,6 +2,7 @@ import { Entity, parseEntity } from '../core/models';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
+
 export interface User extends Entity {
   firstName: string;
   lastName: string;
@@ -9,8 +10,16 @@ export interface User extends Entity {
   joined: Moment;
   lastOn: Moment;
 
-  //map of group IDs to the ID of the district they're a constituent of
-  districts: { [id: string]: { id: string, name: string } }
+  groups: {
+    [id: string]: {
+      name: string,
+      role: 'admin' | 'representative' | 'citizen',
+      district?: {
+        id: string,
+        name: string
+      }
+    }
+  }
 }
 
 export type UserAddress = {
@@ -29,6 +38,7 @@ export interface SessionUser extends User {
   following: string[];
   superuser: boolean;
   isVerified: boolean;
+
 }
 
 
@@ -46,8 +56,7 @@ export function parseUser(data: Partial<User> | any): User {
     joined: moment(data.joined),
     lastOn: moment(data.lastOn),
     icon: data.icon,
-    districts: data.districts || {},
-
+    groups: data.groups || {}
   }
 }
 
@@ -65,12 +74,12 @@ export const parseSessionUser: (data: Partial<SessionUser> | any) => SessionUser
   }
 };
 
-export function userDistrict(user: User, groupId: string) {
-  if (!user || !user.districts[ groupId ]) {
+export function userDistrict(user: User, groupId: string): string | null {
+  if (!user || !user.groups[ groupId ]) {
     return null;
   }
 
-  return user.districts[ groupId ].id;
+  return user.groups[ groupId ].district.id;
 }
 
 export function usersEqual(x: User, y: User): boolean {

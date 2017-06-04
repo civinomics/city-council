@@ -100,8 +100,8 @@ export class MeetingReportComponent {
   }
 
   userDistrict(user: User) {
-    if (!!user.districts[ 'id_acc' ]) {
-      return user.districts[ 'id_acc' ].name
+    if (!!user.groups[this.group.id]) {
+      return user.groups[ this.group.id ].name
     }
     return 'no district';
   }

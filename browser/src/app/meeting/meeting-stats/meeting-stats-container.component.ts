@@ -45,7 +45,7 @@ export class MeetingStatsContainerComponent implements OnInit {
 
   constructor(private meetingSvc: MeetingService, private groupSvc: GroupService) {
 
-    this.group$ = this.groupSvc.getSelectedGroup();
+    this.group$ = this.groupSvc.getActiveGroup();
     this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);
     this.stats$ = this.meeting$.take(1).map(it => it.id).flatMap(id => this.meetingSvc.getMeetingStats(id));
 

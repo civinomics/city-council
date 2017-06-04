@@ -20,20 +20,26 @@ root:
       lastName: required string
       icon: string
       admin: string
+      groups:
+        $groupId:
+          role: oneOf(['admin', 'representative', 'citizen'])
+          district: string
+
 
   user_private:
     .read: isSuperuser()
     $id:
       .read/write: auth != null && auth.uid == $id #superuser has auth because of
       isVerified: boolean
-      email: string
+      email: indexed string
       superuser: isSuperuser()
       address:
         line1: string
         line2: string
         state: string
         city: string
-        zip: required
+        zip: string
+
       votes:
         $itemId:
           $voteId: itemOrCommentExists($itemId) && voteExists($itemId, $voteId)
@@ -77,6 +83,7 @@ root:
           icon: string
           title: string
           district: string
+          email: string
 
       districts:
         $districtId:
@@ -138,7 +145,7 @@ root:
         text: required string
         owner: newData.isString() && newData == auth.uid
         posted: required string
-
+        userDistrict: string
 
 
   vote:

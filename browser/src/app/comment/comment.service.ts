@@ -49,7 +49,7 @@ export class CommentService {
   }
 
 
-  public postComment(itemId: string, text: string, role: string) {
+  public postComment(itemId: string, text: string, role: string, groupId?: string) {
     console.log(`CommentService.postComment(${itemId}, ${text}, ${role})`);
     this.authService.sessionUser$.take(1).subscribe(user => {
       //if user tries to comment without being authenticated, show auth modal, call self in callback
@@ -88,13 +88,18 @@ export class CommentService {
 
   }
 
-  private createNewComment(itemId: string, text: string, role: string, user: SessionUser) {
+  private createNewComment(itemId: string, text: string, role: string, user: SessionUser, groupId?: string) {
+
+    let userDistrict = groupId &&
+      user.groups[ groupId ] &&
+      user.groups[ groupId ].district &&
+      user.groups[ groupId ].district.id || null;
 
     let postData = {
       text,
       role,
       posted: moment().toISOString(),
-      userDistrict: user.districts[ 'id_acc' ] || null,
+      userDistrict: userDistrict,
       owner: user.id
     };
 

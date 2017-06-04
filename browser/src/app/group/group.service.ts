@@ -41,7 +41,7 @@ export class GroupService {
       .map((it: Partial<Group>) => parseGroup(it));
   }
 
-  public getSelectedGroup() {
+  public getActiveGroup() {
     return this.store.select(getFocusedGroup);
   }
 
@@ -54,6 +54,7 @@ export class GroupService {
       .map(arr => arr.map(group => parseGroup(group)))
       .subscribe(groups => groups.forEach(group => this.store.dispatch(new GroupLoadedAction(group))));
   }
+
 
   public getAllGroups() {
     return this.store.select(getGroups)

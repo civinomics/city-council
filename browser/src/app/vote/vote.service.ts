@@ -12,6 +12,7 @@ import { AppState, getSessionUser, getUserVoteForSelectedItem, getVotesForSelect
 import { SELECT_ITEM } from '../core/focus.reducer';
 import { State as VotesState, VotesLoadedAction } from './vote.reducer';
 import { SESSION_USER_LOADED } from '../user/auth.reducer';
+
 @Injectable()
 export class VoteService {
   @Effect()
@@ -52,7 +53,7 @@ export class VoteService {
   }
 
 
-  public castVote(itemId: string, value: 1 | -1) {
+  public castVote(itemId: string, value: 1 | -1, groupId?: string) {
     console.log('voting');
 
     this.authService.sessionUser$.take(1).subscribe(user => {
@@ -79,7 +80,7 @@ export class VoteService {
 
       this.getUserVoteFor(itemId).take(1).subscribe(extantVote => {
         if (extantVote == null) {
-          this.castNewVote(itemId, value, user);
+          this.castNewVote(itemId, value, user, groupId);
         } else if (extantVote.value == value) {
           this.deleteVote(itemId, extantVote.id, user.id);
         } else {
@@ -151,9 +152,12 @@ export class VoteService {
     })
   }
 
-  private castNewVote(itemId: string, value: 1 | -1, user: SessionUser) {
+  private castNewVote(itemId: string, value: 1 | -1, user: SessionUser, groupId?: string) {
     console.log(`casting new vote`);
-    let userDistrict = user.districts['id_acc'] || null;
+    let userDistrict = groupId &&
+      user.groups[ groupId ] &&
+      user.groups[ groupId ].district &&
+      user.groups[ groupId ].district.id || null;
 
     this.db.list(`/vote/${itemId}`).push({
       value,

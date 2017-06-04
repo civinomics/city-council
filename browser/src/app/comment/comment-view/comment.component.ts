@@ -122,10 +122,13 @@ export class CommentComponent implements OnInit, OnChanges {
     }
 
     get authorDistrict() {
+      if (this.comment.userDistrict) {
+        return this.comment.userDistrict
+      }
       if (!this.comment.author) {
         return null;
       }
-        return this.comment.author.districts[ this.activeContext ];
+      return this.comment.author.groups[ this.activeContext ].district.id;
     }
 
   get authorIcon() {

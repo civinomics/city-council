@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { Entity, parseEntity, RawEntity } from '../core/models';
+import { Entity, parseEntity } from '../core/models';
 import { parseUser, User } from '../user/user.model';
 import { Vote } from '../vote/vote.model';
 import Moment = moment.Moment;
@@ -25,39 +25,19 @@ export type DenormalizedComment = Comment & {
 }
 
 
-export type RawComment = RawEntity & {
-    [P in 'text' | 'role' | 'userDistrict']: Comment[P]
-    } &
-    {
-        votes?: { up?: number, down?: number },
-        replies?: string[]
-    } &
-    {
-      author?: Partial<User>,
-        posted: string
-    }
-
-export type CommentWithAuthor = Comment & {
-    author: User
-}
-
-export type RawCommentWithAuthor = RawComment & {
-  author: Partial<User>
-}
-
 export type NewCommentData = {
     text: string,
     role: string;
 }
 
-export const parseComment: (data: Comment | any) => Comment = (data) => {
+export const parseComment: (data: Partial<Comment> | any) => Comment = (data) => {
   let voteStats = data.voteStats || { up: 0, down: 0 };
     return {
-        ...parseEntity(data),
-        text: data.text,
-        role: data.role,
-        posted: moment(data.posted),
-        userDistrict: data.userDistrict || null,
+      ...parseEntity(data),
+      text: data.text,
+      role: data.role,
+      posted: moment(data.posted),
+      userDistrict: data.userDistrict || null,
       sessionUserVote: data.sessionUserVote || null,
       voteStats,
         replies: data.replies,
