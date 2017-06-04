@@ -33,11 +33,8 @@ export class AuthService {
   loadSessionUserDataEffect: Observable<SessionUserLoadedAction> = this.actions.ofType(AUTH_STATE_CHANGED)
     .map(toPayload)
     .filter(state => !!state && !!state.uid)
-    .do(it => {
-      console.debug(`initiating loadSessionUserData`);
-      console.debug(it);
-    })
     .map(state => state.uid)
+    .flatMap(id => Observable.timer(500).take(1).mapTo(id))
     .flatMap(id =>
       Observable.combineLatest(this.db.object(`/user/${id}`), this.db.object(`/user_private/${id}`))
       //make sure we end the subscription when the user logs out to avoid 401
@@ -51,9 +48,26 @@ export class AuthService {
         }))
     ).map(user => new SessionUserLoadedAction(user));
 
+  private backendState$: Observable<firebase.User> = this.authBackend.authState;
 
-  public readonly sessionUser$: Observable<SessionUser | null>;
-  public readonly sessionUserId$: Observable<string | null>;
+
+  public readonly sessionUser$: Observable<SessionUser | null> = this.store.select(getSessionUser);
+  public readonly sessionUserId$: Observable<string | null> = this.store.select(getSessionUserId);
+
+  @Effect({ dispatch: false })
+  syncVerifiedValuesEffect =
+    Observable.combineLatest(this.backendState$, this.sessionUser$)
+      .filter(([ authState, userData ]) => !!authState && !!userData)
+      .do(([ authState, userData ]) => {
+        if (authState.emailVerified && !userData.isVerified) {
+          console.log(`User ${authState.uid} has verified their email, updating record accordingly`);
+          this.db.object(`/user_private/${authState.uid}`).update({ isVerified: true }).then(res => {
+            console.info(`successfully updated isVerified for user ${authState.uid}`);
+          });
+        }
+      });
+
+
 
   private authModalReq$: Subject<AuthModalRequest> = new BehaviorSubject(null);
   private verificationRequiredReq$: Subject<any> = new BehaviorSubject(null);
@@ -65,23 +79,11 @@ export class AuthService {
   private emailSigninRequest$: Subject<{ email: string, password: string }> = new BehaviorSubject(null);
   private logoutRequest$: Subject<any> = new BehaviorSubject(null);
 
-  private backendState$: Observable<firebase.User>;
 
   constructor(private authBackend: AngularFireAuth,
               private db: AngularFireDatabase,
               private store: Store<AppState>,
               private actions: Actions) {
-
-
-    this.backendState$ = this.authBackend.authState;
-
-    this.backendState$
-      .distinctUntilChanged()
-      .subscribe(state => {
-        console.log(state);
-        this.store.dispatch(new AuthStateChangedAction(state));
-      });
-
     const SOCIAL_SIGNIN = 'SOCIAL_SIGNIN';
     const EMAIL_SIGNIN = 'EMAIL_SIGNIN';
     const SIGN_OUT = 'SIGN_OUT';
@@ -97,24 +99,13 @@ export class AuthService {
     );
 
 
-
-    //whenever the auth state changes, check our user record and u
     this.backendState$
-      .filter(it => !!it)
       .distinctUntilChanged()
-      .flatMap(authState => this.db.object(`/user_private/${authState.uid}`).map(userData => ({ authState, userData })))
-      .subscribe(it => {
-        if (it.authState.emailVerified && !it.userData.isVerified) {
-          console.log(`User ${it.authState.uid} has verified their email, updating record accordingly`);
-          this.db.object(`/user_private/${it.authState.uid}`).update({ isVerified: true }).then(res => {
-            console.info(`successfully updated isVerified for user ${it.authState.uid}`);
-          });
-        }
+      .subscribe(state => {
+        console.log(state);
+        this.store.dispatch(new AuthStateChangedAction(state));
       });
 
-
-    this.sessionUserId$ = this.store.select(getSessionUserId);
-    this.sessionUser$ = this.store.select(getSessionUser);
 
   }
 

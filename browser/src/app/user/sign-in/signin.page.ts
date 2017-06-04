@@ -78,7 +78,7 @@ export class SignInContainerComponent implements OnInit {
         if (result.extantAccount) {
           this.onSuccess('logged-in');
         } else {
-          let authInfo = result.resultantState.auth;
+          let authInfo = result.resultantState.user;
           let firstName, lastName, email;
           if (!authInfo.displayName) {
             console.error(`Account initiated but we didn't get a name`);
@@ -96,7 +96,7 @@ export class SignInContainerComponent implements OnInit {
         }
       }
 
-    })
+    });
   }
 
   setMode(val: 'sign-up'|'log-in'){
