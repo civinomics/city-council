@@ -21,7 +21,11 @@ export function getGroupModule() { return GroupModule }
 
 export const APP_ROUTES: Routes = [
   {
-    path: 'sign-in',
+    path: 'sign-up',
+    component: SignInContainerComponent
+  },
+  {
+    path: 'log-in',
     component: SignInContainerComponent
   },
   {

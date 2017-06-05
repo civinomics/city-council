@@ -295,9 +295,10 @@ export class AuthService {
   private doSocialLogin(provider: SocialAuthProvider): Observable<AuthResult> {
     return Observable.create((observer: Observer<AuthResult>) => {
 
-      this.authBackend.auth.signInWithPopup(provider == 'facebook' ? new firebase.auth.FacebookAuthProvider() : new firebase.auth.GoogleAuthProvider()).then((resultantState: firebase.User) => {
+      this.authBackend.auth.signInWithPopup(provider == 'facebook' ? new firebase.auth.FacebookAuthProvider() : new firebase.auth.GoogleAuthProvider())
+        .then((resultantState: any) => {
         setTimeout(() => {
-          this.db.object(`/user_private/${resultantState.uid}/address`).take(1).subscribe(val => {
+          this.db.object(`/user_private/${resultantState.user.uid}`).take(1).subscribe(val => {
             if (val.$exists()) {
               console.log(`val exists`);
               console.log(val);

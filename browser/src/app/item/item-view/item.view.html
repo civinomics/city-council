@@ -33,13 +33,15 @@
 
   <hr>
 
-  <div fxLayout="row" fxLayoutAlign="center center">
+    <div fxLayout="row" fxLayoutAlign="center center" *ngIf="!!userRep">
     <div class="key row-label focused">Your Representative</div>
-    <div class="value" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
-      <img class="rep-avatar" src="https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAUyAAAAJGQzOTgwMThlLTJmZTAtNDkwYy1hZDQ1LWQ4NjIzNjA5YWQ1ZA.jpg">
+      <div class="value" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+        <div class="rep-avatar">
+          <img [src]="userRep.icon">
+        </div>
       <div style="padding-bottom:4px;">
-        <span class="name">Zach Friend</span>
-        <span class="title">County Supervisor, 2nd District</span>
+        <span class="name">{{userRep.firstName}} {{userRep.lastName}}</span>
+        <span class="title">{{userRep.title}}</span>
       </div>
     </div>
   </div>
@@ -73,8 +75,8 @@
     <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">Take Action</div>
 
     <div class="row vote" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
-      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center"> 
-        
+      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+
         <div class="vote-count">{{voteStats?.yes}}</div>
         <button md-raised-button
                 class="vote-button yes"
@@ -147,7 +149,7 @@
           </button>
         </div>
       </div>
-    </div> 
+    </div>
 
     <hr style="margin-top: 40px;">
 

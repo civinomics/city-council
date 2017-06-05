@@ -34,7 +34,7 @@ export class SignInContainerComponent implements OnInit {
   private _socialAccountInitiated: boolean = false;
 
   constructor(private authSvc: AuthService, private router: Router, private route: ActivatedRoute) {
-    let initialMode = this.route.snapshot.url.map(segment => segment.toString()).indexOf('sign-in') >= 0 ? 'sign-up' : 'log-in';
+    let initialMode = this.route.snapshot.url.map(segment => segment.toString()).indexOf('log-in') >= 0 ? 'log-in' : 'sign-up';
     this.mode$ = new BehaviorSubject(initialMode);
   }
 
@@ -42,7 +42,9 @@ export class SignInContainerComponent implements OnInit {
   }
 
   emailLogin(data: {email: string, password:string}){
-    this.authSvc.emailLogin(data.email, data.password).take(1).subscribe(result => {
+    this.authSvc.emailLogin(data.email, data.password).take(1)
+      .subscribe(result => {
+
       if (result.success == true){
         this.onSuccess('logged-in');
       } else {
@@ -73,9 +75,9 @@ export class SignInContainerComponent implements OnInit {
     this.authSvc.socialSignIn(provider).subscribe(result => {
       console.info('Social signin result:');
       console.info(result);
-
       if (result.success == true) {
         if (result.extantAccount) {
+
           this.onSuccess('logged-in');
         } else {
           let authInfo = result.resultantState.user;
@@ -104,7 +106,25 @@ export class SignInContainerComponent implements OnInit {
   }
 
   onSuccess(result: 'signed-up'|'logged-in'): void {
-    this.router.navigate(['group', 'id_acc']);
+    this.authSvc.sessionUser$
+      .filter(it => !!it)
+      .take(1).subscribe(it => {
+      let navTo,
+        groupIds = Object.keys(it.groups || {});
+      if (groupIds.length == 1) {
+        navTo = groupIds[ 0 ]
+      } else if (groupIds.length == 0) {
+        navTo = 'id_acc';
+      } else {
+        let isRepOf = groupIds.filter(id => [ 'representative', 'admin' ].indexOf(it.groups[ id ].role) >= 0);
+        if (isRepOf.length > 0) {
+          navTo = isRepOf[ 0 ]
+        } else {
+          navTo = groupIds[ 0 ]
+        }
+      }
+      this.router.navigate([ 'group', navTo ]);
+    })
   }
 
 }

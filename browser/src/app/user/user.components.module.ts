@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 @NgModule({
     imports: [
         SharedModule,
-        RouterModule.forChild([{path:'sign-in', component: SignInContainerComponent}]),
+      RouterModule.forChild([]),
 
 
       AgmCoreModule.forRoot({

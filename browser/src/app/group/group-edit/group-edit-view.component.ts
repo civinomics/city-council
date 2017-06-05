@@ -41,12 +41,15 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
   @Output() adminEmailChanged: EventEmitter<string> = new EventEmitter();
   @Output() submit: EventEmitter<GroupCreateInput> = new EventEmitter();
 
+  @Input() savePending: boolean;
+
   private _nextId: number = 0;
 
   private _extantGroup: Group | undefined;
   private _repMap: { [id: string]: Partial<Representative> } = {};
   private _distMap: { [id: string]: District } = {};
   private _initialized: boolean = false;
+
 
   @Input()
   set extantGroup(it: Group) {

@@ -36,7 +36,7 @@ export class GroupAdminPageComponent implements OnInit {
       .filter(it => !!it)
       .map(arr => arr.filter(it => !!it));
 
-    this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
+    this.group$ = this.groupSvc.getActiveGroup().filter(it => !!it);
   }
 
   ngOnInit() {

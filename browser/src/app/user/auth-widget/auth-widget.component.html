@@ -1,4 +1,4 @@
-<button md-button [routerLink]="'/sign-in'" *ngIf="!(authUser$ | async)">LOGIN | SIGNUP</button>
+<button md-button [routerLink]="'/log-in'" *ngIf="!(authUser$ | async)">LOGIN | SIGNUP</button>
 
 <button md-button *ngIf="authUser$ | async as user" [mdMenuTriggerFor]="userMenu">
   <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">

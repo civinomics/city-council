@@ -13,6 +13,7 @@ export class AppFocusService {
     this.focus$ = this.store.select('focus');
   }
 
+
   public selectItem(itemId: string) {
     this.store.dispatch({type: focus.SELECT_ITEM, payload: itemId});
   }

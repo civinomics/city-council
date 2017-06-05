@@ -15,6 +15,10 @@ import { FollowService } from '../shared/services/follow.service';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Title } from '@angular/platform-browser';
+import { Representative } from '../group/group.model';
+import { GroupService } from '../group/group.service';
+import { AuthService } from '../user/auth.service';
+import { getById } from '../shared/constants';
 
 export const SHOW_COMMENTS_STEP = 5;
 
@@ -32,6 +36,7 @@ export const SHOW_COMMENTS_STEP = 5;
                    [isFollowing]="isFollowing$ | async"
                    [numCommentsShown]="showComments$ | async"
                    [activeGroup]="groupId$ | async"
+                   [userRep]="userRep$ | async"
                    (showComments)="showMoreComments($event)"
                    (follow)="doFollow($event)"
                    (vote)="castVote($event)"
@@ -58,12 +63,12 @@ export class ItemPageComponent implements OnInit {
 
   activeMeeting$: Observable<string>;
 
-
   numFollows$: Observable<number>;
   isFollowing$: Observable<boolean>;
 
   groupId$: Observable<string>;
 
+  userRep$: Observable<Representative | null>;
 
   _showComments$: Subject<number> = new BehaviorSubject(SHOW_COMMENTS_STEP);
 
@@ -77,14 +82,16 @@ export class ItemPageComponent implements OnInit {
               private commentSvc: CommentService,
               private focusSvc: AppFocusService,
               private followSvc: FollowService,
+              private groupSvc: GroupService,
+              private authSvc: AuthService,
               private title: Title) {
 
     const itemId$ = this.route.params.map(params => params[ 'itemId' ]);
 
     this.route.params.subscribe(params => {
-      this.focusSvc.selectItem(params['itemId']);
-      this.focusSvc.selectGroup(params['groupId']);
-      this.focusSvc.selectMeeting(params['meetingId']);
+      this.focusSvc.selectItem(params[ 'itemId' ]);
+      this.focusSvc.selectGroup(params[ 'groupId' ]);
+      this.focusSvc.selectMeeting(params[ 'meetingId' ]);
 
     });
 
@@ -113,13 +120,25 @@ export class ItemPageComponent implements OnInit {
         return Math.min(max + SHOW_COMMENTS_STEP, comments && comments.length || SHOW_COMMENTS_STEP)
       }).startWith(SHOW_COMMENTS_STEP);
 
-    this.groupId$ = this.route.params.map(params => params[ 'groupId' ]);
+    this.groupId$ = this.focusSvc.focus$.map(it => it.group);
 
-    this.activeMeeting$ = this.route.params.map(params => params['meetingId']);
+    this.activeMeeting$ = this.route.params.map(params => params[ 'meetingId' ]);
 
     this.numFollows$ = itemId$.flatMap(id => this.followSvc.getFollowCount('item', id));
 
     this.isFollowing$ = itemId$.flatMap(id => this.followSvc.isFollowing('item', id));
+
+    this.userRep$ = Observable.combineLatest(
+      this.groupSvc.getActiveGroup().filter(it => !!it),
+      this.authSvc.sessionUser$.filter(it => !!it),
+      (group, user) => {
+        if (user.groups && user.groups[ group.id ] && user.groups[ group.id ].district) {
+          let district = getById(user.groups[ group.id ].district.id, group.districts);
+          return getById(district.representative, group.representatives);
+        }
+        return null;
+      });
+
 
   }
 

@@ -12,6 +12,7 @@ import { GroupCreateInput } from '../../group/group.model';
   selector: 'civ-group-setup-page',
   template: `
     <civ-group-edit-view [adminSearchResult]="adminSearchResult$ | async"
+                         [savePending]="savePending"
                          (adminEmailChanged)="adminEmailQuery$.next($event)"
                          (submit)="submit($event)"
                          [error]="error"
@@ -25,6 +26,8 @@ export class GroupSetupPageComponent implements OnInit {
   adminSearchResult$: Observable<User | null>;
 
   error: string = '';
+  savePending: boolean = false;
+
 
   constructor(private authSvc: AuthService, private router: Router, private route: ActivatedRoute, private groupSvc: GroupService) {
     this.adminSearchResult$ = this.authSvc.getUserByEmail(
@@ -38,7 +41,9 @@ export class GroupSetupPageComponent implements OnInit {
   }
 
   submit(input: GroupCreateInput) {
+    this.savePending = true;
     this.groupSvc.createGroup(input).subscribe(result => {
+      this.savePending = false;
       console.log(`RESULT`);
       console.log(result);
       if (result.success == true) {

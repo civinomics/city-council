@@ -12,6 +12,7 @@ import { GroupCreateInput } from '../../group/group.model';
   selector: 'civ-group-edit-page',
   template: `
     <civ-group-edit-view [adminSearchResult]="adminSearchResult$ | async"
+                         [savePending]="savePending"
                          (adminEmailChanged)="adminEmailQuery$.next($event)"
                          (submit)="submit($event)"
                          [error]="error"
@@ -23,8 +24,8 @@ export class GroupEditPageComponent implements OnInit {
 
   adminEmailQuery$: Subject<string> = new BehaviorSubject('');
   adminSearchResult$: Observable<User | null>;
-
   error: string = '';
+  savePending: boolean = false;
 
   constructor(private authSvc: AuthService, private router: Router, private route: ActivatedRoute, private groupSvc: GroupService) {
     this.adminSearchResult$ = this.authSvc.getUserByEmail(
@@ -38,7 +39,9 @@ export class GroupEditPageComponent implements OnInit {
   }
 
   submit(input: GroupCreateInput) {
+    this.savePending = true;
     this.groupSvc.createGroup(input).subscribe(result => {
+      this.savePending = false;
       if (result.success == true) {
         this.router.navigate([ 'group', result.groupId, 'admin' ]);
       } else {

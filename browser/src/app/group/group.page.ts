@@ -114,7 +114,7 @@ export class GroupPage implements OnInit {
 
     groupId$.subscribe(id => this.focusSvc.selectGroup(id));
 
-    this.group$ = this.groupSvc.getSelectedGroup().filter(it => !!it);
+    this.group$ = this.groupSvc.getActiveGroup().filter(it => !!it);
 
     this.group$
       .filter(it => !!it)

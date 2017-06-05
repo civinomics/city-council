@@ -136,9 +136,13 @@
 </div>
 
 <div class="centered row">
-  <button md-raised-button color="primary" [disabled]="!groupForm.valid || !adminSearchResult" (click)="doSubmit()">
+  <button md-raised-button
+          color="primary"
+          [disabled]="!groupForm.valid || !adminSearchResult || savePending"
+          (click)="doSubmit()">
     CREATE GROUP
   </button>
+  <md-spinner></md-spinner>
 </div>
 
 <div class="centered row error" *ngIf="!!error">

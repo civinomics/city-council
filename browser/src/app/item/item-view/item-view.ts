@@ -16,6 +16,7 @@ import { Vote } from '../../vote/vote.model';
 import { Comment } from '../../comment/comment.model';
 import { VoteService } from '../../vote/vote.service';
 import { Observable } from 'rxjs/Observable';
+import { Representative } from '../../group/group.model';
 
 let _dontRemoveImport: Observable<any>;
 
@@ -72,6 +73,7 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @Input() userComment: Comment | null;
   @Input() votes: Vote[];
   @Input() activeGroup: string;
+  @Input() userRep: Representative | null;
 
   @Input() numCommentsShown: number;
   @Output() showComments: EventEmitter<number> = new EventEmitter();
