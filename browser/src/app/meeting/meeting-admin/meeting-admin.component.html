@@ -60,7 +60,9 @@
 
     <div class="body">
         <div *ngFor="let item of agenda; trackBy:itemEquality" class="item" fxLayout="column" fxLayoutGap="10px">
-            <div class="text"><strong>{{item.agendaInfo.itemNumber}}.</strong> {{item.text}}</div>
+          <div class="item-text" (click)="gotoItem.emit(item.id)"><strong>{{item.agendaInfo.itemNumber}}.</strong>
+            {{item.text}}
+          </div>
             <div class="feedback-status"
                  fxFlexAlign="end"
                  fxLayout="row"

@@ -4,6 +4,7 @@
 .meeting-row {
   padding: 10px 5px;
   border-bottom: 1px solid mat-color($mat-grey, 400);
+  cursor: pointer;
 
   &:last-of-type {
     border-bottom: none;

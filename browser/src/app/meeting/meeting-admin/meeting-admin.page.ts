@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { Meeting, PartialMeeting } from '../meeting.model';
 import { Item } from '../../item/item.model';
 import { ItemService } from '../../item/item.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'civ-meeting-admin',
@@ -13,6 +14,7 @@ import { ItemService } from '../../item/item.service';
                                 (setFeedbackStatus)="setFeedbackStatus($event)"
                                 (setPublished)="setPublished($event)"
                                 (updateInfo)="updateInfo($event)"
+                                (gotoItem)="gotoItem($event)"
                                 *ngIf="!!(meeting$ | async) && !!(items$ | async); else loading "
         ></civ-meeting-admin-view>
         <ng-template #loading>
@@ -27,7 +29,7 @@ export class MeetingAdminPage {
     meeting$: Observable<Meeting>;
     items$: Observable<Item[]>;
 
-    constructor(private meetingSvc: MeetingService, private groupSvc: GroupService, private itemSvc: ItemService) {
+  constructor(private meetingSvc: MeetingService, private groupSvc: GroupService, private itemSvc: ItemService, private router: Router, private route: ActivatedRoute) {
         this.meeting$ = meetingSvc.getSelectedMeeting();
         this.items$ = this.meetingSvc.getAgendaItemsOfSelectedMeeting().map(arr => arr.filter(it => !!it));
 
@@ -45,4 +47,7 @@ export class MeetingAdminPage {
     this.meetingSvc.update(it.meetingId, it.updates);
   }
 
+  gotoItem(id: string) {
+    this.router.navigate([ '../', 'item', id ], { relativeTo: this.route });
+  }
 }

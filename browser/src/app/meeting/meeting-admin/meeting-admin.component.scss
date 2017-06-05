@@ -61,3 +61,11 @@
 
   }
 }
+
+.item-text {
+  transition: 100ms 50ms linear color;
+  cursor: pointer;
+  &:hover {
+    color: mat-color($mat-blue, 600);
+  }
+}

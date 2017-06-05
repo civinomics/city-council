@@ -142,7 +142,7 @@
           (click)="doSubmit()">
     CREATE GROUP
   </button>
-  <md-spinner></md-spinner>
+  <md-spinner *ngIf="savePending"></md-spinner>
 </div>
 
 <div class="centered row error" *ngIf="!!error">

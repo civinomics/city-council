@@ -11,7 +11,7 @@
       {{item.onAgendas[meeting.id].itemNumber}}
     </div>
     <div fxFlex="1 1 auto">
-      <div class="item-text" (click)="showItem.emit(item.id)">{{item.text}}</div>
+      <div class="item-text" (click)="showItem.emit(item.id)"><a class="clickable"></a></div>
       <div class="action-items" fxLayout="row" fxLayoutGap="10px">
         <button md-button>{{totalComments(item)}} comments</button>
         <button md-button>{{totalVotes(item)}} votes</button>

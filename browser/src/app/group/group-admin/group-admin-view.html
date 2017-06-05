@@ -1,11 +1,12 @@
 <div class="section meetings">
   <div class="heading">MEETINGS</div>
   <div fxLayout="column" fxLayoutGap="10px" class="body" *ngIf="meetings.length > 0">
-    <div *ngFor="let meeting of meetings | limit: 1"
+    <div *ngFor="let meeting of meetings"
          fxLayout="row"
          fxLayoutAlign="space-between center"
          class="meeting-row"
          fxLayoutGap="20px"
+         (click)="gotoMeeting.emit(meeting.id)"
          fxLayoutWrap="wrap">
       <div class="title">{{meeting.title}}: {{meeting.startTime | amDateFormat: 'M/D/YY'}}</div>
       <div class="published {{meeting.published ? 'yes' : 'no'}}">

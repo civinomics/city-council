@@ -3,7 +3,6 @@ import * as moment from 'moment';
 import { Meeting, PartialMeeting } from '../meeting.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AgendaInfo, Item } from '../../item/item.model';
-import Moment = moment.Moment;
 
 @Component({
     selector: 'civ-meeting-admin-view',
@@ -22,6 +21,7 @@ export class MeetingAdminComponent implements OnInit, OnChanges {
     @Output() setPublished = new EventEmitter<{ meetingId: string, value: boolean }>();
 
   @Output() updateInfo = new EventEmitter<{ meetingId: string, updates: PartialMeeting }>();
+  @Output() gotoItem = new EventEmitter<string>();
 
     agenda: (Item & { agendaInfo: AgendaInfo })[];
 
