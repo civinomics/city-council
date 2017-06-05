@@ -16,6 +16,7 @@ import {
   DenormalizedComment,
   DenormalizedVote,
   Group,
+  isConstituent,
   Item,
   Meeting,
   MeetingStats,
@@ -87,25 +88,35 @@ function prepareReport(meeting: Meeting,
                        group: Group,
                        items: (Item & { comments: DenormalizedComment[], votes: DenormalizedVote[] })[]): MeetingStats {
 
-  let districtIds = group.districts.map(it => it.id).concat([ null ]); //null signifies undistricted users
+  const ANY = 'ANY';
+  const NONE = 'NONE';
+  const SDM = { [ANY]: true, [NONE]: false };
+
+  const isSingleDistrict = group.districts.length == 0;
+
+  let districtIds = isSingleDistrict ? [ ANY, NONE ] : group.districts.map(it => it.id).concat([ null ]); //null signifies undistricted users
+
 
   let allVotes: DenormalizedVote[] = items.reduce((result, item) => [ ...result, ...item.votes ], []),
     allComments: DenormalizedComment[] = items.reduce((result, item) => [ ...result, ...item.comments ], []);
 
   let uniqueParticipants = uniqBy(
-    [ ...allComments, ...allVotes ].map(it => ({
-      userId: it.owner,
-      district: (it.userDistrict || { id: null } as any).id
-    })),
+    [ ...allComments, ...allVotes ].map(it => {
+
+      return {
+        userId: it.owner,
+        district: isSingleDistrict ? userDistrict(it.author, group.id) : isConstituent(it.author, group.id)
+      }
+    }),
     'userId'
   );
 
   let districtTotals = districtIds.reduce((result, districtId) => ({
     ...result,
     [districtId || NO_DISTRICT]: {
-      votes: allVotes.filter(vote => userDistrict(vote.author, meeting.groupId) == districtId).length,
-      comments: allComments.filter(comment => userDistrict(comment.author, meeting.groupId) == districtId).length,
-      participants: uniqueParticipants.filter(it => it.district == districtId).length
+      votes: allVotes.filter(vote => isSingleDistrict ? isConstituent(vote.author, meeting.groupId) == SDM[ districtId ] : userDistrict(vote.author, meeting.groupId) == districtId).length,
+      comments: allComments.filter(comment => isSingleDistrict ? isConstituent(comment.author, meeting.groupId) == SDM[ districtId ] : userDistrict(comment.author, meeting.groupId) == districtId).length,
+      participants: uniqueParticipants.filter(it => isSingleDistrict ? it.district == SDM[ districtId ] : it.district == districtId).length
     }
   }), {});
 
@@ -136,8 +147,8 @@ function prepareReport(meeting: Meeting,
     };
 
     let byDistrict = districtIds.reduce((byDistrictResult, districtId) => {
-      let districtVotes = item.votes.filter(vote => userDistrict(vote.author, meeting.groupId) == districtId);
-      let districtComments = item.comments.filter(comment => userDistrict(comment.author, meeting.groupId) == districtId);
+      let districtVotes = item.votes.filter(vote => isSingleDistrict ? isConstituent(vote.author, meeting.groupId) == SDM[ districtId ] : userDistrict(vote.author, meeting.groupId) == districtId);
+      let districtComments = item.comments.filter(comment => isSingleDistrict ? isConstituent(comment.author, meeting.groupId) == SDM[ districtId ] : userDistrict(comment.author, meeting.groupId) == districtId);
 
       return {
         ...byDistrictResult,
