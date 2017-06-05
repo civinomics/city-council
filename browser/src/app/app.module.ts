@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
@@ -34,6 +34,8 @@ import { BrowseContainerComponent } from './core/browse/browse-container.compone
 import { AppFocusService } from './core/focus.service';
 import { FollowService } from './shared/services/follow.service';
 import { AdminModule } from './admin/admin.module';
+import { AirbrakeHandler } from './shared/airbrake-handler';
+
 
 @NgModule({
 
@@ -81,8 +83,10 @@ import { AdminModule } from './admin/admin.module';
   ],
 
   providers: [
+
     AppFocusService,
-    FollowService
+    FollowService,
+    { provide: ErrorHandler, useClass: AirbrakeHandler }
   ],
 
   bootstrap: [ AppRootComponent ],
@@ -90,6 +94,5 @@ import { AdminModule } from './admin/admin.module';
 export class CivBrowserModule {
 
   constructor() {
-
   }
 }

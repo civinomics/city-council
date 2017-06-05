@@ -44,7 +44,7 @@ export class CommentComponent implements OnInit, OnChanges {
     /**
      * the ID of the
      */
-    @Input() activeContext: string = 'id_acc';
+    @Input() activeContext: string;
 
     _showAuthor: boolean = true;
     _showVotes: boolean = true;
@@ -128,8 +128,15 @@ export class CommentComponent implements OnInit, OnChanges {
       if (!this.comment.author) {
         return null;
       }
-      return this.comment.author.groups[ this.activeContext ].district.id;
+      if (!this.comment.author.groups[ this.activeContext ]) {
+        return 'Non-constituent';
+      }
+      if (!this.comment.author.groups[ this.activeContext ].district) {
+        return 'Constituent'
+      }
+      return this.comment.author.groups[ this.activeContext ].district.name;
     }
+
 
   get authorIcon() {
     if (!this.comment.author) {

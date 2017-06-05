@@ -82,6 +82,13 @@ export function userDistrict(user: User, groupId: string): string | null {
   return user.groups[ groupId ].district.id;
 }
 
+export function isConstituent(user: User, groupId: string) {
+  if (!user || !user.groups[ groupId ]) {
+    return false;
+  }
+  return true;
+}
+
 export function usersEqual(x: User, y: User): boolean {
 
   return x.id == y.id &&

@@ -4,8 +4,12 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { CivBrowserModule } from './app/app.module';
 import { environment } from './environments/environment';
 
-if (environment.production) {
-  enableProdMode();
+function startApp() {
+
 }
 
+if (environment.production) {
+  enableProdMode();
+
+}
 platformBrowserDynamic().bootstrapModule(CivBrowserModule);

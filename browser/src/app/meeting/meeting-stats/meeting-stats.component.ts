@@ -15,10 +15,11 @@ import { schemeCategory10 } from 'd3-scale';
 import { Comment } from '../../comment/comment.model';
 import { hasActivity } from './activity.pipe';
 import { userDistrict } from '../../user/user.model';
+import { Group } from '../../group/group.model';
 
 let _dontRemoveImport: User;
 
-const NO_DISTRICT = 'NO_DISTRICT';
+const NO_DISTRICT = 'NONE';
 
 @Component({
   selector: 'civ-meeting-stats-view',
@@ -30,6 +31,7 @@ export class MeetingStatsComponent implements OnChanges {
 
 
   @Input() meeting: Meeting;
+  @Input() group: Group;
 
   @Input() stats: MeetingStats;
 
@@ -40,11 +42,15 @@ export class MeetingStatsComponent implements OnChanges {
 
   _districts: Office[];
   _districtMap: {[id:string]: Office};
+  _isSingleDistrict: boolean;
   @Input() set districts(val: Office[]){
       if (!!val){
           this._districts = val;
           this._districtMap = val.reduce((result, next) => ({...result, [next.id]: next}), {});
+
+        this._isSingleDistrict = val.length == 0;
       }
+
   }
   get districts() { return this._districts};
 
@@ -186,11 +192,14 @@ export class MeetingStatsComponent implements OnChanges {
   }
 
   districtTableData(item: Item) {
-    return this.districts.map(district => ({
+    return (this._isSingleDistrict ? [ { name: 'In-District', id: 'ANY' }, {
+      name: 'Out-Of-District',
+      id: 'NONE'
+    } ] : this.districts).map(district => ({
       district,
       votes: this.stats.byItem[item.id].byDistrict[district.id].votes,
       comments: this.stats.byItem[item.id].byDistrict[district.id].comments
-    })).concat([ {
+    })).concat(this._isSingleDistrict ? [] : [ {
       district: {
         name: NO_DISTRICT
       } as any,
@@ -209,11 +218,15 @@ export class MeetingStatsComponent implements OnChanges {
 
       let totalSrc = this.activeDistrict.id == null ? this.stats.total : this.stats.total.byDistrict[ this.activeDistrict.id ];
 
+    const districts = this._isSingleDistrict ? [ { name: 'In-District', id: 'ANY' }, {
+      name: 'Out-Of-District',
+      id: 'NONE'
+    } ] : this.districts;
 
-      let participationByDistrict = this.activeDistrict.id == null ? this.districts.map(district => ({
+    let participationByDistrict = this.activeDistrict.id == null ? districts.map(district => ({
       name: district.name,
       value: this.stats.total.byDistrict[district.id].participants
-      })).concat([ {
+    })).concat(this._isSingleDistrict ? [] : [ {
         name: NO_DISTRICT,
         value: this.stats.total.byDistrict[ NO_DISTRICT ].participants
       } ]) : null;

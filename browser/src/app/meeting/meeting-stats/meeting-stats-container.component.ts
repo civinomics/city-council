@@ -14,6 +14,7 @@ import { GroupService } from '../../group/group.service';
   selector: 'civ-meeting-stats',
   template: `
     <civ-meeting-stats-view *ngIf="!!(stats$ | async) && !!(items$ | async); else loading"
+                            [group]="group$ | async"
                             [stats]="stats$ | async" [meeting]="meeting$ | async"
                             [districts]="(group$ | async)?.districts" [items]="items$ | async"
                             [activeDistrict]="activeDistrict$ | async"

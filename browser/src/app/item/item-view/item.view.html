@@ -56,6 +56,7 @@
     <div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
       <civ-comment *ngFor="let comment of visibleComments()"
                    [comment]="comment"
+                   [activeContext]="activeGroup"
                    [userVote]="userVoteFor(comment.id) | async"
                    (vote)="commentVote.emit({itemId: comment.id, value: $event})"
       ></civ-comment>

@@ -1,7 +1,7 @@
 <div class="outer-wrapper {{comment.role}}" fxLayout="column">
   <div *ngIf="showAuthor" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" class="author-row">
     <img class="avatar" *ngIf="authorIcon as icon" [src]="icon">
-    <div class="name">{{authorName}}<span *ngIf="authorDistrict as district">, {{district.name}}</span>
+    <div class="name">{{authorName}}<span *ngIf="authorDistrict as district">, {{district}}</span>
     </div>
     <div class="date">{{comment.posted | amTimeAgo}}</div>
   </div>
