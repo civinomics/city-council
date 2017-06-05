@@ -67,6 +67,11 @@ export async function getUser(userId: string, database: admin.database.Database,
   return parseUser({ ...snapshot.val(), id: userId });
 }
 
+export async function getUserAddress(userId: string, database: admin.database.Database) {
+  const snapshot = await database.ref(`/user_private/${userId}/address`).once('value');
+
+}
+
 
 export async function getComment(itemId: string,
                                  commentId: string,

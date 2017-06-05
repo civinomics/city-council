@@ -1,6 +1,6 @@
 import { getEmailTransport, initializeAdminApp } from './_internal';
 import * as functions from 'firebase-functions';
-import { GroupCreateInput, RepresentativeCreateInput } from '@civ/city-council';
+import { District, GroupCreateInput, RepresentativeCreateInput } from '@civ/city-council';
 import { createRandomString } from './utils';
 
 
@@ -40,19 +40,19 @@ export const createGroup = functions.https.onRequest((request, response) => {
 });
 
 
-export async function doCreateGroup(input: GroupCreateInput) {
+export async function doCreateGroup(groupInput: GroupCreateInput) {
 
-  const groupId = await pushBasicInfo(input.name, input.icon, input.adminId);
+  const groupId = await pushBasicInfo(groupInput.name, groupInput.icon, groupInput.adminId);
   console.info(`pushed basic info - new group id: ${groupId}`);
 
-  const repDataMap = input.representatives.reduce((result, repData) => ({ ...result, [repData.id]: repData }), {});
+  const repDataMap = groupInput.representatives.reduce((result, repData) => ({ ...result, [repData.id]: repData }), {});
 
   console.info(`creating rep user accounts`);
   //create user accounts for each representative,
   const repPushes: Promise<{ inputId: string, outputId: string }[]> =
     Promise.all(
-      input.representatives.map(repData => new Promise((resolve, reject) => {
-          createUserAccountForRepresentative(repData, input.name, input.adminId)
+      groupInput.representatives.map(repData => new Promise((resolve, reject) => {
+        return createUserAccountForRepresentative(repData, { id: groupId, name: groupInput.name })
             .then(outputId => resolve({ inputId: repData.id, outputId }))
             .catch(err => reject(err))
         })
@@ -71,9 +71,20 @@ export async function doCreateGroup(input: GroupCreateInput) {
 
   console.info(`creating districts`);
   //create districts, linking to representatives by correct userId
-  const districts = await Promise.all(input.districts.map(data =>
-    createDistrict(groupId, data.name, repIdMap[ data.representative ]))
-  );
+  const districts = await Promise.all(groupInput.districts.map(data => new Promise((resolve, reject) =>
+    createDistrict(groupId, data.name, repIdMap[ data.representative ])
+      .then(id => resolve({ ...data, id }))
+  )));
+
+  //finally, update rep user objects to attach them to their respective districts
+  console.info('updating rep user groups');
+  await Promise.all(districts.map((district: District) => {
+    let repId = repIdMap[ district.representative ];
+    return updateRepresentativeGroups(repId, { id: groupId, name: groupInput.name }, {
+      id: district.id,
+      name: district.name
+    })
+  }));
 
   return groupId;
 }
@@ -109,7 +120,9 @@ async function pushBasicInfo(name: string, icon: string, owner: string): Promise
 }
 
 
-async function createUserAccountForRepresentative(input: RepresentativeCreateInput, groupName: string, adminId: string): Promise<string> {
+async function createUserAccountForRepresentative(input: RepresentativeCreateInput,
+                                                  group: { id: string, name: string },
+                                                  district?: { id: string, name: string }): Promise<string> {
 
   let password = createRandomString(),
     userId: string;
@@ -134,7 +147,7 @@ async function createUserAccountForRepresentative(input: RepresentativeCreateInp
 
 
   try {
-    await createUserPublicEntry(userId, input.firstName, input.lastName, input.icon, adminId);
+    await createUserPublicEntry(userId, input.firstName, input.lastName, input.icon);
     console.info('DONE creating user public entry');
 
   } catch (err) {
@@ -142,9 +155,8 @@ async function createUserAccountForRepresentative(input: RepresentativeCreateInp
     console.error(err);
     throw new Error(`Error creating userPublic entry: ${JSON.stringify(err)}`);
   }
-
   try {
-    await sendRepresentativeEmail(input.email, password, input.firstName, groupName);
+    await sendRepresentativeEmail('drew@civinomics.com', password, input.firstName, group.name);
     console.info(`DONE sending email to ${input.email}`);
   } catch (err) {
     console.error(`ERROR sending email to ${input.email}`);
@@ -170,12 +182,11 @@ async function createUserAccountForRepresentative(input: RepresentativeCreateInp
     });
   }
 
-  async function createUserPublicEntry(id: string, firstName: string, lastName: string, icon: string, admin: string) {
+  async function createUserPublicEntry(id: string, firstName: string, lastName: string, icon: string) {
     return await db.ref(`/user/${id}`).set({
       firstName,
       lastName,
-      icon,
-      admin
+      icon
     })
   }
 
@@ -186,11 +197,10 @@ async function createUserAccountForRepresentative(input: RepresentativeCreateInp
       subject: `Your new Civinomics Account`,
       html: `
        <div>
-        <p>Greetings, $\{name}!</p>
+        <p>Greetings, ${name}</p>
         <p>${groupName} has recently begun using Civinomics, and you were listed as a representative. </p> 
-        <p>A new account has been created for you - you can sign in <a href="https://civinomics.com/sign-in">here</a> using the following credentials: </p>
-      </div>
-      <div style="text-align: center">
+        <p>A new account has been created for you - you can sign in <a href="https://civinomics.com/log-in">here</a> using the following credentials: </p>
+      </div>g
         <strong>email:</strong> ${email}
         <strong>temporary password: </strong> ${password}
       </div>
@@ -220,4 +230,20 @@ async function createUserAccountForRepresentative(input: RepresentativeCreateInp
 
   }
 
+}
+
+async function updateRepresentativeGroups(repId: string, group: { id: string, name: string }, district?: { id: string, name: string }) {
+  let obj: any = {
+    [group.id]: {
+      name: group.name,
+      role: 'representative',
+      district
+    }
+  };
+
+  if (district) {
+    obj.district = { id: district.id, name: district.name }
+  }
+
+  return await db.ref(`/user/${repId}/groups`).update(obj);
 }

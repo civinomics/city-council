@@ -11,55 +11,21 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/map';
 import * as https from 'https';
-import Moment = moment.Moment;
+import { getAllInstances, InstanceData } from './instances';
 
 
 const app = initializeAdminApp();
 const now = moment().subtract(5, 'days');
 const db = app.database();
 
-type InstanceData = {
-  groupId: string,
-  adminId: string,
-  canEditIds: string[],
-  restEndpoint: {
-    host: string,
-    path: string,
-    method: 'GET'
-  },
-  pullMeetingTypes: string[],
-  meetingTypeDisplayNames: { [type: string]: string },
-  closeFeedback: number,
-  meetingLength: number,
-  timeZone: string
-}
-const INSTANCES: { [id: string]: InstanceData } = {
-  id_acc: { //this will ultimately be persisted and loaded for the relavant group
-    groupId: 'id_acc',
-    adminId: 'id_doug',
-    canEditIds: [ 'id_doug' ],
-    restEndpoint: {
-      host: 'data.austintexas.gov',
-      path: '/resource/es7e-878h.json',
-      method: 'GET'
-    },
-    pullMeetingTypes: [ 'Austin City Council' ],
-    meetingTypeDisplayNames: {
-      'Austin City Council': 'Regular Meeting of the Austin City Council'
-    },
-    closeFeedback: 1440, //number of minutes before meeting to close feedback (1440 = 24 * 60)
-    meetingLength: 120, //number of minutes after start that meeting ends
-    timeZone: '+06:00'
-  }
-};
 
 export const importAgendas = functions.pubsub.topic('hourly-tick').onPublish(event => {
   console.info(`got hourly tick: checking for agendas to import`);
-  Object.keys(INSTANCES).forEach(instanceId => {
-    doImport(INSTANCES[ instanceId ]).then(result => {
-      console.info(`successfully completed import task for ${instanceId}`);
+  getAllInstances().forEach(instanceData => {
+    doImport(instanceData).then(result => {
+      console.info(`successfully completed import task for ${instanceData}`);
     }).catch(err => {
-      console.error(`error completing import task for ${instanceId}: ${JSON.stringify(err)}`)
+      console.error(`error completing import task for ${instanceData}: ${JSON.stringify(err)}`)
     })
   });
 });

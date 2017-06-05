@@ -9,6 +9,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/reduce';
+
 const cors = require('cors')({ origin: true });
 
 const app = initializeAdminApp();
@@ -21,7 +22,7 @@ export function getMeetingComments(meetingId: string): Observable<{ [id: string]
           if (!snapshot.exists()) {
             reject(`Meeting ${meetingId} does not exist`)
           }
-          resolve(Object.keys(snapshot.val().agenda));
+          resolve(Object.keys(snapshot.val().agenda || {}));
         }).catch(err => {
           console.info(`Error getting comments for meeting id ${meetingId}: ${JSON.stringify(err)}`);
           reject(err);

@@ -1,6 +1,6 @@
 export {createUserRecords} from './src/create-user-records';
 
-export {districts} from './src/check-districts';
+export { assignDistricts } from './src/assign-districts';
 
 export {stats} from './src/meeting-stats';
 
@@ -12,4 +12,4 @@ export { newMeetingNotifications, closedMeetingNotifications } from './src/meeti
 
 export { importAgendas } from './src/import-agendas';
 
-export {createRepresentativeAccount} from './src/create-representative'
+export { createGroup } from './src/create-group';
