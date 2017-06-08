@@ -2,21 +2,26 @@
 
   <div class="actions">
     <div class="follow row" fxLayout="row" fxLayoutGap="10px">
-      <div><md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon></div>
-      <div><md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon></div>
+      <div>
+        <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
+      </div>
+      <div>
+        <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
+      </div>
       <div *ngIf="numFollows > 0" class="follower-count">
         <span class="follow-text">{{numFollows}} follower{{numFollows == 1 ? '' : 's'}}</span>
       </div>
-      <button md-raised-button [color]="isFollowing ? 'primary' : 'accent' " (click)="addOrRemoveFollow()">{{isFollowing ?
+      <button md-raised-button [color]="isFollowing ? 'primary' : 'accent' " (click)="addOrRemoveFollow()">{{isFollowing
+        ?
         'UNFOLLOW' : 'FOLLOW'}}
       </button>
       <!-- <button md-raised-button>FORK</button> -->
-      <button md-raised-button>EDIT</button>
+      <button md-raised-button *ngIf="canEdit" (click)="edit.emit(!isEditing)">EDIT</button>
     </div>
   </div>
 
   <div class="item-content">
-    <div class="item-text">
+    <div class="item-text" *ngIf="!isEditing" [@contentPane]>
       <div class="item-title">{{itemNumber}}. {{item.text}}</div>
       <!-- <div>
         <p>Whereas this might be a longer law for people to consider; and</p>
@@ -26,145 +31,192 @@
         <p>The full text of the item should be visible on the item page.</p>
         <p style="text-align:center; cursor: pointer; font-size:2em;">...</p>
       </div> -->
-    <div>
-      <a target="_blank" [href]="item.resourceLinks[0]">Attachments</a>
-    </div>
-  </div>
 
-  <hr>
+      <div class="row-label" fxFlexAlign="center">attachments</div>
+
+      <div *ngFor="let resource of item.resourceLinks; let i = index">
+        <a target="_blank" [href]="resource.url">Attachment {{i+1}}</a>
+      </div>
+    </div>
+
+    <div *ngIf="isEditing" [@editPane] class="edit-pane" fxLayout="column">
+      <md-input-container>
+        <textarea mdInput autosize [(ngModel)]="edited.text" #textEdit></textarea>
+      </md-input-container>
+
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px">
+        <div class="row-label">attachments</div>
+        <button md-icon-button (click)="addResource()" color="accent">
+          <md-icon>add</md-icon>
+        </button>
+      </div>
+
+      <div *ngFor="let resource of edited.resources; let i = index"
+           fxLayout="row"
+           fxLayoutAlign="start center"
+           fxLayoutGap="10px">
+
+        <md-input-container fxFlex="1 1">
+          <input type="url" mdInput [(ngModel)]="edited.resources[i]">
+        </md-input-container>
+        <button md-icon-button (click)="removeResource(i)" color="warn">
+          <md-icon>close</md-icon>
+        </button>
+      </div>
+
+      <button class="submit-btn"
+              md-raised-button
+              color="primary"
+              fxFlexAlign="center"
+              [disabled]="!hasChanges() || savePending"
+              (click)="saveChanges()">SAVE CHANGES
+      </button>
+
+    </div>
+
+
+    <hr>
 
     <div fxLayout="row" fxLayoutAlign="center center" *ngIf="!!userRep">
-    <div class="key row-label focused">Your Representative</div>
+      <div class="key row-label focused">Your Representative</div>
       <div class="value" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
         <div class="rep-avatar">
           <img [src]="userRep.icon">
         </div>
-      <div style="padding-bottom:4px;">
-        <span class="name">{{userRep.firstName}} {{userRep.lastName}}</span>
-        <span class="title">{{userRep.title}}</span>
+        <div style="padding-bottom:4px;">
+          <span class="name">{{userRep.firstName}} {{userRep.lastName}}</span>
+          <span class="title">{{userRep.title}}</span>
+        </div>
       </div>
     </div>
-  </div>
 
-
-  <hr>
-
-  <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">comments<strong style="padding-left:10px;">({{comments?.length}})</strong></div>
-
-  <div class="actions-table" fxLayout="column" fxLayoutAlign="center center">
-
-    <div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
-      <civ-comment *ngFor="let comment of visibleComments()"
-                   [comment]="comment"
-                   [activeContext]="activeGroup"
-                   [userVote]="userVoteFor(comment.id) | async"
-                   (vote)="commentVote.emit({itemId: comment.id, value: $event})"
-      ></civ-comment>
-    </div>
-
-    <div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center" style="margin:20px;">
-      <button md-raised-button (click)="showMoreComments()">
-        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
-          <md-icon>expand_more</md-icon>
-          <div>SHOW MORE</div>
-        </div>
-      </button>
-    </div>
 
     <hr>
 
-    <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">Take Action</div>
+    <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
+      comments<strong style="padding-left:10px;">({{comments?.length}})</strong></div>
 
-    <div class="row vote"
-         fxFlex="1 1 auto"
-         fxLayout="row"
-         fxLayout.xs="column"
-         fxLayoutGap="10px"
-         fxLayoutAlign="space-around center">
+    <div class="actions-table" fxLayout="column" fxLayoutAlign="center center">
 
-      <div class="vote-count">{{voteStats?.yes}}</div>
-      <button md-raised-button
-              class="vote-button yes"
-              [class.rejected]="userVoteVal == -1"
-              (click)="castVote(1)"
-              [@voteBtn]="userVoteVal == -1 ? 'rejected' : ''">
-        <md-icon *ngIf="userVoteVal == 1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
-        yes
-      </button>
+      <div fxLayout="column" fxLayoutGap="10px" *ngIf="numCommentsShown" class="comment-container">
+        <civ-comment *ngFor="let comment of visibleComments()"
+                     [comment]="comment"
+                     [activeContext]="activeGroup"
+                     [userVote]="userVoteFor(comment.id) | async"
+                     (vote)="commentVote.emit({itemId: comment.id, value: $event})"
+        ></civ-comment>
+      </div>
 
-      <button md-raised-button
-              class="vote-button no"
-              [class.rejected]="userVoteVal == 1"
-              (click)="castVote(-1)"
-              [@voteBtn]="userVoteVal == 1 ? 'rejected' : ''">
-        <md-icon *ngIf="userVoteVal == -1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
-        no
-      </button>
-      <div class="vote-count">{{voteStats?.no}}</div>
+      <div *ngIf="numCommentsShown < comments.length" fxFlexAlign="center" style="margin:20px;">
+        <button md-raised-button (click)="showMoreComments()">
+          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+            <md-icon>expand_more</md-icon>
+            <div>SHOW MORE</div>
+          </div>
+        </button>
+      </div>
 
-    </div>
+      <hr>
 
-    <div class="row explain" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
+      <div class="row row-label focused" fxLayout="row" fxLayoutAlign="space-around center" *ngIf="!isClosedSession">
+        Take
+        Action
+      </div>
 
-      <div *ngIf="!userComment" fxLayout="column" class="value">
-        <md-input-container>
+      <div class="row vote"
+           fxFlex="1 1 auto"
+           fxLayout="row"
+           fxLayout.xs="column"
+           fxLayoutGap="10px"
+           fxLayoutAlign="space-around center">
+
+        <div class="vote-count">{{voteStats?.yes}}</div>
+        <button md-raised-button
+                class="vote-button yes"
+                [class.rejected]="userVoteVal == -1"
+                (click)="castVote(1)"
+                [@voteBtn]="userVoteVal == -1 ? 'rejected' : ''">
+          <md-icon *ngIf="userVoteVal == 1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
+          yes
+        </button>
+
+        <button md-raised-button
+                class="vote-button no"
+                [class.rejected]="userVoteVal == 1"
+                (click)="castVote(-1)"
+                [@voteBtn]="userVoteVal == 1 ? 'rejected' : ''">
+          <md-icon *ngIf="userVoteVal == -1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
+          no
+        </button>
+        <div class="vote-count">{{voteStats?.no}}</div>
+
+      </div>
+
+      <div class="row explain" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
+
+        <div *ngIf="!userComment" fxLayout="column" class="value">
+          <md-input-container>
           <textarea type="text"
                     rows="4"
                     mdInput
                     [placeholder]="addCommentPlaceholder"
                     #addComment
                     [(ngModel)]="newComment"></textarea>
-        </md-input-container>
-        <button md-raised-button
-                *ngIf="!!addComment.value"
-                [@speakBtn]
-                color="primary"
-                fxFlexAlign="flex-end"
-                (click)="postComment()"
-                [disabled]="!addComment.value">Submit
-        </button>
+          </md-input-container>
+          <button md-raised-button
+                  *ngIf="!!addComment.value"
+                  [@speakBtn]
+                  color="primary"
+                  fxFlexAlign="flex-end"
+                  (click)="postComment()"
+                  [disabled]="!addComment.value">Submit
+          </button>
+
+        </div>
+
+        <civ-comment *ngIf="!!userComment"
+                     [comment]="userComment"
+                     (edit)="editComment($event)"
+                     [showAuthor]="false"
+                     [textOnly]="true"
+                     [canEdit]="true"></civ-comment>
 
       </div>
 
-      <civ-comment *ngIf="!!userComment"
-                   [comment]="userComment"
-                   (edit)="editComment($event)"
-                   [showAuthor]="false"
-                   [textOnly]="true"
-                   [canEdit]="true"></civ-comment>
+      <div *ngIf="isClosedSession" class="closed-session-note">
+        This item is closed session and is not open to public feedback.
+      </div>
 
-    </div>
+      <div class="row share"
+           fxLayout="row"
+           fxLayoutAlign="center center"
+           [class.highlighted]="!!userVote && !!userComment">
 
-    <div *ngIf="isClosedSession" class="closed-session-note">
-      This item is closed session and is not open to public feedback.
-    </div>
-
-    <div class="row share" fxLayout="row" fxLayoutAlign="center center" [class.highlighted]="!!userVote && !!userComment">
-
-      <div fxLayout="row" fxLayoutAlign="center center">
-        <div class="value" fxLayout="row" fxLayoutGap="10px">
-          <button md-icon-button>
-            <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
-          </button>
-          <button md-icon-button>
-            <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
-          </button>
-          <button md-icon-button>
-            <md-icon fontSet="fa" fontIcon="fa-google-plus-square"></md-icon>
-          </button>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <div class="value" fxLayout="row" fxLayoutGap="10px">
+            <button md-icon-button>
+              <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
+            </button>
+            <button md-icon-button>
+              <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
+            </button>
+            <button md-icon-button>
+              <md-icon fontSet="fa" fontIcon="fa-google-plus-square"></md-icon>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <hr style="margin-top: 40px;">
+      <hr style="margin-top: 40px;">
 
-    <div class="back-to-agenda">
-      <button md-raised-button (click)="back.emit()">
+      <div class="back-to-agenda">
+        <button md-raised-button (click)="back.emit()">
         <span fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
           <md-icon>chevron_left</md-icon>
           <span>BACK TO AGENDA</span>
         </span>
-      </button>
-    </div>
-  </div><!-- actions-table -->
-</div><!-- container -->
+        </button>
+      </div>
+    </div><!-- actions-table -->
+  </div><!-- container -->
+</div>

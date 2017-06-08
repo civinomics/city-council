@@ -22,7 +22,7 @@ root:
       admin: string
       groups:
         $groupId:
-          role: oneOf(['admin', 'representative', 'citizen'])
+          role: string
           district: string
 
 
@@ -52,11 +52,12 @@ root:
     .write: isSuperuser()
     $id:
       .write: (!data.exists()) || data.owner == auth.uid
+
       text: string
-      owner: userExists(next)
+      owner: string
       resourceLinks:
-        $url:
-          .value: boolean
+        $id:
+          url: string
 
       onAgendas:
         $meetingId:
@@ -64,6 +65,7 @@ root:
           meetingId: string
           itemNumber: number
           closedSession: boolean
+          feedbackDeadline: string
 
   group:
     .read: true

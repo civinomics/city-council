@@ -37,15 +37,18 @@ export const SHOW_COMMENTS_STEP = 5;
                    [numCommentsShown]="showComments$ | async"
                    [activeGroup]="groupId$ | async"
                    [userRep]="userRep$ | async"
+                   [canEdit]="canEdit$ | async"
+                   [isEditing]="isEditing"
+                   [savePending]="savePending"
+                   [saveError]="saveError"
                    (showComments)="showMoreComments($event)"
                    (follow)="doFollow($event)"
                    (vote)="castVote($event)"
                    (comment)="postComment($event)"
                    (commentVote)="castVote($event)"
                    (back)="backToAgenda()"
-
-    >
-
+                   (save)="saveChanges($event)"
+                   (edit)="isEditing = $event">
     </civ-item-view>
     <ng-template #loading>
       <civ-loading class="loading"></civ-loading>
@@ -68,11 +71,18 @@ export class ItemPageComponent implements OnInit {
 
   groupId$: Observable<string>;
 
+  canEdit$: Observable<boolean>;
+
   userRep$: Observable<Representative | null>;
 
   _showComments$: Subject<number> = new BehaviorSubject(SHOW_COMMENTS_STEP);
 
   showComments$: Observable<number>;
+
+  isEditing: boolean = false;
+
+  savePending: boolean = false;
+  saveError: string | null = null;
 
   constructor(private store: Store<AppState>,
               private router: Router,
@@ -102,6 +112,12 @@ export class ItemPageComponent implements OnInit {
       .filter(it => !!it)
       .take(1).subscribe(item =>
       this.title.setTitle(item.text.length > 20 ? item.text.substring(0, 20).concat('...') : item.text)
+    );
+
+    this.canEdit$ = Observable.combineLatest(
+      this.item$,
+      this.authSvc.sessionUser$.filter(it => !!it),
+      (item, user) => user.superuser || item.owner == user.id
     );
 
 
@@ -139,8 +155,21 @@ export class ItemPageComponent implements OnInit {
         return null;
       });
 
-
   }
+
+
+  saveChanges(data: Item) {
+    this.savePending = true;
+    this.itemSvc.save(data).then(result => {
+      this.savePending = false;
+      this.isEditing = false;
+      this.saveError = null;
+    }).catch(err => {
+      this.savePending = false;
+      this.saveError = err;
+    })
+  }
+
 
   showMoreComments(current) {
     this._showComments$.next(current);

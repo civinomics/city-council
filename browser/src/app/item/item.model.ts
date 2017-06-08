@@ -43,7 +43,7 @@ export type ItemStatsAdt = {
 }
 export interface Item extends Entity {
   text: string;
-  resourceLinks: string[];
+  resourceLinks: { url: string }[];
   feedbackDeadline: Moment;
   activity?: ItemStatsAdt;
   onAgendas: {
@@ -82,7 +82,20 @@ export const parseItem: (it: RawItem | any) => Item = (it) => {
     }
   }), {});
 
-  let resourceLinks = it.resourceLinks ? it.resourceLinks : it.sireLink ? [ it.sireLink ] : [];
+  let resourceLinks;
+
+  if (it.resourceLinks) {
+    if (Array.isArray(it.resourceLinks)) {
+      resourceLinks = it.resourceLinks;
+    } else {
+      resourceLinks = Object.keys(it.resourceLinks).map(id => ({ ...it.resourceLinks[ id ], id }))
+    }
+  } else if (it.sireLink) {
+    resourceLinks = [ it.sireLink ]
+  } else {
+    resourceLinks = []
+  }
+
 
   return {
     ...it,
@@ -132,7 +145,8 @@ const equalityChecks = [
     }
   },
 
-  (x: Item, y: Item) => x.resourceLinks.join('_') == y.resourceLinks.join('_')
+  (x: Item, y: Item) =>
+    (x.resourceLinks || []).map(it => it.url).sort().join('_') === (y.resourceLinks || []).map(it => it.url).sort().join('_')
 ];
 
 export const itemsEqual: (x: Item, y: Item) => boolean = (x, y) => {

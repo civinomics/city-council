@@ -4,6 +4,7 @@ import { ItemService } from './item.service';
 import { ItemPageComponent } from './item.page';
 import { ItemViewComponent } from './item-view/item-view';
 import { CommentModule } from '../comment/comment.module';
+import { ItemEditViewComponent } from './item-edit/item-edit-view.component';
 
 @NgModule({
     imports: [
@@ -11,7 +12,7 @@ import { CommentModule } from '../comment/comment.module';
         CommentModule
     ],
     declarations: [
-        ItemPageComponent, ItemViewComponent
+      ItemPageComponent, ItemViewComponent, ItemEditViewComponent
     ],
     providers: [
         ItemService

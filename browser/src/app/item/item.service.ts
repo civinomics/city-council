@@ -18,9 +18,9 @@ export class ItemService {
   @Effect() doLoadSingleItemsEffect = this.actions.ofType(LOAD_SINGLE_ITEM)
     .map(toPayload)
     .withLatestFrom(this.store.select(getLoadedItemIds))
-    .filter(([idToLoad, loadedItemIds]) => loadedItemIds.indexOf(idToLoad) < 0)
-    .do(([idToLoad, loadedItemIds]) => console.debug(`ItemSvc: ${idToLoad} does not exist in ${JSON.stringify(loadedItemIds)}, loading.`))
-    .flatMap(([idToLoad, loadedItemIds]) => this.load(idToLoad))
+    .filter(([ idToLoad, loadedItemIds ]) => loadedItemIds.indexOf(idToLoad) < 0)
+    .do(([ idToLoad, loadedItemIds ]) => console.debug(`ItemSvc: ${idToLoad} does not exist in ${JSON.stringify(loadedItemIds)}, loading.`))
+    .flatMap(([ idToLoad, loadedItemIds ]) => this.load(idToLoad))
     .map(mtg => new ItemLoadedAction(mtg));
 
 
@@ -37,16 +37,16 @@ export class ItemService {
 
   @Effect() loadItemsOnSelectedMeetingAgendaEffect =
     Observable.combineLatest(this.store.select(getMeetings), this.actions.ofType(SELECT_MEETING).map(toPayload).filter(it => !!it))
-      .filter(([meetings, selectedMeetingId]) => !!meetings[selectedMeetingId])
-      .map(([meetings, selectedMeetingId]) => meetings[selectedMeetingId].agenda)
-      .map(itemIds => ({type: LOAD_ALL_ITEMS, payload: itemIds}));
+      .filter(([ meetings, selectedMeetingId ]) => !!meetings[ selectedMeetingId ])
+      .map(([ meetings, selectedMeetingId ]) => meetings[ selectedMeetingId ].agenda)
+      .map(itemIds => ({ type: LOAD_ALL_ITEMS, payload: itemIds }));
 
 
   @Effect() loadSelectedItemEffect =
     this.actions.ofType(SELECT_ITEM)
       .map(toPayload)
       .filter(it => !!it)
-      .map(id => ({type: LOAD_SINGLE_ITEM, payload: id}));
+      .map(id => ({ type: LOAD_SINGLE_ITEM, payload: id }));
 
 
   constructor(private db: AngularFireDatabase, private actions: Actions, private store: Store<AppState>) {
@@ -69,7 +69,7 @@ export class ItemService {
       )
     ).take(1);
 
-    return Observable.combineLatest(votes, comments, (votes, comments) => ({votes, comments})).take(1);
+    return Observable.combineLatest(votes, comments, (votes, comments) => ({ votes, comments })).take(1);
 
   }
 
@@ -81,6 +81,40 @@ export class ItemService {
     this.db.object(`/item/${itemId}/onAgendas/${meetingId}`).update({ closedSession: value }).then(res => {
       console.log(res);
     })
+  }
+
+  public async save(item: Item): Promise<{ success: boolean, error?: string }> {
+
+    console.log('saving');
+    try {
+      let id = item.id,
+        push = this.prepareItem(item);
+
+      await this.db.object(`/item/${item.id}`).update(push);
+      return { success: true }
+    } catch (err) {
+      debugger;
+      console.error(err);
+      return { success: false, error: err.message }
+    }
+
+  }
+
+  private prepareItem(item: Item): any {
+    let onAgendas = Object.keys(item.onAgendas || {}).reduce((result, id) => ({
+      ...result,
+      [id]: {
+        ...item.onAgendas[ id ],
+        feedbackDeadline: item.onAgendas[ id ].feedbackDeadline.toISOString()
+      }
+    }), {});
+
+    return {
+      text: item.text,
+      owner: item.owner,
+      resourceLinks: item.resourceLinks.reduce((result, next: any, idx) => ({ ...result, [next.id || idx]: next }), {}),
+      onAgendas
+    }
   }
 
   private load(id: string): Observable<Item> {

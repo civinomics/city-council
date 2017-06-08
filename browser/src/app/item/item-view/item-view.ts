@@ -53,8 +53,29 @@ let _dontRemoveImport: Observable<any>;
       state('*', style({ transform: 'translateY(0)', opacity: 1 })),
       transition('void <=> *', animate(250))
     ]),
+
+    trigger('contentPane', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100vw)' }),
+        animate('150ms  150ms ease-in', style({ transform: 'translateX(0)' }))
+      ]),
+      transition(':leave', [
+        animate('150ms ease-in', style({ transform: 'translateX(-100vw)' }))
+      ])
+    ]),
+
+    trigger('editPane', [
+      transition(':enter', [
+        style({ transform: 'translateX(100vw)' }),
+        animate('150ms 150ms ease-in', style({ transform: 'translateX(0)' }))
+      ]),
+      transition(':leave', [
+        animate('150ms ease-in', style({ transform: 'translateX(100vw)' }))
+      ])
+    ]),
+
     trigger('panel', [
-      state('void', style({ position: 'absolute' })),
+
       transition('void => *', animate('250ms 250ms ease-in', style({ opacity: 0, width: 0 }))),
       transition('* => void', [
         style({ transform: 'translateX(100%)', width: 0 }),
@@ -74,6 +95,10 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @Input() votes: Vote[];
   @Input() activeGroup: string;
   @Input() userRep: Representative | null;
+  @Input() canEdit: boolean;
+  @Input() isEditing: boolean;
+  @Input() savePending: boolean;
+  @Input() saveError: string | null;
 
   @Input() numCommentsShown: number;
   @Output() showComments: EventEmitter<number> = new EventEmitter();
@@ -88,6 +113,8 @@ export class ItemViewComponent implements OnInit, OnChanges {
   @Output() commentVote: EventEmitter<{ commentId: string, value: number }> = new EventEmitter();
   @Output() comment: EventEmitter<{ itemId: string, text: string, role: string, groupId: string }> = new EventEmitter();
   @Output() back: EventEmitter<any> = new EventEmitter();
+  @Output() edit: EventEmitter<boolean> = new EventEmitter();
+  @Output() save: EventEmitter<Item> = new EventEmitter();
 
   newComment: string;
 
@@ -97,6 +124,13 @@ export class ItemViewComponent implements OnInit, OnChanges {
   addCommentPlaceholder = 'add your statement';
 
   private _commentOrder: string[] = [];
+
+  editPending: boolean = false;
+
+  edited: {
+    text: string,
+    resources: string[]
+  };
 
   constructor(private voteSvc: VoteService) { }
 
@@ -122,6 +156,21 @@ export class ItemViewComponent implements OnInit, OnChanges {
       }
     }
 
+    if (changes[ 'item' ] && !!this.item) {
+      this.edited = {
+        text: this.item.text,
+        resources: (this.item.resourceLinks || []).map(it => it.url)
+      }
+    }
+
+  }
+
+  removeResource(idx: number) {
+    this.edited.resources.splice(idx, 1);
+  }
+
+  addResource() {
+    this.edited.resources.push('');
   }
 
   get itemNumber() {
@@ -166,6 +215,27 @@ export class ItemViewComponent implements OnInit, OnChanges {
 
   share(provider: 'facebook' | 'google' | 'twitter') {
 
+  }
+
+  hasChanges() {
+    if (this.edited.text != this.item.text || this.edited.resources.length !== this.item.resourceLinks.length) {
+      return true;
+    }
+    for (let i = 0; i < this.edited.resources.length; i++) {
+      if (this.edited.resources[ i ] !== this.item.resourceLinks[ i ].url) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  saveChanges() {
+    let resourceLinks = this.edited.resources
+      .filter(it => !!it)
+      .map(str => ({ url: str }));
+
+    let it: Item = { ...this.item, text: this.edited.text, resourceLinks };
+    this.save.emit(it);
   }
 
   get userVoteVal(): number | null {
