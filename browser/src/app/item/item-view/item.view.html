@@ -75,31 +75,35 @@
 
     <div class="row row-label focused" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">Take Action</div>
 
-    <div class="row vote" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
-      <div class="value" fxFlex="1 1 auto" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+    <div class="row vote"
+         fxFlex="1 1 auto"
+         fxLayout="row"
+         fxLayout.xs="column"
+         fxLayoutGap="10px"
+         fxLayoutAlign="space-around center">
 
-        <div class="vote-count">{{voteStats?.yes}}</div>
-        <button md-raised-button
-                class="vote-button yes"
-                [class.rejected]="userVoteVal == -1"
-                (click)="castVote(1)"
-                [@voteBtn]="userVoteVal == -1 ? 'rejected' : ''">
-                <md-icon *ngIf="userVoteVal == 1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
-                yes
-        </button>
+      <div class="vote-count">{{voteStats?.yes}}</div>
+      <button md-raised-button
+              class="vote-button yes"
+              [class.rejected]="userVoteVal == -1"
+              (click)="castVote(1)"
+              [@voteBtn]="userVoteVal == -1 ? 'rejected' : ''">
+        <md-icon *ngIf="userVoteVal == 1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
+        yes
+      </button>
 
-        <button md-raised-button
-                class="vote-button no"
-                [class.rejected]="userVoteVal == 1"
-                (click)="castVote(-1)"
-                [@voteBtn]="userVoteVal == 1 ? 'rejected' : ''">
-          <md-icon *ngIf="userVoteVal == -1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
-          no
-        </button>
-        <div class="vote-count">{{voteStats?.no}}</div>
+      <button md-raised-button
+              class="vote-button no"
+              [class.rejected]="userVoteVal == 1"
+              (click)="castVote(-1)"
+              [@voteBtn]="userVoteVal == 1 ? 'rejected' : ''">
+        <md-icon *ngIf="userVoteVal == -1" class="checkmark" [@checkmark]="'fromLeft'">check</md-icon>
+        no
+      </button>
+      <div class="vote-count">{{voteStats?.no}}</div>
 
-      </div>
     </div>
+
     <div class="row explain" fxLayout="row" fxLayoutAlign="center center" *ngIf="!isClosedSession">
 
       <div *ngIf="!userComment" fxLayout="column" class="value">

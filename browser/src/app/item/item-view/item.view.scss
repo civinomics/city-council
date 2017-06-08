@@ -34,6 +34,11 @@ hr {
 
 .item-container {
   max-width: 900px;
+  margin: auto;
+  @include mq($until: 900px) {
+    max-width: 100vw;
+  }
+
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
   background-color: #ffffff;
   margin-top: -20px;
@@ -41,6 +46,7 @@ hr {
 
 .item-content {
   padding: 40px 60px 60px;
+
   @include mq-xs {
     padding: 40px 20px 60px;
   }
