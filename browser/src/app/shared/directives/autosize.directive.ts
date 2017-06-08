@@ -16,7 +16,9 @@ export class AutosizeDirective implements AfterContentChecked, AfterContentInit 
   }
 
   ngAfterContentInit(): void {
-
+    setTimeout(() => {
+      this.adjust();
+    }, 100)
   }
 
 
