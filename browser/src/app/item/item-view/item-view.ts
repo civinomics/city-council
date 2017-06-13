@@ -1,10 +1,10 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChild
@@ -19,6 +19,7 @@ import { Observable } from 'rxjs/Observable';
 import { Representative } from '../../group/group.model';
 
 let _dontRemoveImport: Observable<any>;
+declare const window: any;
 
 @Component({
   selector: 'civ-item-view',
@@ -84,7 +85,7 @@ let _dontRemoveImport: Observable<any>;
     ])
   ]
 })
-export class ItemViewComponent implements OnInit, OnChanges {
+export class ItemViewComponent implements OnChanges, AfterViewInit {
 
   @Input() item: Item;
   @Input() userVote: Vote | null;
@@ -134,19 +135,20 @@ export class ItemViewComponent implements OnInit, OnChanges {
 
   constructor(private voteSvc: VoteService) { }
 
-  ngOnInit() {
-  }
-
   addOrRemoveFollow() {
     this.follow.emit(!this.isFollowing);
   }
 
+  ngAfterViewInit(): void {
+    //TODO remove after diagnosing bug # , which causes the page to scroll to the bottom when viewing an item for the first time
+    window.scrollTo(0, 0);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
     if (changes['userVote'] && changes['userVote'].previousValue == null && !!changes['userVote'].currentValue) {
       if (!!this.addCommentInput) {
-        this.addCommentInput.focus();
+        //  this.addCommentInput.focus();
       }
     }
     if (changes['votes'] && !!changes['votes'].currentValue) {
