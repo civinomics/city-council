@@ -35,6 +35,7 @@ hr {
 .item-container {
   width: 900px;
   margin: auto;
+
   @include mq($until: 900px) {
     width: 100vw;
     margin: 10px;

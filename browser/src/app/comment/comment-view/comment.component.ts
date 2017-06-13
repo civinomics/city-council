@@ -122,7 +122,7 @@ export class CommentComponent implements OnInit, OnChanges {
     }
 
     get authorDistrict() {
-      if (this.comment.userDistrict) {
+      if (this.comment.userDistrict && !this.comment.author) {
         return this.comment.userDistrict
       }
       if (!this.comment.author) {
@@ -187,3 +187,5 @@ export class CommentComponent implements OnInit, OnChanges {
 
 
 }
+
+

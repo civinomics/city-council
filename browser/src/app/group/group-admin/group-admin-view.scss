@@ -2,7 +2,7 @@
 @import "../../shared/admin-pages";
 
 .meeting-row {
-  padding: 10px 5px;
+  padding: 15px;
   border-bottom: 1px solid mat-color($mat-grey, 400);
   cursor: pointer;
 
@@ -10,9 +10,6 @@
     border-bottom: none;
   }
 
-  .title {
-    text-align: center; //only has effect when row is wrapped
-  }
 
   .published {
     &.no {

@@ -14,7 +14,8 @@ import { GroupCreateInput } from '../../group/group.model';
     <civ-group-edit-view [adminSearchResult]="adminSearchResult$ | async"
                          [savePending]="savePending"
                          (adminEmailChanged)="adminEmailQuery$.next($event)"
-                         (submit)="submit($event)"
+                         (create)="submit($event)"
+                         [isSuperuser]="true"
                          [error]="error"
     ></civ-group-edit-view>
   `,

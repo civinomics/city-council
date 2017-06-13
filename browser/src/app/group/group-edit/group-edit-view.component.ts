@@ -12,8 +12,15 @@ import {
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ValidEmailAddress } from '../../shared/constants';
 import { MdInputDirective } from '@angular/material';
-import { User } from '../../user/user.model';
-import { District, Group, GroupCreateInput, Representative, RepresentativeCreateInput } from '../../group/group.model';
+import { SessionUser, User } from '../../user/user.model';
+import {
+  District,
+  Group,
+  GroupCreateInput,
+  GroupEditInput,
+  Representative,
+  RepresentativeCreateInput
+} from '../../group/group.model';
 import { Observable } from 'rxjs/Observable';
 import { animate, style, transition, trigger } from '@angular/animations';
 
@@ -38,10 +45,15 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
 
   @Input() adminSearchResult: User | null;
   @Input() error: string;
-  @Output() adminEmailChanged: EventEmitter<string> = new EventEmitter();
-  @Output() submit: EventEmitter<GroupCreateInput> = new EventEmitter();
-
   @Input() savePending: boolean;
+
+  @Input() authUser: SessionUser | null;
+  @Input() isSuperuser: boolean;
+
+
+  @Output() adminEmailChanged: EventEmitter<string> = new EventEmitter();
+  @Output() create: EventEmitter<GroupCreateInput> = new EventEmitter();
+  @Output() save: EventEmitter<GroupEditInput> = new EventEmitter();
 
   private _nextId: number = 0;
 
@@ -150,8 +162,15 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
     return false
   }
 
+
+  saveChanges() {
+    console.log('gfds');
+    this.save.emit(this.parseEditableGroupFromForm());
+
+  }
+
   hasChanges(): boolean {
-    if (!this.extantGroup) {
+    if (!this.extantGroup || this.savePending) {
       return false;
     }
     if (
@@ -281,6 +300,10 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
 
   };
 
+  isValid() {
+
+  }
+
   private newRep(rep?: Representative): FormGroup {
     return new FormGroup({
       firstName: new FormControl(rep && rep.firstName || '', [ Validators.required ]),
@@ -309,6 +332,7 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
     }
   }
 
+
   private parseRepFromForm(form: FormGroup): RepresentativeCreateInput {
     return {
       firstName: form.controls[ 'firstName' ].value,
@@ -317,23 +341,37 @@ export class GroupEditViewComponent implements OnInit, AfterContentInit {
       email: form.controls[ 'email' ].value,
       title: form.controls[ 'title' ].value,
       id: form.controls[ 'id' ].value,
-    }
+    };
+
   }
 
-  private parseGroupFromForm(): GroupCreateInput {
+  private parseEditableGroupFromForm(): GroupEditInput {
     return {
       name: this.groupForm.controls[ 'name' ].value,
       icon: this.groupForm.controls[ 'icon' ].value,
       districts: this.districts.controls.map((form: FormGroup) => this.parseDistrictFromForm(form)),
       representatives: this.representatives.controls.map((form: FormGroup) => this.parseRepFromForm(form)),
-      adminId: this.adminSearchResult.id
+      id: this.extantGroup.id
     };
   }
 
-  doSubmit() {
-    let data = this.parseGroupFromForm();
+  private parseCreatableGroupFromForm(): GroupCreateInput {
+    let adminId = this.isSuperuser && this.adminSearchResult.id || this.authUser && this.authUser.id;
 
-    this.submit.emit(data);
+    return {
+      name: this.groupForm.controls[ 'name' ].value,
+      icon: this.groupForm.controls[ 'icon' ].value,
+      districts: this.districts.controls.map((form: FormGroup) => this.parseDistrictFromForm(form)),
+      representatives: this.representatives.controls.map((form: FormGroup) => this.parseRepFromForm(form)),
+      adminId
+    };
+  }
+
+
+  doSubmit() {
+    let data = this.parseCreatableGroupFromForm();
+
+    this.create.emit(data);
 
   }
 

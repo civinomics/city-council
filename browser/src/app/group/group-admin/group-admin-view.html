@@ -2,23 +2,26 @@
   <div class="heading">MEETINGS</div>
   <div fxLayout="column" fxLayoutGap="10px" class="body" *ngIf="meetings.length > 0">
     <div *ngFor="let meeting of meetings"
-         fxLayout="row"
-         fxLayoutAlign="space-between center"
+         fxLayout="column"
          class="meeting-row"
-         fxLayoutGap="20px"
+         fxLayoutGap="10px"
          (click)="gotoMeeting.emit(meeting.id)"
          fxLayoutWrap="wrap">
       <div class="title">{{meeting.title}}: {{meeting.startTime | amDateFormat: 'M/D/YY'}}</div>
-      <div class="published {{meeting.published ? 'yes' : 'no'}}">
-        {{meeting.published ? 'PUBLISHED' : 'DRAFT'}}
-      </div>
-      <div class="status {{isAfterNow(meeting.feedbackDeadline) ? 'open' : 'closed'}}">
-        {{isAfterNow(meeting.feedbackDeadline) ? 'OPEN' : 'CLOSED'}}
-      </div>
-      <div class="title">
-        <button md-raised-button color="primary" (click)="gotoMeeting.emit(meeting.id)">
-          EDIT
-        </button>
+      <div fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="20px">
+        <div class="spacer"></div>
+        <div class="published {{meeting.published ? 'yes' : 'no'}}">
+          {{meeting.published ? 'PUBLISHED' : 'DRAFT'}}
+        </div>
+        <div class="status {{isAfterNow(meeting.feedbackDeadline) ? 'open' : 'closed'}}">
+          {{isAfterNow(meeting.feedbackDeadline) ? 'OPEN' : 'CLOSED'}}
+        </div>
+        <div class="title" f>
+          <button md-raised-button color="primary" (click)="gotoMeeting.emit(meeting.id)">
+            EDIT
+          </button>
+        </div>
+        <div class="spacer"></div>
       </div>
     </div>
   </div>
@@ -29,7 +32,3 @@
     <button md-raised-button color="primary" (click)="newMeeting.emit()">CREATE NEW MEETING</button>
   </div>
 </div>
-
-<civ-group-edit-view [extantGroup]="group">
-
-</civ-group-edit-view>

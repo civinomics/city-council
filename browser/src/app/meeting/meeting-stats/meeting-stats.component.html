@@ -98,8 +98,12 @@
       </div>
 
       <div class="details">
-          <civ-comment [comment]="data.topComments[item.id].pro" *ngIf="!!data.topComments[item.id].pro"></civ-comment>
-          <civ-comment [comment]="data.topComments[item.id].con" *ngIf="!!data.topComments[item.id].con"></civ-comment>
+        <civ-comment [comment]="data.topComments[item.id].pro"
+                     *ngIf="!!data.topComments[item.id].pro"
+                     [activeContext]="group.id"></civ-comment>
+        <civ-comment [comment]="data.topComments[item.id].con"
+                     *ngIf="!!data.topComments[item.id].con"
+                     [activeContext]="group.id"></civ-comment>
 
           <civ-district-input-table [data]="districtTableData(item)" *ngIf="!showingSingleDistrict"></civ-district-input-table>
       </div>

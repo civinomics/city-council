@@ -9,6 +9,7 @@ import { SELECT_GROUP } from '../core/focus.reducer';
 import { GroupLoadedAction } from './group.reducer';
 import { Headers, Http, RequestOptions } from '@angular/http';
 import { parseUser } from '../user/user.model';
+import { GroupEditInput } from './group.model';
 
 let _ignore: Meeting;//so IDEA won't remove above import, which is needed for tsc to compile with declarations
 
@@ -39,6 +40,42 @@ export class GroupService {
 
     return this.db.object(`/group/${groupId}`)
       .map((it: Partial<Group>) => parseGroup(it));
+  }
+
+  public async saveChanges(group: GroupEditInput): Promise<boolean> {
+
+    console.log(`saving`);
+    let id = group.id,
+      pass = this.prepareGroup(group);
+
+    await this.db.object(`/group/${id}`).update(pass);
+    return true;
+
+  }
+
+  private prepareGroup(group: GroupEditInput | any): any {
+    group = { ...group };
+    delete group.id;
+
+    let representatives = group.representatives.reduce((result, rep) => ({
+      ...result, [rep.id]: {
+        firstName: rep.firstName,
+        lastName: rep.lastName,
+        icon: rep.icon,
+        title: rep.title
+      }
+    }), {});
+    let districts = group.districts.reduce((result, dist) => ({
+      ...result, [dist.id]: {
+        name: dist.name,
+        representative: dist.representative
+      }
+    }), {});
+    return {
+      ...group,
+      representatives,
+      districts
+    }
   }
 
   public getActiveGroup() {

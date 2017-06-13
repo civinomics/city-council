@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Group } from '../group.model';
+import { Group, GroupEditInput } from '../group.model';
 import { Meeting } from '../../meeting/meeting.model';
 import * as moment from 'moment';
 import Moment = moment.Moment;
@@ -16,6 +16,8 @@ export class GroupAdminViewComponent implements OnInit {
 
   @Output() gotoMeeting: EventEmitter<string> = new EventEmitter();
   @Output() newMeeting: EventEmitter<any> = new EventEmitter();
+
+  @Output() save: EventEmitter<GroupEditInput> = new EventEmitter();
 
   private now = moment();
 

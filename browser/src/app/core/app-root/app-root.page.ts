@@ -33,6 +33,7 @@ export class AppRootComponent implements OnInit {
 
   }
 
+
   ngOnInit(): void {
     this.authService.displayAuthModal$.subscribe(req => {
       let dialog = this.dialog.open(AuthModalComponent, {

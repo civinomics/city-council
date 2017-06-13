@@ -19,7 +19,7 @@ import { Group } from '../../group/group.model';
 
 let _dontRemoveImport: User;
 
-const NO_DISTRICT = 'NONE';
+const NO_DISTRICT = 'NO_DISTRICT';
 
 @Component({
   selector: 'civ-meeting-stats-view',
@@ -127,7 +127,7 @@ export class MeetingStatsComponent implements OnChanges {
 
 
   get activityByItemHeight() {
-    return this.data.activityByItem.length * (20 + 5);
+    return this.data.activityByItem.length * (20 + 5) + 25;
   }
 
     constructor(private meetingSvc: MeetingService, private cdr: ChangeDetectorRef) {

@@ -48,12 +48,6 @@ export class MeetingAgendaContainerComponent implements OnInit {
   constructor(private meetingSvc: MeetingService, private groupSvc: GroupService, private itemSvc: ItemService, private router: Router, private route: ActivatedRoute, private focusSvc: AppFocusService) {
     const id$ = this.route.params.map(params => params['meetingId']).distinctUntilChanged();
 
-    this.route.params.subscribe(params => {
-      this.focusSvc.selectItem(params['itemId']);
-      this.focusSvc.selectGroup(params['groupId']);
-      this.focusSvc.selectMeeting(params['meetingId']);
-    });
-
 
     this.group$ = this.groupSvc.getActiveGroup();
     this.meeting$ = this.meetingSvc.getSelectedMeeting().filter(it => !!it);

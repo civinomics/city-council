@@ -48,7 +48,7 @@
             <input mdInput placeholder="Title" formControlName="title">
           </md-input-container>
 
-          <md-input-container class="input email" class.gt-lg="title">
+          <md-input-container class="input email" class.gt-lg="title" *ngIf="!extantGroup">
             <input mdInput type="email" placeholder="Email Address" formControlName="email">
           </md-input-container>
 
@@ -114,13 +114,13 @@
 
 </div>
 
-<button md-fab class="save-btn" *ngIf="hasChanges()" color="accent" [@saveBtn]>
+<button md-fab class="save-btn" *ngIf="hasChanges()" color="accent" [@saveBtn] (click)="saveChanges()">
   SAVE
 </button>
 
 <md-slide-toggle [(ngModel)]="adminExtant">Does the group administrator already have an account?</md-slide-toggle>
 
-<div [formGroup]="adminForm" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+<div [formGroup]="adminForm" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" *ngIf="isSuperuser">
 
   <md-input-container>
     <input mdInput type="email" formControlName="email" placeholder="Admin Email Address" #adminEmail>
@@ -135,10 +135,12 @@
 
 </div>
 
+
 <div class="centered row">
   <button md-raised-button
           color="primary"
-          [disabled]="!groupForm.valid || !adminSearchResult || savePending"
+          *ngIf="!extantGroup"
+          [disabled]="!groupForm.valid || (isSuperuser && !adminSearchResult) || savePending"
           (click)="doSubmit()">
     CREATE GROUP
   </button>

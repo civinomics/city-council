@@ -38,6 +38,14 @@ export type GroupCreateInput = {
   adminId: string;
 }
 
+export type GroupEditInput = {
+  id: string;
+  name: string;
+  icon: string;
+  districts?: District[]
+  representatives: RepresentativeCreateInput[]
+}
+
 export function parseDistrict(data: Partial<District> | any) {
   let id = data.id || data.$key;
   if (!id) {
@@ -95,7 +103,7 @@ export function representativesEqual(x: Representative, y: Representative): bool
 
 
 export function groupsEqual(x: Group, y: Group): boolean {
-  if (x.id != y.id || x.icon != y.icon) {
+  if (x.id !== y.id || x.icon !== y.icon || x.name !== y.name) {
     return false;
   }
   if (x.meetings.join('_') != y.meetings.join('_')) {
@@ -115,8 +123,8 @@ export function groupsEqual(x: Group, y: Group): boolean {
     }
   }
 
-  let xReps = x.representatives.sort((x, y) => x.id.localeCompare(y.id));
-  let yReps = x.representatives.sort((x, y) => x.id.localeCompare(y.id));
+  let xReps = x.representatives.sort((a, b) => a.id.localeCompare(b.id));
+  let yReps = y.representatives.sort((a, b) => a.id.localeCompare(b.id));
 
   if (xReps.length != yReps.length) {
     return false;
