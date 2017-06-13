@@ -98,13 +98,6 @@ export class ItemPageComponent implements OnInit {
 
     const itemId$ = this.route.params.map(params => params[ 'itemId' ]);
 
-    this.route.params.subscribe(params => {
-      this.focusSvc.selectItem(params[ 'itemId' ]);
-      this.focusSvc.selectGroup(params[ 'groupId' ]);
-      this.focusSvc.selectMeeting(params[ 'meetingId' ]);
-
-    });
-
 
     this.item$ = this.itemSvc.getSelectedItem();
 

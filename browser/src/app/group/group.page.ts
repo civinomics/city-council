@@ -107,12 +107,7 @@ export class GroupPage implements OnInit {
         [ '/group', params[ 'groupId' ] ]
     );
 
-
-
-
     const groupId$ = this.route.params.map(params => params['groupId']);
-
-    groupId$.subscribe(id => this.focusSvc.selectGroup(id));
 
     this.group$ = this.groupSvc.getActiveGroup().filter(it => !!it);
 

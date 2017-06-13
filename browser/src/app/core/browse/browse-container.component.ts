@@ -55,14 +55,19 @@ export class BrowseContainerComponent implements OnInit, OnChanges {
       meeting: params['meetingId'],
       item: params['itemId']
     }))
-      .distinctUntilChanged((x, y) => x.group == y.group && x.meeting == y.meeting && x.item == y.item);
+      .distinctUntilChanged((x, y) => x.group === y.group && x.meeting === y.meeting && x.item === y.item);
+
+    focus.subscribe(it => {
+      console.log(`BROWSE::`);
+      console.log(it);
+    });
+
 
     this.focusedGroup$ = groupSvc.getActiveGroup();
     this.focusedMeeting$ = meetingSvc.getSelectedMeeting();
     this.focusedItem$ = itemSvc.getSelectedItem();
 
 
-    focus.subscribe(it => console.log(it));
     route.firstChild.params.subscribe(it => console.log(it));
     this.focusedGroup$.subscribe(it => console.log(it));
 

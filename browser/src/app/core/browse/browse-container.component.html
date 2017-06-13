@@ -16,11 +16,11 @@
 
     <md-icon *ngIf="focusedItem$ | async" [@travEl] style="font-weight: 200"> chevron_right</md-icon>
 
-    <div *ngIf="focusedMeeting$ | async as meeting"
+    <div *ngIf="focusedItem$ | async as meeting"
          fxLayout="row"
          fxLayoutAlign="start center"
          fxLayoutGap="5px"
-         [routerLink]="['/group', (focusedGroup$ | async).id, 'meeting', meeting.id]">
+         [routerLink]="['/group', (focusedGroup$ | async)?.id, 'meeting', meeting.id]">
 
       <div class="entry-text" *ngIf="meeting">{{meeting.startTime | amDateFormat:
         'M/DD/YY'}}

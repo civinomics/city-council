@@ -112,12 +112,6 @@ export class MeetingPage implements OnInit {
                 private title: Title) {
         const id$ = this.route.params.map(params => params[ 'meetingId' ]).distinctUntilChanged();
 
-        this.route.params.subscribe(params => {
-            this.focusSvc.selectItem(params[ 'itemId' ]);
-            this.focusSvc.selectGroup(params[ 'groupId' ]);
-            this.focusSvc.selectMeeting(params[ 'meetingId' ]);
-        });
-
         this.baseUrl = this.route.params.take(1).map(params =>
             [ '/group', params[ 'groupId' ], 'meeting', params[ 'meetingId' ] ]
         );
