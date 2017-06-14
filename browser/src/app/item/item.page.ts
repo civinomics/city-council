@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Item } from './item.model';
 import { Store } from '@ngrx/store';
@@ -19,8 +19,10 @@ import { Representative } from '../group/group.model';
 import { GroupService } from '../group/group.service';
 import { AuthService } from '../user/auth.service';
 import { getById } from '../shared/constants';
+import { ShareArgs, ShareButtonsService, ShareProvider } from 'ngx-sharebuttons';
 
 export const SHOW_COMMENTS_STEP = 5;
+
 
 @Component({
   selector: 'civ-item-container',
@@ -31,11 +33,11 @@ export const SHOW_COMMENTS_STEP = 5;
                    [userComment]="userComment$ | async"
                    [votes]="votes$ | async"
                    [comments]="comments$ | async"
-                   [activeMeeting]="activeMeeting$ | async"
+                   [activeMeeting]="activeMeetingId$ | async"
+                   [activeGroup]="activeGroupId$ | async"
                    [numFollows]="numFollows$ | async"
                    [isFollowing]="isFollowing$ | async"
                    [numCommentsShown]="showComments$ | async"
-                   [activeGroup]="groupId$ | async"
                    [userRep]="userRep$ | async"
                    [canEdit]="canEdit$ | async"
                    [isEditing]="isEditing"
@@ -48,7 +50,9 @@ export const SHOW_COMMENTS_STEP = 5;
                    (commentVote)="castVote($event)"
                    (back)="backToAgenda()"
                    (save)="saveChanges($event)"
-                   (edit)="isEditing = $event">
+                   (edit)="isEditing = $event"
+                   (share)="share($event)"
+    >
     </civ-item-view>
     <ng-template #loading>
       <civ-loading class="loading"></civ-loading>
@@ -64,12 +68,12 @@ export class ItemPageComponent implements OnInit {
   votes$: Observable<Vote[]>;
   comments$: Observable<Comment[]>;
 
-  activeMeeting$: Observable<string>;
+  activeGroupId$: Observable<string>;
+  activeMeetingId$: Observable<string>;
 
   numFollows$: Observable<number>;
   isFollowing$: Observable<boolean>;
 
-  groupId$: Observable<string>;
 
   canEdit$: Observable<boolean>;
 
@@ -94,7 +98,8 @@ export class ItemPageComponent implements OnInit {
               private followSvc: FollowService,
               private groupSvc: GroupService,
               private authSvc: AuthService,
-              private title: Title) {
+              private title: Title,
+              private shareSvc: ShareButtonsService) {
 
     const itemId$ = this.route.params.map(params => params[ 'itemId' ]);
 
@@ -129,9 +134,9 @@ export class ItemPageComponent implements OnInit {
         return Math.min(max + SHOW_COMMENTS_STEP, comments && comments.length || SHOW_COMMENTS_STEP)
       }).startWith(SHOW_COMMENTS_STEP);
 
-    this.groupId$ = this.focusSvc.focus$.map(it => it.group);
+    this.activeGroupId$ = this.focusSvc.focus$.map(it => it.group);
 
-    this.activeMeeting$ = this.route.params.map(params => params[ 'meetingId' ]);
+    this.activeMeetingId$ = this.route.params.map(params => params[ 'meetingId' ]);
 
     this.numFollows$ = itemId$.flatMap(id => this.followSvc.getFollowCount('item', id));
 
@@ -212,5 +217,17 @@ export class ItemPageComponent implements OnInit {
       })
     })
   }
+
+  share(it: { provider: ShareProvider, args: ShareArgs }) {
+    const emitter = new EventEmitter<ShareProvider>();
+    this.shareSvc.share(it.provider, it.args, emitter);
+
+    emitter.subscribe(it => {
+      console.log(it);
+    });
+
+  }
+
+
 
 }

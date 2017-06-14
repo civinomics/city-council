@@ -118,7 +118,8 @@
   SAVE
 </button>
 
-<md-slide-toggle [(ngModel)]="adminExtant">Does the group administrator already have an account?</md-slide-toggle>
+<md-slide-toggle [(ngModel)]="adminExtant" *ngIf="isSuperuser">Does the group administrator already have an account?
+</md-slide-toggle>
 
 <div [formGroup]="adminForm" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" *ngIf="isSuperuser">
 

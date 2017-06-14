@@ -4,6 +4,22 @@ $twitter-blue: #00aced;
 $facebook-blue: #3b5998;
 $google-orange: #dd4b39;
 
+.fb {
+  color: $facebook-blue;
+}
+
+.twitter {
+  color: $twitter-blue;
+}
+
+.google {
+  color: $google-orange;
+}
+
+.share-btn {
+  cursor: pointer;
+}
+
 :host {
   @include flex(column, $align: center);
 

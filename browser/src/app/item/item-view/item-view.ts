@@ -17,6 +17,7 @@ import { Comment } from '../../comment/comment.model';
 import { VoteService } from '../../vote/vote.service';
 import { Observable } from 'rxjs/Observable';
 import { Representative } from '../../group/group.model';
+import { ShareArgs, ShareButton, ShareProvider } from 'ngx-sharebuttons';
 
 let _dontRemoveImport: Observable<any>;
 declare const window: any;
@@ -117,6 +118,8 @@ export class ItemViewComponent implements OnChanges, AfterViewInit {
   @Output() edit: EventEmitter<boolean> = new EventEmitter();
   @Output() save: EventEmitter<Item> = new EventEmitter();
 
+  @Output() share: EventEmitter<{ provider: ShareProvider, args: ShareArgs }> = new EventEmitter();
+
   newComment: string;
 
   voteStats: { yes: number, no: number };
@@ -132,6 +135,18 @@ export class ItemViewComponent implements OnChanges, AfterViewInit {
     text: string,
     resources: string[]
   };
+
+  fbShareBtn = new ShareButton(
+    ShareProvider.FACEBOOK,
+    ``,
+    'facebook'
+  );
+
+  tweetBtn = new ShareButton(
+    ShareProvider.TWITTER,
+    `<i class="fa fa-twitter"></i>`,
+    'twitter'
+  );
 
   constructor(private voteSvc: VoteService) { }
 
@@ -215,10 +230,6 @@ export class ItemViewComponent implements OnChanges, AfterViewInit {
     return this.voteSvc.getSessionUserVoteFor(id);
   }
 
-  share(provider: 'facebook' | 'google' | 'twitter') {
-
-  }
-
   hasChanges() {
     if (this.edited.text != this.item.text || this.edited.resources.length !== this.item.resourceLinks.length) {
       return true;
@@ -258,7 +269,22 @@ export class ItemViewComponent implements OnChanges, AfterViewInit {
     return this.comments
       .sort((x, y) => this._commentOrder.indexOf(x.id) - this._commentOrder.indexOf(y.id))
       .slice(0, this.numCommentsShown);
+  }
 
+  doShare(provider: 'facebook' | 'twitter' | 'google') {
+    const url = `https://civinomics.com/group/${this.activeGroup}/meeting/${this.activeMeeting}/item/${this.item.id}`;
+    const args = new ShareArgs(
+      url,
+      '',
+      this.item.text,
+      `https://civinomics.com/assets/img/civ_logo_dark.png`
+    );
+
+    this.share.emit(
+      {
+        provider: provider == 'facebook' ? ShareProvider.FACEBOOK : provider == 'twitter' ? ShareProvider.TWITTER : ShareProvider.GOOGLEPLUS,
+        args
+      });
   }
 
 }

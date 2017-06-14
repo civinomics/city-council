@@ -2,11 +2,14 @@
 
   <div class="actions">
     <div class="follow row" fxLayout="row" fxLayoutGap="10px">
-      <div>
-        <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
+      <div (click)="doShare('facebook')" class="share-btn">
+        <md-icon fontSet="fa" fontIcon="fa-facebook-square" class="fb"></md-icon>
       </div>
-      <div>
-        <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
+      <div (click)="doShare('twitter')" class="share-btn">
+        <md-icon fontSet="fa" fontIcon="fa-twitter-square" class="twitter"></md-icon>
+      </div>
+      <div (click)="doShare('google')" class="share-btn">
+        <md-icon fontSet="fa" fontIcon="fa-google-plus-square" class="google"></md-icon>
       </div>
       <div *ngIf="numFollows > 0" class="follower-count">
         <span class="follow-text">{{numFollows}} follower{{numFollows == 1 ? '' : 's'}}</span>
@@ -194,15 +197,17 @@
 
         <div fxLayout="row" fxLayoutAlign="center center">
           <div class="value" fxLayout="row" fxLayoutGap="10px">
-            <button md-icon-button>
+            <button md-icon-button="fbShareBtn" md-icon-button (click)="doShare('facebook')">
               <md-icon fontSet="fa" fontIcon="fa-facebook-square"></md-icon>
             </button>
-            <button md-icon-button>
+
+            <button md-icon-button (click)="doShare('twiiter')">
               <md-icon fontSet="fa" fontIcon="fa-twitter-square"></md-icon>
             </button>
-            <button md-icon-button>
+            <button md-icon-button (click)="doShare('google')">
               <md-icon fontSet="fa" fontIcon="fa-google-plus-square"></md-icon>
             </button>
+
           </div>
         </div>
       </div>

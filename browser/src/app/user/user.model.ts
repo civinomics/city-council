@@ -91,11 +91,9 @@ export function isConstituent(user: User, groupId: string) {
 
 export function usersEqual(x: User, y: User): boolean {
 
-  return x.id == y.id &&
-    x.firstName == y.firstName &&
-    x.lastName == y.lastName &&
-    x.icon == y.icon &&
-    x.joined == y.joined &&
-    x.lastOn == y.lastOn
+  return x.id === y.id &&
+    x.firstName === y.firstName &&
+    x.lastName === y.lastName &&
+    x.icon === y.icon
 
 }

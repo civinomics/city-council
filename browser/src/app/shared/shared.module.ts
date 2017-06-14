@@ -26,37 +26,39 @@ import { NgxErrorsModule } from '@ultimate/ngxerrors';
 import { LimitPipe } from './pipes/limit.pipe';
 import { LoadingComponent } from './components/loading/loading.component';
 import { AutosizeDirective } from './directives/autosize.directive';
+import { ShareButtonsModule } from 'ngx-sharebuttons';
 
 const VIEW_PROVIDERS = [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MdSelectModule,
-    MdButtonModule,
+  CommonModule,
+  FormsModule,
+  ReactiveFormsModule,
+  MdSelectModule,
+  MdButtonModule,
   MdDatepickerModule,
   MdNativeDateModule,
-    MdIconModule,
-    MdToolbarModule,
-    MdAutocompleteModule,
-    MdCheckboxModule,
-    MdInputModule,
-    MdTooltipModule,
-    MdMenuModule,
-    MdDialogModule,
+  MdIconModule,
+  MdToolbarModule,
+  MdAutocompleteModule,
+  MdCheckboxModule,
+  MdInputModule,
+  MdTooltipModule,
+  MdMenuModule,
+  MdDialogModule,
   MdSlideToggleModule,
-    MdTabsModule,
+  MdTabsModule,
   MdProgressSpinnerModule,
-    FlexLayoutModule,
-    MomentModule,
-    NgxChartsModule,
-    InfiniteScrollModule,
-    NgxErrorsModule
+  FlexLayoutModule,
+  MomentModule,
+  NgxChartsModule,
+  InfiniteScrollModule,
+  NgxErrorsModule,
+  ShareButtonsModule
 ];
 
 @NgModule({
   declarations: [ LimitPipe, LoadingComponent, AutosizeDirective ],
-    imports: VIEW_PROVIDERS,
-  exports: [ ...VIEW_PROVIDERS, LimitPipe, LoadingComponent, AutosizeDirective ],
+  imports: [ ...VIEW_PROVIDERS, ShareButtonsModule.forRoot() ],
+  exports: [ ...VIEW_PROVIDERS, LimitPipe, LoadingComponent, AutosizeDirective, ShareButtonsModule ],
 })
 export class SharedModule {
 }
